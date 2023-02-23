@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0AA5CE6329A7867400C4BBE4 /* Logger + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA5CE6229A7867400C4BBE4 /* Logger + Extensions.swift */; };
 		0AF3176829A0D667005417A5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF3176729A0D667005417A5 /* AppDelegate.swift */; };
 		0AF3176C29A0D667005417A5 /* FirstViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF3176B29A0D667005417A5 /* FirstViewController.swift */; };
 		0AF3177129A0D66A005417A5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0AF3177029A0D66A005417A5 /* Assets.xcassets */; };
@@ -15,6 +16,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0AA5CE6229A7867400C4BBE4 /* Logger + Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Logger + Extensions.swift"; sourceTree = "<group>"; };
 		0AF3176429A0D667005417A5 /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0AF3176729A0D667005417A5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0AF3176B29A0D667005417A5 /* FirstViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstViewController.swift; sourceTree = "<group>"; };
@@ -35,6 +37,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0AA5CE6129A7865500C4BBE4 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				0AA5CE6229A7867400C4BBE4 /* Logger + Extensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		0AF3175B29A0D667005417A5 = {
 			isa = PBXGroup;
 			children = (
@@ -56,6 +66,7 @@
 			children = (
 				0AF3177B29A0D84B005417A5 /* Application */,
 				0AF3177E29A0D8EB005417A5 /* Screens */,
+				0AA5CE6129A7865500C4BBE4 /* Extensions */,
 				0AF3177C29A0D877005417A5 /* Resources */,
 				0AF3177D29A0D884005417A5 /* Supporting Files */,
 			);
@@ -169,6 +180,7 @@
 				0AF3176C29A0D667005417A5 /* FirstViewController.swift in Sources */,
 				0AF3176829A0D667005417A5 /* AppDelegate.swift in Sources */,
 				0AF3179029A3C1BB005417A5 /* SecondViewController.swift in Sources */,
+				0AA5CE6329A7867400C4BBE4 /* Logger + Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

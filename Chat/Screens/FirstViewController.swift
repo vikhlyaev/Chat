@@ -23,7 +23,7 @@ final class FirstViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        logger.info("Called method: \(#function)")
+        logger.calledInfo()
         
         setupView()
         setConstraints()
@@ -31,32 +31,32 @@ final class FirstViewController: UIViewController {
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        logger.info("Called method: \(#function)")
+        logger.calledInfo()
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        logger.info("Called method: \(#function)")
+        logger.calledInfo()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        logger.info("Called method: \(#function)")
+        logger.calledInfo()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        logger.info("Called method: \(#function)")
+        logger.calledInfo()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        logger.info("Called method: \(#function)")
+        logger.calledInfo()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        logger.info("Called method: \(#function)")
+        logger.calledInfo()
     }
     
     // MARK: - Private methods
