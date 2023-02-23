@@ -11,13 +11,15 @@ final class FirstViewController: UIViewController {
         }
     }
     
-    private lazy var goToSecondViewControllerButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Перейти на второй экран", for: .normal)
-        button.addTarget(self, action: #selector(goToSecondViewControllerButtonTapped), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
+    private lazy var settingsButton = UIBarButtonItem(image: UIImage(systemName: "gear"),
+                                                      style: .plain,
+                                                      target: self,
+                                                      action: #selector(settingsButtonTapped))
+    
+    private lazy var profileButton = UIBarButtonItem(image: UIImage(systemName: "person.crop.circle"),
+                                                     style: .plain,
+                                                     target: self,
+                                                     action: #selector(profileButtonTapped))
     
     // MARK: - ViewController lifecycle methods
     
@@ -25,6 +27,7 @@ final class FirstViewController: UIViewController {
         super.viewDidLoad()
         logger.calledInfo()
         
+        setupNavBar()
         setupView()
         setConstraints()
     }
@@ -62,12 +65,22 @@ final class FirstViewController: UIViewController {
     // MARK: - Private methods
     
     private func setupView() {
-        title = "Первый экран"
         view.backgroundColor = .systemBackground
-        view.addSubview(goToSecondViewControllerButton)
     }
     
-    @objc private func goToSecondViewControllerButtonTapped() {
+    private func setupNavBar() {
+        navigationItem.leftBarButtonItem = settingsButton
+        navigationItem.rightBarButtonItem = profileButton
+        
+        navigationController?.navigationBar.prefersLargeTitles = true
+        title = "Chat"
+    }
+    
+    @objc private func settingsButtonTapped() {
+        print("settingsButtonTapped")
+    }
+    
+    @objc private func profileButtonTapped() {
         let secondViewController = SecondViewController()
         navigationController?.pushViewController(secondViewController, animated: true)
     }
@@ -78,8 +91,7 @@ final class FirstViewController: UIViewController {
 extension FirstViewController {
     private func setConstraints() {
         NSLayoutConstraint.activate([
-            goToSecondViewControllerButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            goToSecondViewControllerButton.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            
         ])
     }
 }
