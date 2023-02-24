@@ -175,6 +175,13 @@ final class ProfileViewController: UIViewController {
         present(picker, animated: true)
     }
     
+    private func updateAvatar(_ image: UIImage) {
+        DispatchQueue.main.async { [weak self] in
+            self?.avatarImageView.image = image
+            self?.removeInitials()
+        }
+    }
+    
     @objc private func closeButtonTapped() {
         dismiss(animated: true)
     }
@@ -200,16 +207,11 @@ final class ProfileViewController: UIViewController {
 extension ProfileViewController: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         picker.dismiss(animated: true)
-        
         guard let itemProvider = results.first?.itemProvider,
               itemProvider.canLoadObject(ofClass: UIImage.self) else { return }
-        
-        itemProvider.loadObject(ofClass: UIImage.self) { [weak self] (image, error) in
+        itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
             if let image = image as? UIImage {
-                DispatchQueue.main.async {
-                    self?.avatarImageView.image = image
-                    self?.removeInitials()
-                }
+                self?.updateAvatar(image)
             }
         }
     }
@@ -221,13 +223,8 @@ extension ProfileViewController: UIImagePickerControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         guard let imagePicker = imagePicker,
               let image = info[.originalImage] as? UIImage else { return }
-        
         imagePicker.dismiss(animated: true, completion: nil)
-        
-        DispatchQueue.main.async { [weak self] in
-            self?.avatarImageView.image = image
-            self?.removeInitials()
-        }
+        updateAvatar(image)
     }
 }
 
