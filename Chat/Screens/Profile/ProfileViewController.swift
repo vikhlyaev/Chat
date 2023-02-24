@@ -12,6 +12,12 @@ final class ProfileViewController: UIViewController {
         }
     }
     
+    private lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
+    }()
+    
     private lazy var photoView = PhotoView()
     
     private lazy var addPhotoButton: UIButton = {
@@ -25,6 +31,7 @@ final class ProfileViewController: UIViewController {
     
     private lazy var nameLabel: UILabel = {
         let label = UILabel()
+        label.textAlignment = .center
         label.numberOfLines = 1
         label.adjustsFontSizeToFitWidth = true
         label.font = .systemFont(ofSize: 22, weight: .bold)
@@ -34,18 +41,20 @@ final class ProfileViewController: UIViewController {
     
     private lazy var positionLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor(red: 0.24, green: 0.24, blue: 0.26, alpha: 0.6)
+        label.textAlignment = .center
         label.numberOfLines = 2
         label.adjustsFontSizeToFitWidth = true
+        label.alpha = 0.6
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private lazy var cityLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor(red: 0.24, green: 0.24, blue: 0.26, alpha: 0.6)
+        label.textAlignment = .center
         label.numberOfLines = 1
         label.adjustsFontSizeToFitWidth = true
+        label.alpha = 0.6
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -89,11 +98,12 @@ final class ProfileViewController: UIViewController {
     
     private func setupView() {
         view.backgroundColor = .systemBackground
-        view.addSubview(photoView)
-        view.addSubview(addPhotoButton)
-        view.addSubview(nameLabel)
-        view.addSubview(positionLabel)
-        view.addSubview(cityLabel)
+        view.addSubview(scrollView)
+        scrollView.addSubview(photoView)
+        scrollView.addSubview(addPhotoButton)
+        scrollView.addSubview(nameLabel)
+        scrollView.addSubview(positionLabel)
+        scrollView.addSubview(cityLabel)
     }
     
     private func updateUI() {
@@ -195,22 +205,31 @@ extension ProfileViewController: UINavigationControllerDelegate {
 extension ProfileViewController {
     private func setConstraints() {
         NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        
+            photoView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 88),
+            photoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             photoView.widthAnchor.constraint(equalToConstant: 150),
             photoView.heightAnchor.constraint(equalToConstant: 150),
-            photoView.topAnchor.constraint(equalTo: view.topAnchor, constant: 88),
-            photoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
             addPhotoButton.topAnchor.constraint(equalTo: photoView.bottomAnchor, constant: 24),
             addPhotoButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
             nameLabel.topAnchor.constraint(equalTo: addPhotoButton.bottomAnchor, constant: 24),
-            nameLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            nameLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            nameLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             
             positionLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 10),
-            positionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            positionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            positionLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             
             cityLabel.topAnchor.constraint(equalTo: positionLabel.bottomAnchor),
-            cityLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            cityLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            cityLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            cityLabel.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -16)
         ])
     }
 }
