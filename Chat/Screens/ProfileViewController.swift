@@ -140,6 +140,14 @@ final class ProfileViewController: UIViewController {
         initialsLabel.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor).isActive = true
     }
     
+    private func removeInitials() {
+        initialsLabel.removeFromSuperview()
+        initialsLabel.removeConstraints([
+            initialsLabel.centerXAnchor.constraint(equalTo: avatarImageView.centerXAnchor),
+            initialsLabel.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor)
+        ])
+    }
+    
     private func setupNavBar() {
         navigationItem.leftBarButtonItem = closeButton
         navigationItem.rightBarButtonItem = editButtonItem
@@ -155,6 +163,8 @@ final class ProfileViewController: UIViewController {
         guard let imagePicker = imagePicker else { return }
         imagePicker.delegate = self
         imagePicker.sourceType = .camera
+        imagePicker.cameraCaptureMode = .photo
+        imagePicker.cameraDevice = .front
         present(imagePicker, animated: true, completion: nil)
     }
     
@@ -171,21 +181,16 @@ final class ProfileViewController: UIViewController {
     
     @objc private func addPhotoButtonTapped() {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        
         let takePhotoAction = UIAlertAction(title: "Сделать фото", style: .default) { [weak self] _ in
             self?.takePhoto()
         }
-        
         let chooseFromGalleryAction = UIAlertAction(title: "Выбрать из галереи", style: .default) { [weak self] _ in
             self?.chooseFromGallery()
         }
-        
         let cancelAction = UIAlertAction(title: "Отмена", style: .cancel)
-        
         alert.addAction(takePhotoAction)
         alert.addAction(chooseFromGalleryAction)
         alert.addAction(cancelAction)
-        
         present(alert, animated: true)
     }
 }
@@ -196,13 +201,14 @@ extension ProfileViewController: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         picker.dismiss(animated: true)
         
-        if let itemProvider = results.first?.itemProvider,
-           itemProvider.canLoadObject(ofClass: UIImage.self) {
-            itemProvider.loadObject(ofClass: UIImage.self) { [weak self] (image, error) in
-                if let image = image as? UIImage {
-                    DispatchQueue.main.async {
-                        self?.avatarImageView.image = image
-                    }
+        guard let itemProvider = results.first?.itemProvider,
+              itemProvider.canLoadObject(ofClass: UIImage.self) else { return }
+        
+        itemProvider.loadObject(ofClass: UIImage.self) { [weak self] (image, error) in
+            if let image = image as? UIImage {
+                DispatchQueue.main.async {
+                    self?.avatarImageView.image = image
+                    self?.removeInitials()
                 }
             }
         }
@@ -212,7 +218,17 @@ extension ProfileViewController: PHPickerViewControllerDelegate {
 // MARK: - UIImagePickerControllerDelegate
 
 extension ProfileViewController: UIImagePickerControllerDelegate {
-    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        guard let imagePicker = imagePicker,
+              let image = info[.originalImage] as? UIImage else { return }
+        
+        imagePicker.dismiss(animated: true, completion: nil)
+        
+        DispatchQueue.main.async { [weak self] in
+            self?.avatarImageView.image = image
+            self?.removeInitials()
+        }
+    }
 }
 
 // MARK: - UINavigationControllerDelegate
