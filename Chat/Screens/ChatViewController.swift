@@ -1,7 +1,7 @@
 import UIKit
 import OSLog
 
-final class FirstViewController: UIViewController {
+final class ChatViewController: UIViewController {
     
     private var logger: Logger {
         if ProcessInfo.processInfo.environment.keys.contains("LOGGING") {
@@ -71,7 +71,6 @@ final class FirstViewController: UIViewController {
     private func setupNavBar() {
         navigationItem.leftBarButtonItem = settingsButton
         navigationItem.rightBarButtonItem = profileButton
-        
         navigationController?.navigationBar.prefersLargeTitles = true
         title = "Chat"
     }
@@ -81,14 +80,14 @@ final class FirstViewController: UIViewController {
     }
     
     @objc private func profileButtonTapped() {
-        let secondViewController = SecondViewController()
-        navigationController?.pushViewController(secondViewController, animated: true)
+        let profileNavigationController = UINavigationController(rootViewController: ProfileViewController())
+        navigationController?.present(profileNavigationController, animated: true)
     }
 }
 
 // MARK: - Setting Constraints
 
-extension FirstViewController {
+extension ChatViewController {
     private func setConstraints() {
         NSLayoutConstraint.activate([
             
