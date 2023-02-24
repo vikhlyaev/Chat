@@ -6,31 +6,13 @@ final class ProfileViewController: UIViewController {
     
     private var logger: Logger {
         if ProcessInfo.processInfo.environment.keys.contains("LOGGING") {
-            return Logger(subsystem: Bundle.main.bundleIdentifier ?? "", category: "ProfileVCLifeCycle")
+            return Logger(subsystem: Bundle.main.bundleIdentifier ?? "", category: "ProfileViewController")
         } else {
             return Logger(.disabled)
         }
     }
     
-    private lazy var avatarPlaceholder = UIImage(named: "AvatarPlaceholder")
-    
-    private lazy var initialsLabel: UILabel = {
-        let label = UILabel()
-        label.text = initials
-        label.font = .rounded(ofSize: 64, weight: .semibold)
-        label.textColor = .white
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private lazy var avatarImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = avatarPlaceholder
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
-    }()
+    private lazy var photoView = PhotoView()
     
     private lazy var addPhotoButton: UIButton = {
         let button = UIButton(type: .system)
@@ -43,7 +25,6 @@ final class ProfileViewController: UIViewController {
     
     private lazy var nameLabel: UILabel = {
         let label = UILabel()
-        label.text = "Stephen Johnson"
         label.numberOfLines = 1
         label.adjustsFontSizeToFitWidth = true
         label.font = .systemFont(ofSize: 22, weight: .bold)
@@ -53,9 +34,8 @@ final class ProfileViewController: UIViewController {
     
     private lazy var positionLabel: UILabel = {
         let label = UILabel()
-        label.text = "UX/UI designer, web designer"
         label.textColor = UIColor(red: 0.24, green: 0.24, blue: 0.26, alpha: 0.6)
-        label.numberOfLines = 1
+        label.numberOfLines = 2
         label.adjustsFontSizeToFitWidth = true
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -63,7 +43,6 @@ final class ProfileViewController: UIViewController {
     
     private lazy var cityLabel: UILabel = {
         let label = UILabel()
-        label.text = "Moscow, Russia"
         label.textColor = UIColor(red: 0.24, green: 0.24, blue: 0.26, alpha: 0.6)
         label.numberOfLines = 1
         label.adjustsFontSizeToFitWidth = true
@@ -76,82 +55,60 @@ final class ProfileViewController: UIViewController {
                                                    target: self,
                                                    action: #selector(closeButtonTapped))
     
-    private var initials: String {
-        guard let name = nameLabel.text else { return "" }
-        return name.split(separator: " ").compactMap { String($0).first }.map { String($0) }.joined()
-    }
-    
     private var imagePicker: UIImagePickerController?
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        avatarImageView.layer.cornerRadius = avatarImageView.frame.width / 2
+    private let user: User?
+    
+    init(user: User) {
+        self.user = user
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupNavBar()
         setupView()
         setConstraints()
+        updateUI()
     }
     
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        logger.calledInfo()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        logger.calledInfo()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        logger.calledInfo()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        logger.calledInfo()
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        logger.calledInfo()
-    }
-    
-    private func setupView() {
-        view.backgroundColor = .systemBackground
-        view.addSubview(avatarImageView)
-        view.addSubview(addPhotoButton)
-        view.addSubview(nameLabel)
-        view.addSubview(positionLabel)
-        view.addSubview(cityLabel)
-        
-        if avatarImageView.image == avatarPlaceholder {
-            addInitials()
-        }
-    }
-    
-    private func addInitials() {
-        avatarImageView.addSubview(initialsLabel)
-        initialsLabel.centerXAnchor.constraint(equalTo: avatarImageView.centerXAnchor).isActive = true
-        initialsLabel.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor).isActive = true
-    }
-    
-    private func removeInitials() {
-        initialsLabel.removeFromSuperview()
-        initialsLabel.removeConstraints([
-            initialsLabel.centerXAnchor.constraint(equalTo: avatarImageView.centerXAnchor),
-            initialsLabel.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor)
-        ])
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        photoView.layer.cornerRadius = photoView.frame.width / 2
     }
     
     private func setupNavBar() {
         navigationItem.leftBarButtonItem = closeButton
         navigationItem.rightBarButtonItem = editButtonItem
         title = "My Profile"
+    }
+    
+    private func setupView() {
+        view.backgroundColor = .systemBackground
+        view.addSubview(photoView)
+        view.addSubview(addPhotoButton)
+        view.addSubview(nameLabel)
+        view.addSubview(positionLabel)
+        view.addSubview(cityLabel)
+    }
+    
+    private func updateUI() {
+        guard let user = user else { return }
+        nameLabel.text = user.name
+        positionLabel.text = user.position
+        cityLabel.text = user.city
+        
+        if let photo = user.photo {
+            photoView.updatePhoto(photo)
+        } else {
+            guard let placeholder = UIImage(named: "Placeholder") else { return }
+            photoView.updatePhoto(placeholder)
+            photoView.addInitials(user.initials)
+        }
     }
     
     private func takePhoto() {
@@ -175,11 +132,10 @@ final class ProfileViewController: UIViewController {
         present(picker, animated: true)
     }
     
-    private func updateAvatar(_ image: UIImage) {
-        DispatchQueue.main.async { [weak self] in
-            self?.avatarImageView.image = image
-            self?.removeInitials()
-        }
+    private func updatePhoto(_ image: UIImage) {
+        user?.photo = image
+        photoView.updatePhoto(image)
+        photoView.removeInitials()
     }
     
     @objc private func closeButtonTapped() {
@@ -211,7 +167,7 @@ extension ProfileViewController: PHPickerViewControllerDelegate {
               itemProvider.canLoadObject(ofClass: UIImage.self) else { return }
         itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
             if let image = image as? UIImage {
-                self?.updateAvatar(image)
+                self?.updatePhoto(image)
             }
         }
     }
@@ -224,7 +180,7 @@ extension ProfileViewController: UIImagePickerControllerDelegate {
         guard let imagePicker = imagePicker,
               let image = info[.originalImage] as? UIImage else { return }
         imagePicker.dismiss(animated: true, completion: nil)
-        updateAvatar(image)
+        updatePhoto(image)
     }
 }
 
@@ -239,12 +195,12 @@ extension ProfileViewController: UINavigationControllerDelegate {
 extension ProfileViewController {
     private func setConstraints() {
         NSLayoutConstraint.activate([
-            avatarImageView.widthAnchor.constraint(equalToConstant: 150),
-            avatarImageView.heightAnchor.constraint(equalToConstant: 150),
-            avatarImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 88),
-            avatarImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            photoView.widthAnchor.constraint(equalToConstant: 150),
+            photoView.heightAnchor.constraint(equalToConstant: 150),
+            photoView.topAnchor.constraint(equalTo: view.topAnchor, constant: 88),
+            photoView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
-            addPhotoButton.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 24),
+            addPhotoButton.topAnchor.constraint(equalTo: photoView.bottomAnchor, constant: 24),
             addPhotoButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
             nameLabel.topAnchor.constraint(equalTo: addPhotoButton.bottomAnchor, constant: 24),
