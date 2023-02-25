@@ -167,6 +167,9 @@ final class ProfileViewController: UIViewController {
     }
     
     @objc private func addPhotoButtonTapped() {
+        // В консоли будет ошибка Unable to simultaneously satisfy constraints. Это баг Apple.
+        // https://stackoverflow.com/questions/55372093/uialertcontrollers-actionsheet-gives-constraint-error-on-ios-12-2-12-3
+        
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let takePhotoAction = UIAlertAction(title: "Сделать фото", style: .default) { [weak self] _ in
             self?.takePhoto()
