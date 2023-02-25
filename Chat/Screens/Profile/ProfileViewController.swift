@@ -4,14 +4,6 @@ import OSLog
 
 final class ProfileViewController: UIViewController {
     
-    private var logger: Logger {
-        if ProcessInfo.processInfo.environment.keys.contains("LOGGING") {
-            return Logger(subsystem: Bundle.main.bundleIdentifier ?? "", category: "ProfileViewController")
-        } else {
-            return Logger(.disabled)
-        }
-    }
-    
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
