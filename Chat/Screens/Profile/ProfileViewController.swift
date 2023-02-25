@@ -71,6 +71,12 @@ final class ProfileViewController: UIViewController {
     init(user: User) {
         self.user = user
         super.init(nibName: nil, bundle: nil)
+        
+        /*
+         На данном этапе размеры addPhotoButton еще неизвестны,
+         так как еще не загрузилась view класса UIViewController.
+         */
+        print("\(#function) - \(addPhotoButton.frame)")
     }
     
     required init?(coder: NSCoder) {
@@ -83,11 +89,27 @@ final class ProfileViewController: UIViewController {
         setupView()
         setConstraints()
         updateUI()
+        
+        /*
+         На данном этапе размеры addPhotoButton еще неизвестны,
+         так как view класса UIViewController только загрузилась.
+         Размеры view некорректны, поэтому у дочерних subview еще нет размеров.
+         */
+        print("\(#function) - \(addPhotoButton.frame)")
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         photoView.layer.cornerRadius = photoView.frame.width / 2
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        /*
+         Размеры view становятся корректными уже в viewWillAppear,
+         размеры и расположение дочерних subview становятся корректными в методе viewDidLayoutSubviews()
+        */
+        print("\(#function) - \(addPhotoButton.frame)")
     }
     
     private func setupNavBar() {
