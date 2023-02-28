@@ -120,7 +120,6 @@ final class ProfileViewController: UIViewController {
     }
     
     private func updateUI() {
-        guard let user = user else { return }
         nameLabel.text = user.name
         positionLabel.text = user.position
         cityLabel.text = user.city
@@ -156,7 +155,7 @@ final class ProfileViewController: UIViewController {
     }
     
     private func updatePhoto(_ image: UIImage) {
-        user?.photo = image
+        user.photo = image
         photoView.updatePhoto(image)
         photoView.removeInitials()
     }
