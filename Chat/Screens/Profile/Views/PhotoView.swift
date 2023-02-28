@@ -37,9 +37,7 @@ final class PhotoView: UIView {
     }
     
     func addInitials(_ initials: String) {
-        DispatchQueue.main.async { [weak self] in
-            self?.initialsLabel.text = initials
-        }
+        initialsLabel.text = initials
     }
     
     func removeInitials() {

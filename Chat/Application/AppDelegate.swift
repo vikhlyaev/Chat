@@ -14,12 +14,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
-    private var currentState: UIApplication.State {
-        return UIApplication.shared.applicationState
-    }
-    
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        logger.info("Application moved from Not Running to \(self.currentState.stringValue): \(#function)")
+        logger.info("Application moved from Not Running to \(application.applicationState.stringValue): \(#function)")
         return true
     }
     
@@ -32,23 +28,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {
-        logger.info("Application moved from \(self.currentState.stringValue) to \(UIApplication.State.inactive.stringValue): \(#function)")
+        logger.info("Application moved from \(application.applicationState.stringValue) to \(UIApplication.State.inactive.stringValue): \(#function)")
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
-        logger.info("Application moved from \(UIApplication.State.inactive.stringValue) to \(self.currentState.stringValue): \(#function)")
+        logger.info("Application moved from \(UIApplication.State.inactive.stringValue) to \(application.applicationState.stringValue): \(#function)")
     }
     
     func applicationWillResignActive(_ application: UIApplication) {
-        logger.info("Application moved from \(self.currentState.stringValue) to \(UIApplication.State.inactive.stringValue): \(#function)")
+        logger.info("Application moved from \(application.applicationState.stringValue) to \(UIApplication.State.inactive.stringValue): \(#function)")
     }
     
     func applicationDidEnterBackground(_ application: UIApplication) {
-        logger.info("Application moved from \(UIApplication.State.inactive.stringValue) to \(self.currentState.stringValue): \(#function)")
+        logger.info("Application moved from \(UIApplication.State.inactive.stringValue) to \(application.applicationState.stringValue): \(#function)")
     }
     
     func applicationWillTerminate(_ application: UIApplication) {
-        logger.info("Application moved from \(self.currentState.stringValue) to Not Running: \(#function)")
+        logger.info("Application moved from \(application.applicationState.stringValue) to Not Running: \(#function)")
     }
 
 }
