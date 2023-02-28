@@ -57,7 +57,7 @@ final class ProfileViewController: UIViewController {
     
     private var imagePicker: UIImagePickerController?
     
-    private let user: User?
+    private let user: User
     
     init(user: User) {
         self.user = user
