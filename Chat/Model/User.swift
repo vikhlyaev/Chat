@@ -1,9 +1,9 @@
 import UIKit
 
 final class User {
-    var name: String
-    var position: String
-    var city: String
+    let name: String
+    let position: String
+    let city: String
     
     var photo: UIImage?
     
