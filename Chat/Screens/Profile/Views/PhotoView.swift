@@ -28,11 +28,6 @@ final class PhotoView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        layer.cornerRadius = bounds.width / 2.0
-    }
-    
     private func setupView() {
         clipsToBounds = true
         translatesAutoresizingMaskIntoConstraints = false
@@ -54,7 +49,9 @@ final class PhotoView: UIView {
     }
     
     func updatePhoto(_ image: UIImage) {
-        photoImageView.image = image
+        DispatchQueue.main.async { [weak self] in
+            self?.photoImageView.image = image
+        }
     }
 }
 
