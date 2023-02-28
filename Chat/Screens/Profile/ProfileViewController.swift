@@ -1,6 +1,5 @@
 import UIKit
 import PhotosUI
-import OSLog
 
 final class ProfileViewController: UIViewController {
     
