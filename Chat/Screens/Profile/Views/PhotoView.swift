@@ -28,6 +28,11 @@ final class PhotoView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        layer.cornerRadius = bounds.width / 2.0
+    }
+    
     private func setupView() {
         clipsToBounds = true
         translatesAutoresizingMaskIntoConstraints = false
@@ -41,20 +46,15 @@ final class PhotoView: UIView {
     }
     
     func removeInitials() {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            self.initialsLabel.removeFromSuperview()
-            self.initialsLabel.removeConstraints([
-                self.initialsLabel.centerXAnchor.constraint(equalTo: self.photoImageView.centerXAnchor),
-                self.initialsLabel.centerYAnchor.constraint(equalTo: self.photoImageView.centerYAnchor)
-            ])
-        }
+        initialsLabel.removeFromSuperview()
+        initialsLabel.removeConstraints([
+            initialsLabel.centerXAnchor.constraint(equalTo: self.photoImageView.centerXAnchor),
+            initialsLabel.centerYAnchor.constraint(equalTo: self.photoImageView.centerYAnchor)
+        ])
     }
     
     func updatePhoto(_ image: UIImage) {
-        DispatchQueue.main.async { [weak self] in
-            self?.photoImageView.image = image
-        }
+        photoImageView.image = image
     }
 }
 

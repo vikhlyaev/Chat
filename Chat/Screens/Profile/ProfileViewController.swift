@@ -91,7 +91,7 @@ final class ProfileViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        photoView.layer.cornerRadius = photoView.frame.width / 2
+        //        photoView.layer.cornerRadius = photoView.frame.width / 2
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -157,7 +157,6 @@ final class ProfileViewController: UIViewController {
     private func updatePhoto(_ image: UIImage) {
         user.photo = image
         photoView.updatePhoto(image)
-        photoView.removeInitials()
     }
     
     @objc private func closeButtonTapped() {
@@ -192,7 +191,10 @@ extension ProfileViewController: PHPickerViewControllerDelegate {
               itemProvider.canLoadObject(ofClass: UIImage.self) else { return }
         itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
             if let image = image as? UIImage {
-                self?.updatePhoto(image)
+                DispatchQueue.main.async {
+                    self?.updatePhoto(image)
+                    self?.photoView.removeInitials()
+                }
             }
         }
     }
