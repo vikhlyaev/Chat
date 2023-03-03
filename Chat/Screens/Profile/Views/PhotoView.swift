@@ -18,6 +18,11 @@ final class PhotoView: UIView {
         return label
     }()
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        layer.cornerRadius = frame.width / 2
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
@@ -49,9 +54,7 @@ final class PhotoView: UIView {
     }
     
     func updatePhoto(_ image: UIImage) {
-        DispatchQueue.main.async { [weak self] in
-            self?.photoImageView.image = image
-        }
+        photoImageView.image = image
     }
 }
 

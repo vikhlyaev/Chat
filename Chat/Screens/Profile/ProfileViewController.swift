@@ -89,11 +89,6 @@ final class ProfileViewController: UIViewController {
         print("\(#function) - \(addPhotoButton.frame)")
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        photoView.layer.cornerRadius = photoView.frame.width / 2
-    }
-    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         /*
