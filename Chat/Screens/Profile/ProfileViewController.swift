@@ -62,12 +62,6 @@ final class ProfileViewController: UIViewController {
     init(user: User) {
         self.user = user
         super.init(nibName: nil, bundle: nil)
-        
-        /*
-         На данном этапе размеры addPhotoButton еще неизвестны,
-         так как еще не загрузилась view класса UIViewController.
-         */
-        print("\(#function) - \(addPhotoButton.frame)")
     }
     
     required init?(coder: NSCoder) {
@@ -80,22 +74,6 @@ final class ProfileViewController: UIViewController {
         setupView()
         setConstraints()
         updateUI()
-        
-        /*
-         На данном этапе размеры addPhotoButton еще неизвестны,
-         так как view класса UIViewController только загрузилась.
-         Размеры view некорректны, поэтому у дочерних subview еще нет размеров.
-         */
-        print("\(#function) - \(addPhotoButton.frame)")
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        /*
-         Размеры view становятся корректными уже в viewWillAppear,
-         размеры и расположение дочерних subview становятся корректными в методе viewDidLayoutSubviews()
-        */
-        print("\(#function) - \(addPhotoButton.frame)")
     }
     
     private func setupNavBar() {
@@ -162,7 +140,6 @@ final class ProfileViewController: UIViewController {
     @objc private func addPhotoButtonTapped() {
         // В iOS 14 в консоли будет ошибка Unable to simultaneously satisfy constraints. Это баг Apple.
         // https://stackoverflow.com/questions/55372093/uialertcontrollers-actionsheet-gives-constraint-error-on-ios-12-2-12-3
-        
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let takePhotoAction = UIAlertAction(title: "Сделать фото", style: .default) { [weak self] _ in
             self?.takePhoto()
