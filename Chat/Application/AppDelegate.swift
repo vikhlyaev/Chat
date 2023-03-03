@@ -15,36 +15,36 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        logger.info("Application moved from Not Running to Inactive: \(#function)")
+        logger.info("Application moved from Not Running to \(application.applicationState.stringValue): \(#function)")
         return true
     }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
-        let navigationController = UINavigationController(rootViewController: FirstViewController())
+        let navigationController = UINavigationController(rootViewController: ChatViewController())
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
         return true
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {
-        logger.info("Application moved from Background to Inactive: \(#function)")
+        logger.info("Application moved from \(application.applicationState.stringValue) to \(UIApplication.State.inactive.stringValue): \(#function)")
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
-        logger.info("Application moved from Inactive to Active: \(#function)")
+        logger.info("Application moved from \(UIApplication.State.inactive.stringValue) to \(application.applicationState.stringValue): \(#function)")
     }
     
     func applicationWillResignActive(_ application: UIApplication) {
-        logger.info("Application moved from Active to Inactive: \(#function)")
+        logger.info("Application moved from \(application.applicationState.stringValue) to \(UIApplication.State.inactive.stringValue): \(#function)")
     }
     
     func applicationDidEnterBackground(_ application: UIApplication) {
-        logger.info("Application moved from Inactive to Background: \(#function)")
+        logger.info("Application moved from \(UIApplication.State.inactive.stringValue) to \(application.applicationState.stringValue): \(#function)")
     }
     
     func applicationWillTerminate(_ application: UIApplication) {
-        logger.info("Application moved from Background to Not Running: \(#function)")
+        logger.info("Application moved from \(application.applicationState.stringValue) to Not Running: \(#function)")
     }
 
 }

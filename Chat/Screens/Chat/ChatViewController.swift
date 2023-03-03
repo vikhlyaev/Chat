@@ -1,11 +1,11 @@
 import UIKit
 import OSLog
 
-final class FirstViewController: UIViewController {
+final class ChatViewController: UIViewController {
     
     private var logger: Logger {
         if ProcessInfo.processInfo.environment.keys.contains("LOGGING") {
-            return Logger(subsystem: Bundle.main.bundleIdentifier ?? "", category: "VCLifeCycle")
+            return Logger(subsystem: Bundle.main.bundleIdentifier ?? "", category: "ChatViewController")
         } else {
             return Logger(.disabled)
         }
@@ -15,11 +15,13 @@ final class FirstViewController: UIViewController {
                                                       style: .plain,
                                                       target: self,
                                                       action: #selector(settingsButtonTapped))
-    
+
     private lazy var profileButton = UIBarButtonItem(image: UIImage(systemName: "person.crop.circle"),
                                                      style: .plain,
                                                      target: self,
                                                      action: #selector(profileButtonTapped))
+    
+    private var user = User(name: "Stephen Johnson", position: "UX/UI designer, web designer", city: "Moscow, Russia")
     
     // MARK: - ViewController lifecycle methods
     
@@ -29,7 +31,6 @@ final class FirstViewController: UIViewController {
         
         setupNavBar()
         setupView()
-        setConstraints()
     }
     
     override func viewWillLayoutSubviews() {
@@ -71,7 +72,6 @@ final class FirstViewController: UIViewController {
     private func setupNavBar() {
         navigationItem.leftBarButtonItem = settingsButton
         navigationItem.rightBarButtonItem = profileButton
-        
         navigationController?.navigationBar.prefersLargeTitles = true
         title = "Chat"
     }
@@ -81,18 +81,8 @@ final class FirstViewController: UIViewController {
     }
     
     @objc private func profileButtonTapped() {
-        let secondViewController = SecondViewController()
-        navigationController?.pushViewController(secondViewController, animated: true)
-    }
-}
-
-// MARK: - Setting Constraints
-
-extension FirstViewController {
-    private func setConstraints() {
-        NSLayoutConstraint.activate([
-            
-        ])
+        let profileNavigationController = UINavigationController(rootViewController: ProfileViewController(user: user))
+        navigationController?.present(profileNavigationController, animated: true)
     }
 }
 
