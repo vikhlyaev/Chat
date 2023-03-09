@@ -108,13 +108,13 @@ final class ProfileViewController: UIViewController {
     @objc
     private func addPhotoButtonTapped() {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let takePhotoAction = UIAlertAction(title: "Сделать фото", style: .default) { [weak self] _ in
+        let takePhotoAction = UIAlertAction(title: "Take photo", style: .default) { [weak self] _ in
             self?.takePhoto()
         }
-        let chooseFromGalleryAction = UIAlertAction(title: "Выбрать из галереи", style: .default) { [weak self] _ in
+        let chooseFromGalleryAction = UIAlertAction(title: "Choose from gallery", style: .default) { [weak self] _ in
             self?.chooseFromGallery()
         }
-        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         alert.addAction(takePhotoAction)
         alert.addAction(chooseFromGalleryAction)
         alert.addAction(cancelAction)
