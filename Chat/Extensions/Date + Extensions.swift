@@ -12,13 +12,26 @@ extension Date {
 
     func toString() -> String {
         let dateFormatter = DateFormatter()
+        dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale
         if Calendar.current.isDateInToday(self) {
             dateFormatter.dateFormat = "HH:mm"
         } else {
-            dateFormatter.dateFormat = "dd MMMM"
+            dateFormatter.dateFormat = "MMM, d"
         }
         return dateFormatter.string(from: self)
     }
+    
+    func onlyDayAndMonth() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX") as Locale
+        if Calendar.current.isDateInToday(self) {
+            return "Today"
+        } else if Calendar.current.isDateInYesterday(self) {
+            return "Yesterday"
+        } else {
+            dateFormatter.dateFormat = "MMM, d"
+        }
+        return dateFormatter.string(from: self)    }
     
     func onlyHoursAndMinutes() -> String {
         let dateFormatter = DateFormatter()
