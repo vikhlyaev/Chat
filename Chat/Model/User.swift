@@ -2,18 +2,27 @@ import UIKit
 
 final class User {
     let name: String
-    let position: String
-    let city: String
-    
+    var information: String?
     var photo: UIImage?
+    var isOnline: Bool = false
+    var hasUnreadMessages: Bool = false
+    var messages: [Message]?
     
-    var initials: String {
-        name.split(separator: " ").compactMap { String($0).first }.map { String($0) }.joined()
+    init(name: String, information: String? = nil, withPhoto photoName: String? = nil) {
+        self.name = name
+        self.information = information ?? nil
+        // временная реализация со строкой для моков
+        if let photoName = photoName {
+            guard let photo = UIImage(named: photoName) else { return }
+            self.photo = photo
+        } else {
+            self.photo = UIImage.makeRandomAvatar(with: name)
+        }
     }
     
-    init(name: String, position: String, city: String) {
+    init(name: String, information: String? = nil, withPhoto photo: UIImage? = nil) {
         self.name = name
-        self.position = position
-        self.city = city
+        self.information = information ?? nil
+        self.photo = photo ?? UIImage.makeRandomAvatar(with: name)
     }
 }
