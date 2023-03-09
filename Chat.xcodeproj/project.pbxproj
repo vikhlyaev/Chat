@@ -51,6 +51,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0A03CD6029B9893100B9CC8E /* UIKit */ = {
+			isa = PBXGroup;
+			children = (
+				0A03CD5C29B984F300B9CC8E /* UIImage + Extensions.swift */,
+				0A03CD5A29B984A500B9CC8E /* UIColor + Extensions.swift */,
+				0AA5CE6429A7F8EE00C4BBE4 /* UIFont + Extensions.swift */,
+			);
+			path = UIKit;
+			sourceTree = "<group>";
+		};
 		0A63C5D629A8F69B0000173B /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -87,11 +97,9 @@
 		0AA5CE6129A7865500C4BBE4 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				0A03CD5C29B984F300B9CC8E /* UIImage + Extensions.swift */,
-				0A03CD5A29B984A500B9CC8E /* UIColor + Extensions.swift */,
+				0A03CD6029B9893100B9CC8E /* UIKit */,
 				0A63C5DE29AA17700000173B /* State + Extensions.swift */,
 				0AA5CE6229A7867400C4BBE4 /* Logger + Extensions.swift */,
-				0AA5CE6429A7F8EE00C4BBE4 /* UIFont + Extensions.swift */,
 				0A03CD5E29B988EE00B9CC8E /* Date + Extensions.swift */,
 			);
 			path = Extensions;
