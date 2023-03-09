@@ -19,6 +19,7 @@
 		0A03CD7029B99BBE00B9CC8E /* ConversationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A03CD6F29B99BBE00B9CC8E /* ConversationViewController.swift */; };
 		0A03CD7229B99C1300B9CC8E /* ConversationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A03CD7129B99C1300B9CC8E /* ConversationCell.swift */; };
 		0A03CD7429B9A18800B9CC8E /* MessageCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A03CD7329B9A18800B9CC8E /* MessageCellModel.swift */; };
+		0A03CD7629B9DA0C00B9CC8E /* Array + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A03CD7529B9DA0C00B9CC8E /* Array + Extensions.swift */; };
 		0A63C5D829A8F6BD0000173B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A63C5D729A8F6BD0000173B /* User.swift */; };
 		0A63C5DF29AA17710000173B /* State + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A63C5DE29AA17700000173B /* State + Extensions.swift */; };
 		0AA5CE6329A7867400C4BBE4 /* Logger + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA5CE6229A7867400C4BBE4 /* Logger + Extensions.swift */; };
@@ -43,6 +44,7 @@
 		0A03CD6F29B99BBE00B9CC8E /* ConversationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationViewController.swift; sourceTree = "<group>"; };
 		0A03CD7129B99C1300B9CC8E /* ConversationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCell.swift; sourceTree = "<group>"; };
 		0A03CD7329B9A18800B9CC8E /* MessageCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCellModel.swift; sourceTree = "<group>"; };
+		0A03CD7529B9DA0C00B9CC8E /* Array + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array + Extensions.swift"; sourceTree = "<group>"; };
 		0A63C5D729A8F6BD0000173B /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		0A63C5DE29AA17700000173B /* State + Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "State + Extensions.swift"; sourceTree = "<group>"; };
 		0AA5CE6229A7867400C4BBE4 /* Logger + Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Logger + Extensions.swift"; sourceTree = "<group>"; };
@@ -132,6 +134,7 @@
 				0A63C5DE29AA17700000173B /* State + Extensions.swift */,
 				0AA5CE6229A7867400C4BBE4 /* Logger + Extensions.swift */,
 				0A03CD5E29B988EE00B9CC8E /* Date + Extensions.swift */,
+				0A03CD7529B9DA0C00B9CC8E /* Array + Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -283,6 +286,7 @@
 				0A03CD5F29B988EE00B9CC8E /* Date + Extensions.swift in Sources */,
 				0AF3179029A3C1BB005417A5 /* ProfileViewController.swift in Sources */,
 				0A03CD7029B99BBE00B9CC8E /* ConversationViewController.swift in Sources */,
+				0A03CD7629B9DA0C00B9CC8E /* Array + Extensions.swift in Sources */,
 				0A03CD6529B98B4400B9CC8E /* ConfigurableViewProtocol.swift in Sources */,
 				0A03CD5B29B984A500B9CC8E /* UIColor + Extensions.swift in Sources */,
 				0A03CD6D29B9910200B9CC8E /* ConversationsListCellModel.swift in Sources */,
