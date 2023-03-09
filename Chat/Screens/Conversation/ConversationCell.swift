@@ -19,6 +19,7 @@ final class ConversationCell: UITableViewCell {
     private lazy var messageLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
+        label.lineBreakMode = .byWordWrapping
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()

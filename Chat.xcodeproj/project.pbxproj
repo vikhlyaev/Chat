@@ -82,8 +82,8 @@
 			children = (
 				0A03CD6C29B9910200B9CC8E /* ConversationsListCellModel.swift */,
 				0A03CD6229B98A2300B9CC8E /* ProfileViewModel.swift */,
-				0A03CD6429B98B4400B9CC8E /* ConfigurableViewProtocol.swift */,
 				0A03CD7329B9A18800B9CC8E /* MessageCellModel.swift */,
+				0A03CD6429B98B4400B9CC8E /* ConfigurableViewProtocol.swift */,
 			);
 			path = "Configuration Models";
 			sourceTree = "<group>";
