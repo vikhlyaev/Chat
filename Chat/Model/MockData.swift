@@ -24,18 +24,43 @@ final class MockData {
                 friend.isOnline = true
             }
             if index % 3 != 0 {
-                friend.messages = [.init(text: "I've paid my dues, time after time", date: Date(), type: .sent),
-                                   .init(text: "I've done my sentence, but committed no crime", date: Date(), type: .received),
-                                   .init(text: "And bad mistakes I've made a few", date: Date(), type: .sent),
-                                   .init(text: "I've had my share of sand kicked in my face, but I've come through", date: Date(), type: .received),
-                                   .init(text: "And I need to go on and on, and on, and on", date: Date(), type: .received),
-                                   .init(text: "We are the champions, my friends We are the champions, my friends We are the champions, my friends We are the champions, my friends", date: Date(), type: .sent),
-                                   .init(text: "And we'll keep on fighting till the end", date: Date(), type: .received),
-                                   .init(text: "We are the champions", date: Date(), type: .received),
-                                   .init(text: "We are the champions", date: Date(), type: .sent),
-                                   .init(text: "No time for losers", date: Date(), type: .received),
-                                   .init(text: "'Cause, we are the champions of the world", date: Date(), type: .sent)
-                ]
+                friend.messages = [.init(text: "We are the champions 🏆",
+                                         date: Date(),
+                                         type: .sent),
+                                   .init(text: "I've paid my dues, time after time",
+                                         date: Date("05.02.2023 12:48"),
+                                         type: .sent),
+                                   .init(text: "I've done my sentence, but committed no crime",
+                                         date: Date("05.02.2023 12:46"),
+                                         type: .received),
+                                   .init(text: "And bad mistakes I've made a few",
+                                         date: Date("05.02.2023 12:32"),
+                                         type: .sent),
+                                   .init(text: "I've had my share of sand kicked in my face, but I've come through",
+                                         date: Date("04.02.2023 22:18"),
+                                         type: .received),
+                                   .init(text: "And I need to go on and on, and on, and on",
+                                         date: Date("04.02.2023 22:01"),
+                                         type: .received),
+                                   .init(text: "We are the champions, my friends We are the champions, my friends We are the champions, my friends We are the champions, my friends",
+                                         date: Date("04.02.2023 21:52"),
+                                         type: .sent),
+                                   .init(text: "And we'll keep on fighting till the end",
+                                         date: Date("04.02.2023 21:48"),
+                                         type: .received),
+                                   .init(text: "We are the champions",
+                                         date: Date("04.02.2023 21:47"),
+                                         type: .received),
+                                   .init(text: "We are the champions",
+                                         date: Date("04.02.2023 21:39"),
+                                         type: .sent),
+                                   .init(text: "No time for losers",
+                                         date: Date("23.01.2023 00:01"),
+                                         type: .received),
+                                   .init(text: "'Cause, we are the champions of the world",
+                                         date: Date("30.12.2022 23:38"),
+                                         type: .sent)
+                ].reversed()
             }
         }
         return usersArray
