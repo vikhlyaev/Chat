@@ -1,8 +1,8 @@
 import Foundation
 
-struct Message {
+struct Message: DayCategorizable {
     let text: String
-    let date: Date
+    var date: Date
     let type: MessageType
     
     init(text: String, date: Date, type: MessageType) {
@@ -16,3 +16,8 @@ enum MessageType: CaseIterable {
     case sent
     case received
 }
+
+protocol DayCategorizable {
+    var date: Date { get }
+}
+
