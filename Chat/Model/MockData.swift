@@ -6,16 +6,16 @@ final class MockData {
     let user = User(name: "Anton Vikhlyaev", information: "iOS Developer, \nSterlitamak, Bashkortostan", withPhoto: nil)
     
     private let usersArray = [
-        User(name: "Lucius Carson", information: "Android Developer", withPhotoString: nil),
+        User(name: "Lucius Carson", information: "Android Developer", withPhoto: nil),
         User(name: "Werner Ball", information: "Economist", withPhotoString: "0"),
-        User(name: "Bobette Dennis", information: "Lawyer", withPhotoString: nil),
+        User(name: "Bobette Dennis", information: "Lawyer", withPhoto: nil),
         User(name: "Milo Hull", information: "iOS Developer", withPhotoString: "1"),
         User(name: "Nolan Garner", information: "Marketing Manager", withPhotoString: "2"),
-        User(name: "Kacy Brown", information: "Android Developer", withPhotoString: nil),
+        User(name: "Kacy Brown", information: "Android Developer", withPhoto: nil),
         User(name: "Shemika Farrell", information: "Economist", withPhotoString: "3"),
-        User(name: "Larae Jones", information: "Lawyer", withPhotoString: nil),
+        User(name: "Larae Jones", information: "Lawyer", withPhoto: nil),
         User(name: "Elza Hatfield", information: "iOS Developer", withPhotoString: "4"),
-        User(name: "Johnie Espinoza", information: "Marketing Manager", withPhotoString: nil),
+        User(name: "Johnie Espinoza", information: "Marketing Manager", withPhoto: nil),
     ]
     
     var users: [User] {
