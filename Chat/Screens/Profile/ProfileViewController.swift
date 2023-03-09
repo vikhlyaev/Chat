@@ -39,6 +39,7 @@ final class ProfileViewController: UIViewController {
     
     private lazy var informationLabel: UILabel = {
         let label = UILabel()
+        label.numberOfLines = 0
         label.textAlignment = .center
         label.adjustsFontSizeToFitWidth = true
         label.alpha = 0.6
