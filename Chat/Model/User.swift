@@ -8,7 +8,7 @@ final class User {
     var hasUnreadMessages: Bool = false
     var messages: [Message]?
     
-    init(name: String, information: String? = nil, withPhoto photoName: String? = nil) {
+    init(name: String, information: String? = nil, withPhotoString photoName: String? = nil) {
         self.name = name
         self.information = information ?? nil
         // временная реализация со строкой для моков
