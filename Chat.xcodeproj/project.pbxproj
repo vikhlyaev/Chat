@@ -10,6 +10,8 @@
 		0A03CD5B29B984A500B9CC8E /* UIColor + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A03CD5A29B984A500B9CC8E /* UIColor + Extensions.swift */; };
 		0A03CD5D29B984F300B9CC8E /* UIImage + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A03CD5C29B984F300B9CC8E /* UIImage + Extensions.swift */; };
 		0A03CD5F29B988EE00B9CC8E /* Date + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A03CD5E29B988EE00B9CC8E /* Date + Extensions.swift */; };
+		0A03CD6329B98A2300B9CC8E /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A03CD6229B98A2300B9CC8E /* ProfileViewModel.swift */; };
+		0A03CD6529B98B4400B9CC8E /* ConfigurableViewProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A03CD6429B98B4400B9CC8E /* ConfigurableViewProtocol.swift */; };
 		0A63C5D829A8F6BD0000173B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A63C5D729A8F6BD0000173B /* User.swift */; };
 		0A63C5DD29A901100000173B /* PhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A63C5DC29A901100000173B /* PhotoView.swift */; };
 		0A63C5DF29AA17710000173B /* State + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A63C5DE29AA17700000173B /* State + Extensions.swift */; };
@@ -26,6 +28,8 @@
 		0A03CD5A29B984A500B9CC8E /* UIColor + Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor + Extensions.swift"; sourceTree = "<group>"; };
 		0A03CD5C29B984F300B9CC8E /* UIImage + Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage + Extensions.swift"; sourceTree = "<group>"; };
 		0A03CD5E29B988EE00B9CC8E /* Date + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date + Extensions.swift"; sourceTree = "<group>"; };
+		0A03CD6229B98A2300B9CC8E /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
+		0A03CD6429B98B4400B9CC8E /* ConfigurableViewProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurableViewProtocol.swift; sourceTree = "<group>"; };
 		0A63C5D729A8F6BD0000173B /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		0A63C5DC29A901100000173B /* PhotoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoView.swift; sourceTree = "<group>"; };
 		0A63C5DE29AA17700000173B /* State + Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "State + Extensions.swift"; sourceTree = "<group>"; };
@@ -61,9 +65,19 @@
 			path = UIKit;
 			sourceTree = "<group>";
 		};
+		0A03CD6129B989C000B9CC8E /* Configuration Models */ = {
+			isa = PBXGroup;
+			children = (
+				0A03CD6229B98A2300B9CC8E /* ProfileViewModel.swift */,
+				0A03CD6429B98B4400B9CC8E /* ConfigurableViewProtocol.swift */,
+			);
+			path = "Configuration Models";
+			sourceTree = "<group>";
+		};
 		0A63C5D629A8F69B0000173B /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				0A03CD6129B989C000B9CC8E /* Configuration Models */,
 				0A63C5D729A8F6BD0000173B /* User.swift */,
 			);
 			path = Model;
@@ -244,8 +258,10 @@
 				0A63C5DD29A901100000173B /* PhotoView.swift in Sources */,
 				0A63C5D829A8F6BD0000173B /* User.swift in Sources */,
 				0AA5CE6529A7F8EE00C4BBE4 /* UIFont + Extensions.swift in Sources */,
+				0A03CD6329B98A2300B9CC8E /* ProfileViewModel.swift in Sources */,
 				0A03CD5F29B988EE00B9CC8E /* Date + Extensions.swift in Sources */,
 				0AF3179029A3C1BB005417A5 /* ProfileViewController.swift in Sources */,
+				0A03CD6529B98B4400B9CC8E /* ConfigurableViewProtocol.swift in Sources */,
 				0A03CD5B29B984A500B9CC8E /* UIColor + Extensions.swift in Sources */,
 				0AA5CE6329A7867400C4BBE4 /* Logger + Extensions.swift in Sources */,
 				0A63C5DF29AA17710000173B /* State + Extensions.swift in Sources */,
