@@ -38,7 +38,7 @@ final class ConversationViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-   
+    
     private lazy var customNavBar: UIView = {
         let view = UIView()
         view.backgroundColor = .customBackground
@@ -162,7 +162,7 @@ final class ConversationViewController: UIViewController {
             }
         }
     }
-
+    
     @objc
     private func keyboardWillHide(notification: NSNotification) {
         if view.frame.origin.y != 0 {
@@ -186,23 +186,52 @@ final class ConversationViewController: UIViewController {
 // MARK: - UITableViewDataSource
 
 extension ConversationViewController: UITableViewDataSource {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        guard let sortedMessages = user.sortedMessage else { return 0 }
+        return sortedMessages.count
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        user.messages?.count ?? 0
+        guard let sortedMessages = user.sortedMessage else { return 0 }
+        return sortedMessages[section].messages.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ConversationCell.identifier,
                                                        for: indexPath) as? ConversationCell else { return UITableViewCell() }
-        guard let messages = user.messages else { return UITableViewCell() }
-        let model = convert(message: messages[indexPath.row])
+        guard let message = user.sortedMessage?[indexPath.section].messages[indexPath.row] else { return UITableViewCell() }
+        let model = convert(message: message)
         cell.configure(with: model)
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        guard let sortedMessages = user.sortedMessage else { return nil }
+        return sortedMessages[section].date.onlyDayAndMonth()
+    }
+    
+    
 }
 
 // MARK: - UITableViewDelegate
 
-extension ConversationViewController: UITableViewDelegate {}
+extension ConversationViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        guard let sortedMessages = user.sortedMessage else { return nil }
+        let header = UITableViewHeaderFooterView()
+        var content = header.defaultContentConfiguration()
+        content.text = sortedMessages[section].date.onlyDayAndMonth()
+        content.textProperties.font = .systemFont(ofSize: 11, weight: .medium)
+        content.textProperties.alignment = .center
+        content.textProperties.color = .customDarkGrey
+        header.contentConfiguration = content
+        return header
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        24
+    }
+}
 
 // MARK: - Setting Constraints
 
