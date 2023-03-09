@@ -117,6 +117,9 @@ final class ConversationsListViewController: UIViewController {
 extension ConversationsListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        let user = TableViewSection.allCases[indexPath.section].array[indexPath.row]
+        let conversationViewController = ConversationViewController(user: user)
+        navigationController?.pushViewController(conversationViewController, animated: true)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
