@@ -110,11 +110,13 @@ extension ConversationCell: ConfigurableViewProtocol {
 // MARK: - Setting Constraints
 
 extension ConversationCell {
-    private func setConstraints() {
+    func setConstraints() {
+        let messageViewWidth = messageView.widthAnchor.constraint(lessThanOrEqualToConstant: frame.width * 0.75)
+        messageViewWidth.priority = UILayoutPriority(999)
         NSLayoutConstraint.activate([
             messageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4),
             messageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
-            messageView.widthAnchor.constraint(lessThanOrEqualToConstant: contentView.frame.width * 0.75),
+            messageViewWidth,
             
             bubbleImageView.topAnchor.constraint(equalTo: messageView.topAnchor),
             bubbleImageView.leadingAnchor.constraint(equalTo: messageView.leadingAnchor),

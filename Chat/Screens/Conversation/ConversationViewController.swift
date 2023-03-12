@@ -4,6 +4,9 @@ final class ConversationViewController: UIViewController {
     
     private lazy var chatTableView: UITableView = {
         let tableView = UITableView(frame: .zero)
+        if #available(iOS 15.0, *) {
+            tableView.sectionHeaderTopPadding = 0
+        }
         tableView.allowsSelection = false
         tableView.separatorStyle = .none
         tableView.keyboardDismissMode = .onDrag
@@ -14,6 +17,7 @@ final class ConversationViewController: UIViewController {
     
     private lazy var wrapperView: UIView = {
         let view = UIView()
+        view.backgroundColor = .systemBackground
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -98,13 +102,22 @@ final class ConversationViewController: UIViewController {
         setDelegates()
         setConstraints()
         setupNavBar()
-        addObserversKeyboard()
+        addObserverKeyboard()
         hideKeyboardByTappingOnScreen()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         addBottomBorder()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        removeObserverKeyboard()
     }
     
     private func setupView() {
@@ -136,9 +149,17 @@ final class ConversationViewController: UIViewController {
         view.addGestureRecognizer(UITapGestureRecognizer(target: view, action: #selector(textView.endEditing(_:))))
     }
     
-    private func addObserversKeyboard() {
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    private func addObserverKeyboard() {
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardWillChange),
+                                               name: UIResponder.keyboardWillChangeFrameNotification,
+                                               object: nil)
+    }
+    
+    private func removeObserverKeyboard() {
+        NotificationCenter.default.removeObserver(self,
+                                                  name: UIResponder.keyboardWillChangeFrameNotification,
+                                                  object: nil)
     }
     
     private func addBottomBorder() {
@@ -155,19 +176,31 @@ final class ConversationViewController: UIViewController {
     }
     
     @objc
-    private func keyboardWillShow(notification: NSNotification) {
-        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            if view.frame.origin.y == 0 {
-                view.frame.origin.y = view.frame.origin.y - keyboardSize.height
-            }
+    private func keyboardWillChange(notification: NSNotification) {
+        guard
+            let userInfo = notification.userInfo,
+            let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue
+        else {
+            return
         }
-    }
-    
-    @objc
-    private func keyboardWillHide(notification: NSNotification) {
-        if view.frame.origin.y != 0 {
-            view.frame.origin.y = 0
-        }
+        
+        let keyboardFrameInView = view.convert(keyboardFrame, from: nil)
+        let safeAreaFrame = view.safeAreaLayoutGuide.layoutFrame.insetBy(dx: 0, dy: -additionalSafeAreaInsets.bottom)
+        let intersection = safeAreaFrame.intersection(keyboardFrameInView)
+        
+        let keyboardAnimationDuration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey]
+        let animationDuration: TimeInterval = (keyboardAnimationDuration as? NSNumber)?.doubleValue ?? 0
+        let animationCurveRawNSN = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? NSNumber
+        let animationCurveRaw = animationCurveRawNSN?.uintValue ?? UIView.AnimationOptions.curveEaseInOut.rawValue
+        let animationCurve = UIView.AnimationOptions(rawValue: animationCurveRaw)
+        
+        UIView.animate(withDuration: animationDuration,
+                       delay: 0,
+                       options: animationCurve,
+                       animations: {
+            self.additionalSafeAreaInsets.bottom = intersection.height
+            self.view.layoutIfNeeded()
+        }, completion: nil)
     }
     
     @objc
@@ -225,11 +258,12 @@ extension ConversationViewController: UITableViewDelegate {
         content.textProperties.alignment = .center
         content.textProperties.color = .customDarkGrey
         header.contentConfiguration = content
+        header.tintColor = .systemBackground
         return header
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        24
+        32
     }
 }
 
@@ -262,7 +296,7 @@ extension ConversationViewController {
             chatTableView.topAnchor.constraint(equalTo: customNavBar.bottomAnchor),
             chatTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             chatTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            chatTableView.bottomAnchor.constraint(greaterThanOrEqualTo: wrapperView.topAnchor, constant: -4),
+            chatTableView.bottomAnchor.constraint(equalTo: wrapperView.topAnchor, constant: -4),
             
             wrapperView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             wrapperView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
