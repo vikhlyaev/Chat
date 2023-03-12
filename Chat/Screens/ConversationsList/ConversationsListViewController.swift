@@ -168,6 +168,7 @@ extension ConversationsListViewController: UITableViewDataSource {
         }
         let currentUser = TableViewSection.allCases[indexPath.section].array[indexPath.row]
         let model = convert(user: currentUser)
+        cell.resetCell()
         cell.configure(with: model)
         return cell
     }

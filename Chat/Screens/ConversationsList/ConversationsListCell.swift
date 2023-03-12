@@ -115,12 +115,23 @@ final class ConversationsListCell: UITableViewCell {
     }
     
     private func removeOnlineBadge() {
+        onlineView.removeFromSuperview()
         NSLayoutConstraint.deactivate([
             onlineView.topAnchor.constraint(equalTo: photoView.topAnchor),
             onlineView.trailingAnchor.constraint(equalTo: photoView.trailingAnchor),
             onlineView.widthAnchor.constraint(equalToConstant: 16),
             onlineView.heightAnchor.constraint(equalToConstant: 16),
         ])
+    }
+    
+    func resetCell() {
+        nameLabel.text = nil
+        photoImageView.image = nil
+        dateAndTimeLabel.text = nil
+        lastMessageLabel.text = nil
+        lastMessageLabel.font = .systemFont(ofSize: 15, weight: .regular)
+        lastMessageLabel.alpha = 0.6
+        removeOnlineBadge()
     }
 }
 
@@ -146,8 +157,6 @@ extension ConversationsListCell: ConfigurableViewProtocol {
         
         if model.isOnline {
             addOnlineBadge()
-        } else {
-            removeOnlineBadge()
         }
     }
 }
