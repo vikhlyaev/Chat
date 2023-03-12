@@ -19,7 +19,7 @@ final class ConversationCell: UITableViewCell {
     private lazy var messageLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
-        label.lineBreakMode = .byWordWrapping
+        label.lineBreakMode = .byClipping
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -28,6 +28,8 @@ final class ConversationCell: UITableViewCell {
         let label = UILabel()
         label.font = .systemFont(ofSize: 11)
         label.alpha = 0.6
+        label.numberOfLines = 1
+        label.lineBreakMode = .byClipping
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -92,6 +94,12 @@ final class ConversationCell: UITableViewCell {
             messageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20).isActive = true
         }
     }
+    
+    func resetCell() {
+        messageLabel.text = nil
+        timeLabel.text = nil
+        bubbleImageView.image = nil
+    }
 }
 
 // MARK: - ConfigurableViewProtocol
@@ -113,6 +121,10 @@ extension ConversationCell {
     func setConstraints() {
         let messageViewWidth = messageView.widthAnchor.constraint(lessThanOrEqualToConstant: frame.width * 0.75)
         messageViewWidth.priority = UILayoutPriority(999)
+        
+        messageLabel.setContentCompressionResistancePriority(UILayoutPriority(999), for: .horizontal)
+        timeLabel.setContentCompressionResistancePriority(UILayoutPriority(1000), for: .horizontal)
+
         NSLayoutConstraint.activate([
             messageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4),
             messageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),

@@ -234,6 +234,7 @@ extension ConversationViewController: UITableViewDataSource {
                                                        for: indexPath) as? ConversationCell else { return UITableViewCell() }
         guard let message = user.sortedMessage?[indexPath.section].messages[indexPath.row] else { return UITableViewCell() }
         let model = convert(message: message)
+        cell.resetCell()
         cell.configure(with: model)
         return cell
     }
