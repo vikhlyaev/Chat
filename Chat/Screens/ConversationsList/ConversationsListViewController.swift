@@ -36,6 +36,10 @@ final class ConversationsListViewController: UIViewController {
     
     private lazy var conversationsTableView: UITableView = {
         let tableView = UITableView(frame: .zero)
+        if #available(iOS 15.0, *) {
+            tableView.sectionHeaderTopPadding = 0
+        }
+        tableView.separatorStyle = .none
         tableView.register(ConversationsListCell.self, forCellReuseIdentifier: ConversationsListCell.identifier)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
@@ -122,8 +126,24 @@ extension ConversationsListViewController: UITableViewDelegate {
         navigationController?.pushViewController(conversationViewController, animated: true)
     }
     
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let header = UITableViewHeaderFooterView()
+        var content = header.defaultContentConfiguration()
+        content.text = TableViewSection.allCases[section].title
+        content.textProperties.font = .systemFont(ofSize: 15, weight: .semibold)
+        content.textProperties.color = .customDarkGrey
+        content.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 16, leading: 0, bottom: 8, trailing: 0)
+        header.contentConfiguration = content
+        header.tintColor = .systemBackground
+        return header
+    }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         70
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        52
     }
 }
 
@@ -144,11 +164,8 @@ extension ConversationsListViewController: UITableViewDataSource {
         
         let indexLastCellInSection = TableViewSection.allCases[indexPath.section].array.count - 1
         if indexPath.row == indexLastCellInSection {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
-        } else {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 73, bottom: 0, right: 0)
+            cell.customSeparator.isHidden = true
         }
-        
         let currentUser = TableViewSection.allCases[indexPath.section].array[indexPath.row]
         let model = convert(user: currentUser)
         cell.configure(with: model)
@@ -168,7 +185,7 @@ extension ConversationsListViewController {
             conversationsTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             conversationsTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             conversationsTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            conversationsTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            conversationsTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
 }

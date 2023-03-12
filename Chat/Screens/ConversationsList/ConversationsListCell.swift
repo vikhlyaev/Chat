@@ -75,6 +75,13 @@ final class ConversationsListCell: UITableViewCell {
         return imageView
     }()
     
+    lazy var customSeparator: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(red: 0.686, green: 0.686, blue: 0.694, alpha: 1)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -89,17 +96,26 @@ final class ConversationsListCell: UITableViewCell {
     private func setupView() {
         contentView.addSubview(photoView)
         photoView.addSubview(photoImageView)
+        contentView.addSubview(customSeparator)
         contentView.addSubview(wrapperView)
         wrapperView.addSubview(nameLabel)
         wrapperView.addSubview(dateAndTimeLabel)
         wrapperView.addSubview(lastMessageLabel)
         wrapperView.addSubview(disclosureImageView)
-        
     }
     
     private func addOnlineBadge() {
         photoView.addSubview(onlineView)
         NSLayoutConstraint.activate([
+            onlineView.topAnchor.constraint(equalTo: photoView.topAnchor),
+            onlineView.trailingAnchor.constraint(equalTo: photoView.trailingAnchor),
+            onlineView.widthAnchor.constraint(equalToConstant: 16),
+            onlineView.heightAnchor.constraint(equalToConstant: 16),
+        ])
+    }
+    
+    private func removeOnlineBadge() {
+        NSLayoutConstraint.deactivate([
             onlineView.topAnchor.constraint(equalTo: photoView.topAnchor),
             onlineView.trailingAnchor.constraint(equalTo: photoView.trailingAnchor),
             onlineView.widthAnchor.constraint(equalToConstant: 16),
@@ -125,10 +141,13 @@ extension ConversationsListCell: ConfigurableViewProtocol {
         
         if model.hasUnreadMessages {
             lastMessageLabel.font = .boldSystemFont(ofSize: 15)
+            lastMessageLabel.alpha = 1
         }
         
         if model.isOnline {
             addOnlineBadge()
+        } else {
+            removeOnlineBadge()
         }
     }
 }
@@ -165,7 +184,12 @@ extension ConversationsListCell {
             lastMessageLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor),
             lastMessageLabel.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor),
             lastMessageLabel.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor),
-            lastMessageLabel.bottomAnchor.constraint(equalTo: wrapperView.bottomAnchor)
+            lastMessageLabel.bottomAnchor.constraint(equalTo: wrapperView.bottomAnchor),
+            
+            customSeparator.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            customSeparator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            customSeparator.widthAnchor.constraint(equalTo: wrapperView.widthAnchor, constant: 16),
+            customSeparator.heightAnchor.constraint(equalToConstant: 0.333)
         ])
     }
 }
