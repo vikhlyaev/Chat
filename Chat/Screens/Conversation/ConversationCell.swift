@@ -118,7 +118,7 @@ extension ConversationCell: ConfigurableViewProtocol {
 // MARK: - Setting Constraints
 
 extension ConversationCell {
-    func setConstraints() {
+    private func setConstraints() {
         let messageViewWidth = messageView.widthAnchor.constraint(lessThanOrEqualToConstant: frame.width * 0.75)
         messageViewWidth.priority = UILayoutPriority(999)
         
