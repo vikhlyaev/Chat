@@ -79,7 +79,7 @@
 			path = UIKit;
 			sourceTree = "<group>";
 		};
-		0A03CD6129B989C000B9CC8E /* Configuration Models */ = {
+		0A03CD6129B989C000B9CC8E /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
 				0A03CD6C29B9910200B9CC8E /* ConversationsListCellModel.swift */,
@@ -87,7 +87,7 @@
 				0A03CD7329B9A18800B9CC8E /* MessageCellModel.swift */,
 				0A03CD6429B98B4400B9CC8E /* ConfigurableViewProtocol.swift */,
 			);
-			path = "Configuration Models";
+			path = Configuration;
 			sourceTree = "<group>";
 		};
 		0A03CD6E29B99BB300B9CC8E /* Conversation */ = {
@@ -102,7 +102,7 @@
 		0A63C5D629A8F69B0000173B /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				0A03CD6129B989C000B9CC8E /* Configuration Models */,
+				0A03CD6129B989C000B9CC8E /* Configuration */,
 				0A63C5D729A8F6BD0000173B /* User.swift */,
 				0A03CD6629B98DDA00B9CC8E /* MockData.swift */,
 				0A03CD6829B98E3D00B9CC8E /* Message.swift */,
