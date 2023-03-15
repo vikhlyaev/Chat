@@ -21,7 +21,7 @@ final class ConversationsListCell: UITableViewCell {
     
     private lazy var onlineView: UIView = {
         let view = UIView()
-        view.backgroundColor = .customGreen
+        view.backgroundColor = .appGreen
         view.layer.borderWidth = 2
         view.layer.borderColor = UIColor.white.cgColor
         view.layer.cornerRadius = 8
