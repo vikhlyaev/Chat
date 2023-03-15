@@ -56,7 +56,7 @@ final class ProfileViewController: UIViewController {
     private var imagePicker: UIImagePickerController?
     
     override func loadView() {
-        view = AppView()
+        view = ProfileView()
     }
     
     override func viewDidLoad() {
