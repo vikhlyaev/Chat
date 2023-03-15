@@ -198,8 +198,8 @@ extension ConversationsListCell {
             lastMessageLabel.bottomAnchor.constraint(equalTo: wrapperView.bottomAnchor),
             
             customSeparator.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            customSeparator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            customSeparator.widthAnchor.constraint(equalTo: wrapperView.widthAnchor, constant: 16),
+            customSeparator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            customSeparator.widthAnchor.constraint(equalTo: wrapperView.widthAnchor),
             customSeparator.heightAnchor.constraint(equalToConstant: 0.333)
         ])
     }
