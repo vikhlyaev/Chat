@@ -15,9 +15,8 @@ final class ConversationViewController: UIViewController {
         return tableView
     }()
     
-    private lazy var wrapperView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .systemBackground
+    private lazy var wrapperView: WrapperView = {
+        let view =  WrapperView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -75,19 +74,12 @@ final class ConversationViewController: UIViewController {
         super.viewWillAppear(animated)
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        addBottomBorder()
-    }
-    
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         removeObserverKeyboard()
     }
     
     private func setupView() {
-        view.backgroundColor = .systemBackground
-        
         view.addSubview(chatTableView)
         view.addSubview(customNavBar)
         view.addSubview(wrapperView)
@@ -119,13 +111,6 @@ final class ConversationViewController: UIViewController {
         NotificationCenter.default.removeObserver(self,
                                                   name: UIResponder.keyboardWillChangeFrameNotification,
                                                   object: nil)
-    }
-    
-    private func addBottomBorder() {
-        let bottomBorder = CALayer()
-        bottomBorder.frame = CGRect(x: 0, y: customNavBar.frame.height - 1, width: customNavBar.frame.width, height: 1)
-        bottomBorder.backgroundColor = UIColor(red: 0.686, green: 0.686, blue: 0.694, alpha: 1).cgColor
-        customNavBar.layer.addSublayer(bottomBorder)
     }
     
     private func convert(message: Message) -> MessageCellModel {
@@ -196,13 +181,6 @@ extension ConversationViewController: UITableViewDataSource {
         cell.configure(with: model)
         return cell
     }
-    
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        guard let sortedMessages = user.sortedMessage else { return nil }
-        return sortedMessages[section].date.onlyDayAndMonth()
-    }
-    
-    
 }
 
 // MARK: - UITableViewDelegate
@@ -210,15 +188,21 @@ extension ConversationViewController: UITableViewDataSource {
 extension ConversationViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard let sortedMessages = user.sortedMessage else { return nil }
-        let header = UITableViewHeaderFooterView()
-        var content = header.defaultContentConfiguration()
-        content.text = sortedMessages[section].date.onlyDayAndMonth()
-        content.textProperties.font = .systemFont(ofSize: 11, weight: .medium)
-        content.textProperties.alignment = .center
-        content.textProperties.color.withAlphaComponent(0.6)
-        header.contentConfiguration = content
-        header.tintColor = .systemBackground
+        let header = ConversationsHeader(title: sortedMessages[section].date.onlyDayAndMonth())
         return header
+//        
+//        
+//        
+//        guard let sortedMessages = user.sortedMessage else { return nil }
+//        let header = UITableViewHeaderFooterView()
+//        var content = header.defaultContentConfiguration()
+//        content.text = sortedMessages[section].date.onlyDayAndMonth()
+//        content.textProperties.font = .systemFont(ofSize: 11, weight: .medium)
+//        content.textProperties.alignment = .center
+//        content.textProperties.color.withAlphaComponent(0.6)
+//        header.contentConfiguration = content
+//        header.tintColor = .systemBackground
+//        return header
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {

@@ -54,7 +54,6 @@ final class CustomNavBar: UIView {
     }
     
     private func setupView() {
-        backgroundColor = .daySecondaryBackgroundColor
         translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(backButton)
