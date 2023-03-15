@@ -33,7 +33,7 @@ final class SettingsViewController: UIViewController {
     }
     
     override func loadView() {
-        view = AppView()
+        view = SettingsView()
     }
     
     override func viewDidLoad() {
