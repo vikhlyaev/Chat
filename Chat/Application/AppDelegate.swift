@@ -9,6 +9,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow(frame: UIScreen.main.bounds)
         let navigationController = UINavigationController(rootViewController: ConversationsListViewController())
         window?.rootViewController = navigationController
+        window?.overrideUserInterfaceStyle = .light
         window?.makeKeyAndVisible()
         return true
     }
