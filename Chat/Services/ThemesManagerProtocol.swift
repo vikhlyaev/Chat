@@ -1,7 +1,7 @@
 import Foundation
 
 protocol ThemesManagerProtocol: AnyObject {
-    func loadTheme()
+    func loadTheme(completion: @escaping (Int) -> Void)
     func saveTheme()
     func apply(theme: Theme)
 }
