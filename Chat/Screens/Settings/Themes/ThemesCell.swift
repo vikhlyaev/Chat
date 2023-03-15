@@ -23,6 +23,15 @@ final class ThemesCell: UITableViewCell {
         
         setupView()
         setConstraints()
+        
+        if let currentTheme = ThemesManager().currentTheme {
+            switch currentTheme {
+            case .day:
+                dayThemeButton.isSelected = true
+            case .night:
+                nightThemeButton.isSelected = false
+            }
+        }
     }
     
     required init?(coder: NSCoder) {

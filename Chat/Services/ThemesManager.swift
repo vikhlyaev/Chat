@@ -2,7 +2,7 @@ import UIKit
 
 final class ThemesManager {
     private let application = UIApplication.shared
-    private var currentTheme: Theme?
+    var currentTheme: Theme?
     let key = "CurrentTheme"
 }
 
