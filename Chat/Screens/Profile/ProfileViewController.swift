@@ -5,6 +5,7 @@ final class ProfileViewController: UIViewController {
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
+        scrollView.backgroundColor = .clear
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
@@ -54,6 +55,10 @@ final class ProfileViewController: UIViewController {
     
     private var imagePicker: UIImagePickerController?
     
+    override func loadView() {
+        view = AppView()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavBar()
@@ -68,7 +73,7 @@ final class ProfileViewController: UIViewController {
     }
     
     private func setupView() {
-        view.backgroundColor = .systemBackground
+//        view.backgroundColor = .systemBackground
         view.addSubview(scrollView)
         scrollView.addSubview(photoImageView)
         scrollView.addSubview(addPhotoButton)
