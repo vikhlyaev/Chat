@@ -11,6 +11,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = navigationController
         window?.overrideUserInterfaceStyle = .light
         window?.makeKeyAndVisible()
+        
+        ThemesManager().loadTheme { [ weak self ] themeIndex in
+            guard let theme = Theme(rawValue: themeIndex) else {
+                self?.window?.overrideUserInterfaceStyle = .light
+                return
+            }
+            switch theme {
+            case .day:
+                self?.window?.overrideUserInterfaceStyle = .light
+            case .night:
+                self?.window?.overrideUserInterfaceStyle = .dark
+            }
+        }
+        
         return true
     }
 }
