@@ -28,6 +28,7 @@
 		0AB6B5B429C1E23200361A2C /* ThemeProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB6B5B229C1E23200361A2C /* ThemeProtocol.swift */; };
 		0AB6B5B729C1E52D00361A2C /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB6B5B629C1E52D00361A2C /* AppView.swift */; };
 		0AB6B5BA29C1E5CD00361A2C /* CustomNavBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB6B5B929C1E5CD00361A2C /* CustomNavBar.swift */; };
+		0AB6B5BC29C1E99B00361A2C /* CustomSeparator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB6B5BB29C1E99B00361A2C /* CustomSeparator.swift */; };
 		0AF3176829A0D667005417A5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF3176729A0D667005417A5 /* AppDelegate.swift */; };
 		0AF3176C29A0D667005417A5 /* ConversationsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF3176B29A0D667005417A5 /* ConversationsListViewController.swift */; };
 		0AF3177129A0D66A005417A5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0AF3177029A0D66A005417A5 /* Assets.xcassets */; };
@@ -57,6 +58,7 @@
 		0AB6B5B229C1E23200361A2C /* ThemeProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThemeProtocol.swift; sourceTree = "<group>"; };
 		0AB6B5B629C1E52D00361A2C /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
 		0AB6B5B929C1E5CD00361A2C /* CustomNavBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavBar.swift; sourceTree = "<group>"; };
+		0AB6B5BB29C1E99B00361A2C /* CustomSeparator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSeparator.swift; sourceTree = "<group>"; };
 		0AF3176429A0D667005417A5 /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0AF3176729A0D667005417A5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0AF3176B29A0D667005417A5 /* ConversationsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationsListViewController.swift; sourceTree = "<group>"; };
@@ -170,6 +172,7 @@
 			isa = PBXGroup;
 			children = (
 				0AB6B5B629C1E52D00361A2C /* AppView.swift */,
+				0AB6B5BB29C1E99B00361A2C /* CustomSeparator.swift */,
 			);
 			path = ThemesHelperClasses;
 			sourceTree = "<group>";
@@ -326,6 +329,7 @@
 				0A03CD7029B99BBE00B9CC8E /* ConversationViewController.swift in Sources */,
 				0A03CD7629B9DA0C00B9CC8E /* Array + Extensions.swift in Sources */,
 				0AB6B5B429C1E23200361A2C /* ThemeProtocol.swift in Sources */,
+				0AB6B5BC29C1E99B00361A2C /* CustomSeparator.swift in Sources */,
 				0A03CD6529B98B4400B9CC8E /* ConfigurableViewProtocol.swift in Sources */,
 				0AB6B5BA29C1E5CD00361A2C /* CustomNavBar.swift in Sources */,
 				0A03CD5B29B984A500B9CC8E /* UIColor + Extensions.swift in Sources */,

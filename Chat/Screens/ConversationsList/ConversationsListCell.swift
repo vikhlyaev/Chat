@@ -75,9 +75,9 @@ final class ConversationsListCell: UITableViewCell {
         return imageView
     }()
     
-    lazy var customSeparator: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor(red: 0.686, green: 0.686, blue: 0.694, alpha: 1)
+    lazy var customSeparator: CustomSeparator = {
+        let view = CustomSeparator()
+        view.alpha = 0.3
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -94,6 +94,8 @@ final class ConversationsListCell: UITableViewCell {
     }
     
     private func setupView() {
+        backgroundColor = .clear
+        
         contentView.addSubview(photoView)
         photoView.addSubview(photoImageView)
         contentView.addSubview(customSeparator)

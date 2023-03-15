@@ -45,6 +45,10 @@ final class ConversationsListViewController: UIViewController {
         return tableView
     }()
     
+    override func loadView() {
+        view = AppView()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -103,7 +107,7 @@ final class ConversationsListViewController: UIViewController {
     }
     
     @objc private func settingsButtonTapped() {
-        print("settingsButtonTapped")
+        print(#function)
     }
     
     @objc private func profileButtonTapped() {
@@ -131,19 +135,14 @@ extension ConversationsListViewController: UITableViewDelegate {
         var content = header.defaultContentConfiguration()
         content.text = TableViewSection.allCases[section].title
         content.textProperties.font = .systemFont(ofSize: 15, weight: .semibold)
-        content.textProperties.color = .customDarkGrey
+        content.textProperties.color.withAlphaComponent(0.3)
         content.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 16, leading: 0, bottom: 8, trailing: 0)
         header.contentConfiguration = content
-        header.tintColor = .systemBackground
         return header
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         70
-    }
-    
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        52
     }
 }
 
