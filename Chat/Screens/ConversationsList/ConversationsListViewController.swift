@@ -39,6 +39,7 @@ final class ConversationsListViewController: UIViewController {
         if #available(iOS 15.0, *) {
             tableView.sectionHeaderTopPadding = 0
         }
+        tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 24))
         tableView.separatorStyle = .none
         tableView.register(ConversationsListCell.self, forCellReuseIdentifier: ConversationsListCell.identifier)
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -132,14 +133,11 @@ extension ConversationsListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let header = UITableViewHeaderFooterView()
-        var content = header.defaultContentConfiguration()
-        content.text = TableViewSection.allCases[section].title
-        content.textProperties.font = .systemFont(ofSize: 15, weight: .semibold)
-        content.textProperties.color.withAlphaComponent(0.3)
-        content.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 16, leading: 0, bottom: 8, trailing: 0)
-        header.contentConfiguration = content
-        return header
+        ConversationsListHeader(title: TableViewSection.allCases[section].title)
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 24))
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
