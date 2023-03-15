@@ -69,9 +69,9 @@ final class ConversationCell: UITableViewCell {
     private func setBubbleColor(type: MessageType) {
         switch type {
         case .sent:
-            bubbleImageView.tintColor = .customBubbleSent
+            bubbleImageView.tintColor = .appBubbleSent
         case .received:
-            bubbleImageView.tintColor = .customBubbleReceived
+            bubbleImageView.tintColor = .appBubbleReceived
         }
     }
     

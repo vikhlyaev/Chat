@@ -43,46 +43,7 @@ final class ConversationViewController: UIViewController {
         return button
     }()
     
-    private lazy var customNavBar: UIView = {
-        let view = UIView()
-        view.backgroundColor = .customBackground
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    private lazy var customBackButton: UIButton = {
-        let button = UIButton(type: .custom)
-        button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-        button.tintColor = .systemBlue
-        button.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    private lazy var customTitleView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    private lazy var customPhotoImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 25
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
-    }()
-    
-    private lazy var customNameLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 11)
-        label.textAlignment = .center
-        label.numberOfLines = 1
-        label.adjustsFontSizeToFitWidth = true
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
+    private lazy var customNavBar = CustomNavBar(name: user.name, photo: user.photo, completion: backButtonTapped)
     
     private let user: User
     
@@ -93,6 +54,10 @@ final class ConversationViewController: UIViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func loadView() {
+        view = AppView()
     }
     
     override func viewDidLoad() {
@@ -123,12 +88,8 @@ final class ConversationViewController: UIViewController {
     private func setupView() {
         view.backgroundColor = .systemBackground
         
-        view.addSubview(customNavBar)
-        customNavBar.addSubview(customBackButton)
-        customNavBar.addSubview(customTitleView)
-        customTitleView.addSubview(customPhotoImageView)
-        customTitleView.addSubview(customNameLabel)
         view.addSubview(chatTableView)
+        view.addSubview(customNavBar)
         view.addSubview(wrapperView)
         wrapperView.addSubview(textView)
         wrapperView.addSubview(sendMessageButton)
@@ -141,8 +102,6 @@ final class ConversationViewController: UIViewController {
     
     private func setupNavBar() {
         navigationController?.isNavigationBarHidden = true
-        customPhotoImageView.image = user.photo
-        customNameLabel.text = user.name
     }
     
     private func hideKeyboardByTappingOnScreen() {
@@ -203,7 +162,6 @@ final class ConversationViewController: UIViewController {
         }, completion: nil)
     }
     
-    @objc
     private func backButtonTapped() {
         navigationController?.popViewController(animated: true)
     }
@@ -257,7 +215,7 @@ extension ConversationViewController: UITableViewDelegate {
         content.text = sortedMessages[section].date.onlyDayAndMonth()
         content.textProperties.font = .systemFont(ofSize: 11, weight: .medium)
         content.textProperties.alignment = .center
-        content.textProperties.color = .customDarkGrey
+        content.textProperties.color.withAlphaComponent(0.6)
         header.contentConfiguration = content
         header.tintColor = .systemBackground
         return header
@@ -277,22 +235,6 @@ extension ConversationViewController {
             customNavBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             customNavBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             customNavBar.heightAnchor.constraint(equalToConstant: 137),
-            
-            customBackButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 22),
-            customBackButton.leadingAnchor.constraint(equalTo: customNavBar.leadingAnchor, constant: 16),
-            customBackButton.widthAnchor.constraint(equalToConstant: 32),
-            customBackButton.heightAnchor.constraint(equalToConstant: 32),
-            
-            customTitleView.centerXAnchor.constraint(equalTo: customNavBar.centerXAnchor),
-            customTitleView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            
-            customPhotoImageView.centerXAnchor.constraint(equalTo: customTitleView.centerXAnchor),
-            customPhotoImageView.topAnchor.constraint(equalTo: customTitleView.topAnchor),
-            customPhotoImageView.widthAnchor.constraint(equalToConstant: 50),
-            customPhotoImageView.heightAnchor.constraint(equalToConstant: 50),
-            
-            customNameLabel.centerXAnchor.constraint(equalTo: customTitleView.centerXAnchor),
-            customNameLabel.topAnchor.constraint(equalTo: customPhotoImageView.bottomAnchor, constant: 5),
             
             chatTableView.topAnchor.constraint(equalTo: customNavBar.bottomAnchor),
             chatTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),

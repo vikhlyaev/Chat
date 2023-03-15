@@ -26,6 +26,8 @@
 		0AA5CE6529A7F8EE00C4BBE4 /* UIFont + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA5CE6429A7F8EE00C4BBE4 /* UIFont + Extensions.swift */; };
 		0AB6B5B329C1E23200361A2C /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB6B5B129C1E23200361A2C /* Theme.swift */; };
 		0AB6B5B429C1E23200361A2C /* ThemeProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB6B5B229C1E23200361A2C /* ThemeProtocol.swift */; };
+		0AB6B5B729C1E52D00361A2C /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB6B5B629C1E52D00361A2C /* AppView.swift */; };
+		0AB6B5BA29C1E5CD00361A2C /* CustomNavBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB6B5B929C1E5CD00361A2C /* CustomNavBar.swift */; };
 		0AF3176829A0D667005417A5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF3176729A0D667005417A5 /* AppDelegate.swift */; };
 		0AF3176C29A0D667005417A5 /* ConversationsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF3176B29A0D667005417A5 /* ConversationsListViewController.swift */; };
 		0AF3177129A0D66A005417A5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0AF3177029A0D66A005417A5 /* Assets.xcassets */; };
@@ -53,6 +55,8 @@
 		0AA5CE6429A7F8EE00C4BBE4 /* UIFont + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont + Extensions.swift"; sourceTree = "<group>"; };
 		0AB6B5B129C1E23200361A2C /* Theme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		0AB6B5B229C1E23200361A2C /* ThemeProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThemeProtocol.swift; sourceTree = "<group>"; };
+		0AB6B5B629C1E52D00361A2C /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
+		0AB6B5B929C1E5CD00361A2C /* CustomNavBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavBar.swift; sourceTree = "<group>"; };
 		0AF3176429A0D667005417A5 /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0AF3176729A0D667005417A5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0AF3176B29A0D667005417A5 /* ConversationsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationsListViewController.swift; sourceTree = "<group>"; };
@@ -99,6 +103,7 @@
 			children = (
 				0A03CD6F29B99BBE00B9CC8E /* ConversationViewController.swift */,
 				0A03CD7129B99C1300B9CC8E /* ConversationCell.swift */,
+				0AB6B5B929C1E5CD00361A2C /* CustomNavBar.swift */,
 			);
 			path = Conversation;
 			sourceTree = "<group>";
@@ -153,6 +158,22 @@
 			path = Themes;
 			sourceTree = "<group>";
 		};
+		0AB6B5B529C1E50B00361A2C /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				0AB6B5B829C1E59400361A2C /* ThemesHelperClasses */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		0AB6B5B829C1E59400361A2C /* ThemesHelperClasses */ = {
+			isa = PBXGroup;
+			children = (
+				0AB6B5B629C1E52D00361A2C /* AppView.swift */,
+			);
+			path = ThemesHelperClasses;
+			sourceTree = "<group>";
+		};
 		0AF3175B29A0D667005417A5 = {
 			isa = PBXGroup;
 			children = (
@@ -175,6 +196,7 @@
 				0AF3177B29A0D84B005417A5 /* Application */,
 				0A63C5D629A8F69B0000173B /* Model */,
 				0AF3177E29A0D8EB005417A5 /* Screens */,
+				0AB6B5B529C1E50B00361A2C /* Services */,
 				0AA5CE6129A7865500C4BBE4 /* Extensions */,
 				0AF3177C29A0D877005417A5 /* Resources */,
 				0AF3177D29A0D884005417A5 /* Supporting Files */,
@@ -291,6 +313,7 @@
 				0AF3176C29A0D667005417A5 /* ConversationsListViewController.swift in Sources */,
 				0A03CD5D29B984F300B9CC8E /* UIImage + Extensions.swift in Sources */,
 				0AF3176829A0D667005417A5 /* AppDelegate.swift in Sources */,
+				0AB6B5B729C1E52D00361A2C /* AppView.swift in Sources */,
 				0A03CD6729B98DDA00B9CC8E /* MockData.swift in Sources */,
 				0A63C5D829A8F6BD0000173B /* User.swift in Sources */,
 				0AB6B5B329C1E23200361A2C /* Theme.swift in Sources */,
@@ -304,6 +327,7 @@
 				0A03CD7629B9DA0C00B9CC8E /* Array + Extensions.swift in Sources */,
 				0AB6B5B429C1E23200361A2C /* ThemeProtocol.swift in Sources */,
 				0A03CD6529B98B4400B9CC8E /* ConfigurableViewProtocol.swift in Sources */,
+				0AB6B5BA29C1E5CD00361A2C /* CustomNavBar.swift in Sources */,
 				0A03CD5B29B984A500B9CC8E /* UIColor + Extensions.swift in Sources */,
 				0A03CD6D29B9910200B9CC8E /* ConversationsListCellModel.swift in Sources */,
 				0AA5CE6329A7867400C4BBE4 /* Logger + Extensions.swift in Sources */,
