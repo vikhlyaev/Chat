@@ -79,10 +79,10 @@ final class ConversationCell: UITableViewCell {
         switch type {
         case .sent:
             messageLabel.textColor = .white
-            timeLabel.textColor = .customLightGrey
+            timeLabel.textColor = .white
         case .received:
             messageLabel.textColor = .black
-            timeLabel.textColor = .customDarkGrey
+            timeLabel.textColor = .white
         }
     }
     
