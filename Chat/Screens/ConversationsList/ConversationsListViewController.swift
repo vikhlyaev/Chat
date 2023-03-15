@@ -137,7 +137,7 @@ extension ConversationsListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        return UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 24))
+        UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 24))
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -159,7 +159,6 @@ extension ConversationsListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ConversationsListCell.identifier,
                                                        for: indexPath) as? ConversationsListCell else { return UITableViewCell() }
-        
         let indexLastCellInSection = TableViewSection.allCases[indexPath.section].array.count - 1
         if indexPath.row == indexLastCellInSection {
             cell.customSeparator.isHidden = true
