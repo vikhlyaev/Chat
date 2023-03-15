@@ -48,15 +48,6 @@ enum Theme: ThemeProtocol {
         }
     }
     
-    var tintColor: UIColor {
-        switch self {
-        case .day:
-            return .dayTintColor
-        case .night:
-            return .nightTintColor
-        }
-    }
-    
     var profileScreenBackgroundColor: UIColor {
         switch self {
         case .day:
