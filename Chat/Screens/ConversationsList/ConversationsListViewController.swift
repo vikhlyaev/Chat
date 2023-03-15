@@ -107,7 +107,8 @@ final class ConversationsListViewController: UIViewController {
     }
     
     @objc private func settingsButtonTapped() {
-        print(#function)
+        let settingViewController = SettingsViewController()
+        navigationController?.pushViewController(settingViewController, animated: true)
     }
     
     @objc private func profileButtonTapped() {
