@@ -1,8 +1,8 @@
 import UIKit
 
 final class ThemesManager {
+    static var currentTheme: Theme?
     private let application = UIApplication.shared
-    var currentTheme: Theme?
     let key = "CurrentTheme"
 }
 
@@ -15,12 +15,12 @@ extension ThemesManager: ThemesManagerProtocol {
     }
     
     func saveTheme() {
-        guard let currentTheme = currentTheme else { return }
+        guard let currentTheme = ThemesManager.currentTheme else { return }
         UserDefaults.standard.set(currentTheme.rawValue, forKey: key)
     }
     
     func apply(theme: Theme) {
-        currentTheme = theme
+        ThemesManager.currentTheme = theme
         print(theme.title)
         print(theme.rawValue)
         
@@ -77,6 +77,8 @@ extension ThemesManager: ThemesManagerProtocol {
         
         WrapperView.appearance()
             .backgroundColor = theme.backgroundColor
+        UITextView.appearance(whenContainedInInstancesOf: [WrapperView.self])
+            .layer.borderColor = theme.textColor.withAlphaComponent(0.3).cgColor
         
         application.windows.reload()
         

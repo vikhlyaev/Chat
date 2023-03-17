@@ -23,15 +23,6 @@ final class ThemesCell: UITableViewCell {
         
         setupView()
         setConstraints()
-        
-        if let currentTheme = ThemesManager().currentTheme {
-            switch currentTheme {
-            case .day:
-                dayThemeButton.isSelected = true
-            case .night:
-                nightThemeButton.isSelected = false
-            }
-        }
     }
     
     required init?(coder: NSCoder) {
@@ -40,6 +31,7 @@ final class ThemesCell: UITableViewCell {
     
     private func setupView() {
         contentView.addSubview(themeButtonsStackView)
+        checkCurrentTheme()
     }
     
     private func dayThemeButtonTapped() {
@@ -50,6 +42,18 @@ final class ThemesCell: UITableViewCell {
     private func nightThemeButtonTapped() {
         dayThemeButton.isSelected = !nightThemeButton.isSelected
         delegate?.didNightButtonTapped()
+    }
+    
+    private func checkCurrentTheme() {
+        guard let currentTheme = ThemesManager.currentTheme else { return }
+        switch currentTheme {
+        case .day:
+            dayThemeButton.isSelected = true
+            nightThemeButton.isSelected = false
+        case .night:
+            nightThemeButton.isSelected = true
+            dayThemeButton.isSelected = false
+        }
     }
 }
 

@@ -190,19 +190,6 @@ extension ConversationViewController: UITableViewDelegate {
         guard let sortedMessages = user.sortedMessage else { return nil }
         let header = ConversationsHeader(title: sortedMessages[section].date.onlyDayAndMonth())
         return header
-//        
-//        
-//        
-//        guard let sortedMessages = user.sortedMessage else { return nil }
-//        let header = UITableViewHeaderFooterView()
-//        var content = header.defaultContentConfiguration()
-//        content.text = sortedMessages[section].date.onlyDayAndMonth()
-//        content.textProperties.font = .systemFont(ofSize: 11, weight: .medium)
-//        content.textProperties.alignment = .center
-//        content.textProperties.color.withAlphaComponent(0.6)
-//        header.contentConfiguration = content
-//        header.tintColor = .systemBackground
-//        return header
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
