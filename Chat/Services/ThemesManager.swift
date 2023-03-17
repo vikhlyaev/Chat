@@ -21,9 +21,7 @@ extension ThemesManager: ThemesManagerProtocol {
     
     func apply(theme: Theme) {
         ThemesManager.currentTheme = theme
-        print(theme.title)
-        print(theme.rawValue)
-        
+
         // Setting UIView backgroundColor
         AppView.appearance()
             .backgroundColor = theme.backgroundColor
