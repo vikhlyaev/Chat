@@ -4,7 +4,7 @@ extension Array where Element: DayCategorizable {
     var daySorted: [Date: [Element]] {
         var result: [Date: [Element]] = [:]
         let calendar = Calendar.current
-        self.forEach { item in
+        forEach { item in
             let i = calendar.startOfDay(for: item.date)
             if result.keys.contains(i) {
                 result[i]?.append(item)
