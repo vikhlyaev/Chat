@@ -148,8 +148,8 @@ final class ConversationViewController: UIViewController {
         }, completion: nil)
     }
     
-    private func backButtonTapped() {
-        navigationController?.popViewController(animated: true)
+    private lazy var backButtonTapped = { [weak self] in
+        self?.navigationController?.popViewController(animated: true)
     }
     
     @objc
@@ -157,6 +157,10 @@ final class ConversationViewController: UIViewController {
         if let text = textView.text {
             print(text)
         }
+    }
+    
+    deinit {
+        print("conversation deinit")
     }
 }
 
