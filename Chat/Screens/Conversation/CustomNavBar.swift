@@ -1,7 +1,7 @@
 import UIKit
 
 final class CustomNavBar: UIView {
-
+    
     private lazy var backButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
@@ -36,6 +36,13 @@ final class CustomNavBar: UIView {
         return label
     }()
     
+    private lazy var bottomBorder: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemGray4
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     private let completion: () -> Void
     
     init(name: String, photo: UIImage, completion: @escaping () -> Void) {
@@ -54,10 +61,12 @@ final class CustomNavBar: UIView {
     }
     
     private func setupView() {
+        backgroundColor = .systemGray6
         translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(backButton)
         addSubview(titleView)
+        addSubview(bottomBorder)
         titleView.addSubview(photoImageView)
         titleView.addSubview(nameLabel)
     }
@@ -86,6 +95,11 @@ extension CustomNavBar {
             
             nameLabel.centerXAnchor.constraint(equalTo: titleView.centerXAnchor),
             nameLabel.topAnchor.constraint(equalTo: photoImageView.bottomAnchor, constant: 5),
+            
+            bottomBorder.bottomAnchor.constraint(equalTo: bottomAnchor),
+            bottomBorder.leadingAnchor.constraint(equalTo: leadingAnchor),
+            bottomBorder.trailingAnchor.constraint(equalTo: trailingAnchor),
+            bottomBorder.heightAnchor.constraint(equalToConstant: 1),
         ])
     }
 }
