@@ -46,10 +46,6 @@ final class ConversationsListViewController: UIViewController {
         return tableView
     }()
     
-    override func loadView() {
-        view = AppView()
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         

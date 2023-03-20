@@ -21,6 +21,7 @@ final class ConversationsListHeader: UIView {
     }
     
     private func setupView() {
+        backgroundColor = .systemBackground
         addSubview(titleLabel)
         
         NSLayoutConstraint.activate([
