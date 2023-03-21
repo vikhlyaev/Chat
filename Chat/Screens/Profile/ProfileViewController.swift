@@ -152,18 +152,13 @@ final class ProfileViewController: UIViewController {
         tapScreen.cancelsTouchesInView = false
         view.addGestureRecognizer(tapScreen)
         
-        let swipeScreen = UISwipeGestureRecognizer(target: self, action: #selector(swipeHideKeyboard))
+        let swipeScreen = UISwipeGestureRecognizer(target: self, action: #selector(hideKeyboard))
         swipeScreen.cancelsTouchesInView = false
         view.addGestureRecognizer(swipeScreen)
     }
     
     @objc
     private func hideKeyboard() {
-        view.endEditing(true)
-    }
-    
-    @objc
-    private func swipeHideKeyboard() {
         view.endEditing(true)
     }
     
@@ -189,7 +184,6 @@ final class ProfileViewController: UIViewController {
         alert.addAction(cancelAction)
         present(alert, animated: true)
     }
-    
 }
 
 // MARK: - ConfigurableViewProtocol
@@ -270,7 +264,6 @@ extension ProfileViewController: UITextFieldDelegate {
 // MARK: - Editing State
 
 extension ProfileViewController {
-    
     private func updateUI(editing: Bool) {
         nameLabel.isHidden = editing
         informationLabel.isHidden = editing
