@@ -3,6 +3,20 @@ import PhotosUI
 
 final class ProfileViewController: UIViewController {
     
+    private enum TableViewSection: CaseIterable {
+        case name
+        case information
+        
+        var title: String {
+            switch self {
+            case .name:
+                return "Name"
+            case .information:
+                return "Bio"
+            }
+        }
+    }
+    
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.backgroundColor = .clear
@@ -12,6 +26,7 @@ final class ProfileViewController: UIViewController {
     
     private lazy var photoImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.image = UIImage(named: "PlaceholderAvatar")
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 75
@@ -30,6 +45,7 @@ final class ProfileViewController: UIViewController {
     
     private lazy var nameLabel: UILabel = {
         let label = UILabel()
+        label.text = "No name"
         label.textAlignment = .center
         label.numberOfLines = 1
         label.adjustsFontSizeToFitWidth = true
@@ -40,6 +56,7 @@ final class ProfileViewController: UIViewController {
     
     private lazy var informationLabel: UILabel = {
         let label = UILabel()
+        label.text = "No bio specified"
         label.numberOfLines = 0
         label.textAlignment = .center
         label.adjustsFontSizeToFitWidth = true
@@ -48,24 +65,50 @@ final class ProfileViewController: UIViewController {
         return label
     }()
     
+    private lazy var nameAndInformationTableView: UITableView = {
+        let tableView = UITableView(frame: .zero)
+        tableView.layer.borderWidth = 0.33
+        tableView.layer.borderColor = UIColor.separator.cgColor
+        tableView.bounces = false
+        tableView.allowsSelection = false
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
+        tableView.rowHeight = 44
+        tableView.isHidden = true
+        tableView.register(ProfileEditCell.self, forCellReuseIdentifier: ProfileEditCell.identifier)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        return tableView
+    }()
+    
     private lazy var closeButton = UIBarButtonItem(title: "Close",
                                                    style: .plain,
                                                    target: self,
                                                    action: #selector(closeButtonTapped))
+    
+    private lazy var rightBarButton: UIBarButtonItem = {
+        let button = UIBarButtonItem()
+        button.image = UIImage(systemName: "ellipsis.circle")
+        return button
+    }()
     
     private var imagePicker: UIImagePickerController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavBar()
+        setDelegates()
         setupView()
         setConstraints()
+        hideKeyboardByTapOnView()
     }
     
     private func setupNavBar() {
         navigationItem.leftBarButtonItem = closeButton
         navigationItem.rightBarButtonItem = editButtonItem
         title = "My Profile"
+    }
+    
+    private func setDelegates() {
+        nameAndInformationTableView.dataSource = self
     }
     
     private func setupView() {
@@ -76,6 +119,7 @@ final class ProfileViewController: UIViewController {
         scrollView.addSubview(addPhotoButton)
         scrollView.addSubview(nameLabel)
         scrollView.addSubview(informationLabel)
+        scrollView.addSubview(nameAndInformationTableView)
     }
     
     private func takePhoto() {
@@ -103,6 +147,26 @@ final class ProfileViewController: UIViewController {
         photoImageView.image = photo
     }
     
+    private func hideKeyboardByTapOnView() {
+        let tapScreen = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
+        tapScreen.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapScreen)
+        
+        let swipeScreen = UISwipeGestureRecognizer(target: self, action: #selector(swipeHideKeyboard))
+        swipeScreen.cancelsTouchesInView = false
+        view.addGestureRecognizer(swipeScreen)
+    }
+    
+    @objc
+    private func hideKeyboard() {
+        view.endEditing(true)
+    }
+    
+    @objc
+    private func swipeHideKeyboard() {
+        view.endEditing(true)
+    }
+    
     @objc
     private func closeButtonTapped() {
         dismiss(animated: true)
@@ -110,6 +174,8 @@ final class ProfileViewController: UIViewController {
     
     @objc
     private func addPhotoButtonTapped() {
+        setEditing(true, animated: true)
+        
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let takePhotoAction = UIAlertAction(title: "Take photo", style: .default) { [weak self] _ in
             self?.takePhoto()
@@ -123,6 +189,7 @@ final class ProfileViewController: UIViewController {
         alert.addAction(cancelAction)
         present(alert, animated: true)
     }
+    
 }
 
 // MARK: - ConfigurableViewProtocol
@@ -167,6 +234,95 @@ extension ProfileViewController: UIImagePickerControllerDelegate {
 
 extension ProfileViewController: UINavigationControllerDelegate {}
 
+// MARK: - UITableViewDataSource
+
+extension ProfileViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        TableViewSection.allCases.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard
+            let cell = tableView.dequeueReusableCell(withIdentifier: ProfileEditCell.identifier,
+                                                     for: indexPath) as? ProfileEditCell
+        else {
+            return UITableViewCell()
+        }
+        
+        let indexLastCellInSection = TableViewSection.allCases.count - 1
+        if indexPath.row == indexLastCellInSection {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+        }
+        cell.textField.delegate = self
+        cell.configure(title: TableViewSection.allCases[indexPath.row].title)
+        return cell
+    }
+}
+
+// MARK: - UITextFieldDelegate
+
+extension ProfileViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+    }
+}
+
+// MARK: - Editing State
+
+extension ProfileViewController {
+    
+    private func updateUI(editing: Bool) {
+        nameLabel.isHidden = editing
+        informationLabel.isHidden = editing
+        nameAndInformationTableView.isHidden = !editing
+        view.backgroundColor = editing ? .systemGray6 : .systemBackground
+    }
+    
+    private func updateNavBar(editing: Bool) {
+        if editing {
+            let cancelButton = UIBarButtonItem(title: "Cancel",
+                                               style: .plain,
+                                               target: self,
+                                               action: #selector(cancelButtonTapped))
+            
+            let saveGCDAction = UIAction(title: "Save GCD") { action in
+                print("Save GCD")
+            }
+            
+            let saveOperationAction = UIAction(title: "Save Operation") { action in
+                print("Save Operation")
+            }
+            
+            let saveMenu = UIMenu(children: [saveGCDAction, saveOperationAction])
+            
+            let menuButton = UIBarButtonItem(image: UIImage(systemName: "ellipsis.circle"),
+                                             menu: saveMenu)
+            
+            navigationItem.setLeftBarButton(cancelButton, animated: true)
+            navigationItem.setRightBarButton(menuButton, animated: true)
+        } else {
+            navigationItem.setLeftBarButton(closeButton, animated: true)
+            navigationItem.setRightBarButton(editButtonItem, animated: true)
+        }
+    }
+    
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        updateNavBar(editing: editing)
+        updateUI(editing: editing)
+        
+        if let cell = nameAndInformationTableView.visibleCells.first as? ProfileEditCell, editing {
+            cell.textField.becomeFirstResponder()
+        }
+    }
+    
+    @objc
+    private func cancelButtonTapped() {
+        setEditing(false, animated: true)
+        print("cancelButtonTapped")
+    }
+}
+
 // MARK: - Setting Constraints
 
 extension ProfileViewController {
@@ -192,7 +348,12 @@ extension ProfileViewController {
             informationLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 10),
             informationLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             informationLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            informationLabel.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -16)
+            informationLabel.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -16),
+            
+            nameAndInformationTableView.topAnchor.constraint(equalTo: addPhotoButton.bottomAnchor, constant: 24),
+            nameAndInformationTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            nameAndInformationTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            nameAndInformationTableView.heightAnchor.constraint(equalToConstant: 88)
         ])
     }
 }

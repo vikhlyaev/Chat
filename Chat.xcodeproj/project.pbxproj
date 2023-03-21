@@ -20,6 +20,7 @@
 		0A03CD7229B99C1300B9CC8E /* ConversationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A03CD7129B99C1300B9CC8E /* ConversationCell.swift */; };
 		0A03CD7429B9A18800B9CC8E /* MessageCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A03CD7329B9A18800B9CC8E /* MessageCellModel.swift */; };
 		0A03CD7629B9DA0C00B9CC8E /* Array + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A03CD7529B9DA0C00B9CC8E /* Array + Extensions.swift */; };
+		0A41D71B29C97FE600F7987D /* ProfileEditCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A41D71A29C97FE600F7987D /* ProfileEditCell.swift */; };
 		0A63C5D829A8F6BD0000173B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A63C5D729A8F6BD0000173B /* User.swift */; };
 		0A63C5DF29AA17710000173B /* State + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A63C5DE29AA17700000173B /* State + Extensions.swift */; };
 		0AA5CE6329A7867400C4BBE4 /* Logger + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA5CE6229A7867400C4BBE4 /* Logger + Extensions.swift */; };
@@ -54,6 +55,7 @@
 		0A03CD7129B99C1300B9CC8E /* ConversationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCell.swift; sourceTree = "<group>"; };
 		0A03CD7329B9A18800B9CC8E /* MessageCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCellModel.swift; sourceTree = "<group>"; };
 		0A03CD7529B9DA0C00B9CC8E /* Array + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array + Extensions.swift"; sourceTree = "<group>"; };
+		0A41D71A29C97FE600F7987D /* ProfileEditCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditCell.swift; sourceTree = "<group>"; };
 		0A63C5D729A8F6BD0000173B /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		0A63C5DE29AA17700000173B /* State + Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "State + Extensions.swift"; sourceTree = "<group>"; };
 		0AA5CE6229A7867400C4BBE4 /* Logger + Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Logger + Extensions.swift"; sourceTree = "<group>"; };
@@ -134,6 +136,7 @@
 			isa = PBXGroup;
 			children = (
 				0AF3178F29A3C1BB005417A5 /* ProfileViewController.swift */,
+				0A41D71A29C97FE600F7987D /* ProfileEditCell.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -337,6 +340,7 @@
 				0AA5CE6529A7F8EE00C4BBE4 /* UIFont + Extensions.swift in Sources */,
 				0A03CD6329B98A2300B9CC8E /* ProfileViewModel.swift in Sources */,
 				0A03CD7229B99C1300B9CC8E /* ConversationCell.swift in Sources */,
+				0A41D71B29C97FE600F7987D /* ProfileEditCell.swift in Sources */,
 				0AB6B5D629C25B4100361A2C /* ConversationHeader.swift in Sources */,
 				0A03CD5F29B988EE00B9CC8E /* Date + Extensions.swift in Sources */,
 				0AB6B5C629C1EC6A00361A2C /* ThemesButton.swift in Sources */,
