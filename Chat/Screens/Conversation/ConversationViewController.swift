@@ -65,7 +65,6 @@ final class ConversationViewController: UIViewController {
         setConstraints()
         setupNavBar()
         addObserverKeyboard()
-        hideKeyboardByTappingOnScreen()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -95,10 +94,6 @@ final class ConversationViewController: UIViewController {
     
     private func setupNavBar() {
         navigationController?.isNavigationBarHidden = true
-    }
-    
-    private func hideKeyboardByTappingOnScreen() {
-        view.addGestureRecognizer(UITapGestureRecognizer(target: view, action: #selector(textView.endEditing(_:))))
     }
     
     private func addObserverKeyboard() {
