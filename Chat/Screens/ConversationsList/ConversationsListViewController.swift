@@ -113,7 +113,7 @@ final class ConversationsListViewController: UIViewController {
                                      information: MockData.shared.user.information,
                                      photo: MockData.shared.user.photo)
         let profileViewController = ProfileViewController()
-        profileViewController.configure(with: model)
+//        profileViewController.configure(with: model)
         navigationController?.present(UINavigationController(rootViewController: profileViewController), animated: true)
     }
 }
