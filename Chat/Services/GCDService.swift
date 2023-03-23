@@ -110,6 +110,7 @@ extension GCDService: ConcurrencyServiceProtocol {
         queue.async(execute: saveInformation)
         queue.async(execute: saveImage)
     }
+    
     func saveData(_ data: Data, as type: DataType, completion: @escaping (DataManagerError?) -> Void) {
         queue.async { [weak self] in
             self?.dataManager.write(data, as: type, completion: { error in
