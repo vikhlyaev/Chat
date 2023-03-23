@@ -190,6 +190,24 @@ final class ProfileViewController: UIViewController {
         view.addGestureRecognizer(swipeScreen)
     }
     
+    private func showErrorAlert() {
+        let alert = UIAlertController(title: "Could not save profile", message: "Try again", preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .cancel)
+        let tryAgainAction = UIAlertAction(title: "Try again", style: .default) { [weak self] action in
+            self?.save()
+        }
+        alert.addAction(okAction)
+        alert.addAction(tryAgainAction)
+        present(alert, animated: true)
+    }
+    
+    private func showSuccessAlert() {
+        let alert = UIAlertController(title: "Success", message: "You are breathtaking", preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .cancel)
+        alert.addAction(okAction)
+        present(alert, animated: true)
+    }
+    
     @objc
     private func hideKeyboard() {
         view.endEditing(true)
@@ -325,6 +343,47 @@ extension ProfileViewController {
         view.backgroundColor = editing ? .systemGray6 : .systemBackground
     }
     
+    private func save() {
+        view.endEditing(true)
+        
+        let activityIndicatorBarButton = UIBarButtonItem(customView: activityIndicator)
+        navigationItem.setRightBarButton(activityIndicatorBarButton, animated: true)
+        activityIndicator.startAnimating()
+        
+        if savedModel.name != displayModel.name {
+            if let data = savedModel.name?.toData() {
+                concurrencyService.saveData(data, as: .name) { [weak self] error in
+                    if let _ = error {
+                        self?.showErrorAlert()
+                    }
+                }
+            }
+        }
+        
+        if savedModel.information != displayModel.information {
+            if let data = savedModel.information?.toData() {
+                concurrencyService.saveData(data, as: .information) { [weak self] error in
+                    if let _ = error {
+                        self?.showErrorAlert()
+                    }
+                }
+            }
+        }
+        
+        if savedModel.photo != self.displayModel.photo {
+            guard let data = savedModel.photo?.pngData() else { return }
+            concurrencyService.saveData(data, as: .photo) { [weak self] error in
+                if let _ = error {
+                    self?.showErrorAlert()
+                }
+            }
+        }
+        
+        activityIndicator.stopAnimating()
+        setEditing(false, animated: true)
+        showSuccessAlert()
+    }
+    
     private func updateNavBar(editing: Bool) {
         if editing {
             let cancelButton = UIBarButtonItem(title: "Cancel",
@@ -333,88 +392,11 @@ extension ProfileViewController {
                                                action: #selector(cancelButtonTapped))
             
             let saveGCDAction = UIAction(title: "Save GCD") { [weak self] action in
-                guard let self = self else { return }
-                
-                self.view.endEditing(true)
-                
-                let activityIndicatorBarButton = UIBarButtonItem(customView: self.activityIndicator)
-                self.navigationItem.setRightBarButton(activityIndicatorBarButton, animated: true)
-                self.activityIndicator.startAnimating()
-                
-                if self.savedModel.name != self.displayModel.name {
-                    if let data = self.savedModel.name?.toData() {
-                        self.concurrencyService.saveData(data, as: .name) { error in
-                            if let error = error {
-                                
-                            }
-                        }
-                    }
-                }
-                
-                if self.savedModel.information != self.displayModel.information {
-                    if let data = self.savedModel.information?.toData() {
-                        self.concurrencyService.saveData(data, as: .information) { error in
-                            if let error = error {
-                                print(error)
-                            }
-                        }
-                    }
-                }
-                
-                if self.savedModel.photo != self.displayModel.photo {
-                    guard let data = self.savedModel.photo?.pngData() else { return }
-                    self.concurrencyService.saveData(data, as: .photo) { error in
-                        if let error = error {
-                            print(error)
-                        }
-                    }
-                }
-                
-                self.activityIndicator.stopAnimating()
-                self.setEditing(false, animated: true)
-                
+                self?.save()
             }
             
             let saveOperationAction = UIAction(title: "Save Operation") { [weak self] action in
-                guard let self = self else { return }
-    
-                self.view.endEditing(true)
-                
-                let activityIndicatorBarButton = UIBarButtonItem(customView: self.activityIndicator)
-                self.navigationItem.setRightBarButton(activityIndicatorBarButton, animated: true)
-                self.activityIndicator.startAnimating()
-                
-                if self.savedModel.name != self.displayModel.name {
-                    if let data = self.savedModel.name?.toData() {
-                        self.concurrencyService.saveData(data, as: .name) { error in
-                            if let error = error {
-                                print(error)
-                            }
-                        }
-                    }
-                }
-                
-                if self.savedModel.information != self.displayModel.information {
-                    if let data = self.savedModel.information?.toData() {
-                        self.concurrencyService.saveData(data, as: .information) { error in
-                            if let error = error {
-                                print(error)
-                            }
-                        }
-                    }
-                }
-                
-                if self.savedModel.photo != self.displayModel.photo {
-                    guard let data = self.savedModel.photo?.pngData() else { return }
-                    self.concurrencyService.saveData(data, as: .photo) { error in
-                        if let error = error {
-                            print(error)
-                        }
-                    }
-                }
-                
-                self.activityIndicator.stopAnimating()
-                self.setEditing(false, animated: true)
+                self?.save()
             }
             
             let saveMenu = UIMenu(children: [saveGCDAction, saveOperationAction])
