@@ -109,11 +109,7 @@ final class ConversationsListViewController: UIViewController {
     }
     
     @objc private func profileButtonTapped() {
-        let model = ProfileViewModel(name: MockData.shared.user.name,
-                                     information: MockData.shared.user.information,
-                                     photo: MockData.shared.user.photo)
         let profileViewController = ProfileViewController()
-//        profileViewController.configure(with: model)
         navigationController?.present(UINavigationController(rootViewController: profileViewController), animated: true)
     }
 }
