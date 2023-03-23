@@ -40,8 +40,6 @@
 		0ACCB6BF29CCDB500074A121 /* LoadProfileOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACCB6BE29CCDB500074A121 /* LoadProfileOperation.swift */; };
 		0ACCB6C229CCE6CC0074A121 /* SaveProfileOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACCB6C129CCE6CC0074A121 /* SaveProfileOperation.swift */; };
 		0ACCB6C429CCE96B0074A121 /* SaveDataOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACCB6C329CCE96B0074A121 /* SaveDataOperation.swift */; };
-		0ACCB6C629CCEEF80074A121 /* AlertViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACCB6C529CCEEF80074A121 /* AlertViewModel.swift */; };
-		0ACCB6C829CCEFD70074A121 /* AlertPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACCB6C729CCEFD70074A121 /* AlertPresenter.swift */; };
 		0AF3176829A0D667005417A5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF3176729A0D667005417A5 /* AppDelegate.swift */; };
 		0AF3176C29A0D667005417A5 /* ConversationsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF3176B29A0D667005417A5 /* ConversationsListViewController.swift */; };
 		0AF3177129A0D66A005417A5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0AF3177029A0D66A005417A5 /* Assets.xcassets */; };
@@ -83,8 +81,6 @@
 		0ACCB6BE29CCDB500074A121 /* LoadProfileOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadProfileOperation.swift; sourceTree = "<group>"; };
 		0ACCB6C129CCE6CC0074A121 /* SaveProfileOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveProfileOperation.swift; sourceTree = "<group>"; };
 		0ACCB6C329CCE96B0074A121 /* SaveDataOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveDataOperation.swift; sourceTree = "<group>"; };
-		0ACCB6C529CCEEF80074A121 /* AlertViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertViewModel.swift; sourceTree = "<group>"; };
-		0ACCB6C729CCEFD70074A121 /* AlertPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertPresenter.swift; sourceTree = "<group>"; };
 		0AF3176429A0D667005417A5 /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0AF3176729A0D667005417A5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0AF3176B29A0D667005417A5 /* ConversationsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationsListViewController.swift; sourceTree = "<group>"; };
@@ -122,7 +118,6 @@
 				0A03CD6229B98A2300B9CC8E /* ProfileViewModel.swift */,
 				0A03CD7329B9A18800B9CC8E /* MessageCellModel.swift */,
 				0A03CD6429B98B4400B9CC8E /* ConfigurableViewProtocol.swift */,
-				0ACCB6C529CCEEF80074A121 /* AlertViewModel.swift */,
 			);
 			path = Configuration;
 			sourceTree = "<group>";
@@ -189,7 +184,6 @@
 				0A3D726129C9CB9A002774AE /* GCDService.swift */,
 				0A3D726629CA31B1002774AE /* DataManager.swift */,
 				0AB6B5C929C1ED8700361A2C /* ThemesManager.swift */,
-				0ACCB6C729CCEFD70074A121 /* AlertPresenter.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -374,7 +368,6 @@
 				0AA5CE6529A7F8EE00C4BBE4 /* UIFont + Extensions.swift in Sources */,
 				0A03CD6329B98A2300B9CC8E /* ProfileViewModel.swift in Sources */,
 				0A03CD7229B99C1300B9CC8E /* ConversationCell.swift in Sources */,
-				0ACCB6C829CCEFD70074A121 /* AlertPresenter.swift in Sources */,
 				0A41D71B29C97FE600F7987D /* ProfileEditCell.swift in Sources */,
 				0AB6B5D629C25B4100361A2C /* ConversationHeader.swift in Sources */,
 				0A3D726929CB3599002774AE /* String + Extensions.swift in Sources */,
@@ -382,7 +375,6 @@
 				0AB6B5C629C1EC6A00361A2C /* ThemesButton.swift in Sources */,
 				0A3D726229C9CB9A002774AE /* GCDService.swift in Sources */,
 				0AF3179029A3C1BB005417A5 /* ProfileViewController.swift in Sources */,
-				0ACCB6C629CCEEF80074A121 /* AlertViewModel.swift in Sources */,
 				0ACCB6BF29CCDB500074A121 /* LoadProfileOperation.swift in Sources */,
 				0A03CD7029B99BBE00B9CC8E /* ConversationViewController.swift in Sources */,
 				0A03CD7629B9DA0C00B9CC8E /* Array + Extensions.swift in Sources */,

@@ -345,6 +345,49 @@ extension ProfileViewController {
                     if let data = self.savedModel.name?.toData() {
                         self.concurrencyService.saveData(data, as: .name) { error in
                             if let error = error {
+                                
+                            }
+                        }
+                    }
+                }
+                
+                if self.savedModel.information != self.displayModel.information {
+                    if let data = self.savedModel.information?.toData() {
+                        self.concurrencyService.saveData(data, as: .information) { error in
+                            if let error = error {
+                                print(error)
+                            }
+                        }
+                    }
+                }
+                
+                if self.savedModel.photo != self.displayModel.photo {
+                    guard let data = self.savedModel.photo?.pngData() else { return }
+                    self.concurrencyService.saveData(data, as: .photo) { error in
+                        if let error = error {
+                            print(error)
+                        }
+                    }
+                }
+                
+                self.activityIndicator.stopAnimating()
+                self.setEditing(false, animated: true)
+                
+            }
+            
+            let saveOperationAction = UIAction(title: "Save Operation") { [weak self] action in
+                guard let self = self else { return }
+    
+                self.view.endEditing(true)
+                
+                let activityIndicatorBarButton = UIBarButtonItem(customView: self.activityIndicator)
+                self.navigationItem.setRightBarButton(activityIndicatorBarButton, animated: true)
+                self.activityIndicator.startAnimating()
+                
+                if self.savedModel.name != self.displayModel.name {
+                    if let data = self.savedModel.name?.toData() {
+                        self.concurrencyService.saveData(data, as: .name) { error in
+                            if let error = error {
                                 print(error)
                             }
                         }
@@ -372,10 +415,6 @@ extension ProfileViewController {
                 
                 self.activityIndicator.stopAnimating()
                 self.setEditing(false, animated: true)
-            }
-            
-            let saveOperationAction = UIAction(title: "Save Operation") { action in
-                print("Save Operation")
             }
             
             let saveMenu = UIMenu(children: [saveGCDAction, saveOperationAction])
