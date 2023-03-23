@@ -3,7 +3,7 @@ import PhotosUI
 
 final class ProfileViewController: UIViewController {
     
-    private enum TableViewSection: CaseIterable {
+    private enum TableViewSection: Int, CaseIterable {
         case name
         case information
         
@@ -45,7 +45,6 @@ final class ProfileViewController: UIViewController {
     
     private lazy var nameLabel: UILabel = {
         let label = UILabel()
-        label.text = "No name"
         label.textAlignment = .center
         label.numberOfLines = 1
         label.adjustsFontSizeToFitWidth = true
@@ -56,7 +55,6 @@ final class ProfileViewController: UIViewController {
     
     private lazy var informationLabel: UILabel = {
         let label = UILabel()
-        label.text = "No bio specified"
         label.numberOfLines = 0
         label.textAlignment = .center
         label.adjustsFontSizeToFitWidth = true
@@ -90,13 +88,36 @@ final class ProfileViewController: UIViewController {
         return button
     }()
     
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView(style: .medium)
+        activityIndicator.hidesWhenStopped = true
+        return activityIndicator
+    }()
+    
     private var imagePicker: UIImagePickerController?
+    private var concurrencyService: ConcurrencyServiceProtocol
+    private var savedModel: ProfileViewModel = ProfileViewModel()
+    private var displayModel: ProfileViewModel = ProfileViewModel() {
+        didSet {
+            configure(with: displayModel)
+        }
+    }
+    
+    init(concurrencyService: ConcurrencyServiceProtocol = GCDService()) {
+        self.concurrencyService = concurrencyService
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        loadProfile()
         setupNavBar()
-        setDelegates()
         setupView()
+        setDelegates()
         setConstraints()
         hideKeyboardByTapOnView()
     }
@@ -122,6 +143,17 @@ final class ProfileViewController: UIViewController {
         scrollView.addSubview(nameAndInformationTableView)
     }
     
+    private func loadProfile() {
+        concurrencyService.loadProfile { [weak self] result in
+            switch result {
+            case .success(let model):
+                self?.displayModel = model
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+    
     private func takePhoto() {
         guard UIImagePickerController.isSourceTypeAvailable(.camera) else {
             chooseFromGallery()
@@ -144,6 +176,7 @@ final class ProfileViewController: UIViewController {
     }
     
     private func updatePhoto(_ photo: UIImage) {
+        savedModel.photo = photo
         photoImageView.image = photo
     }
     
@@ -184,15 +217,31 @@ final class ProfileViewController: UIViewController {
         alert.addAction(cancelAction)
         present(alert, animated: true)
     }
+    
+    @objc
+    private func textFieldValueChanged(_ textField: UITextField) {
+        switch textField.tag {
+        case TableViewSection.name.rawValue:
+            savedModel.name = textField.text ?? ""
+            nameLabel.text = savedModel.name
+        case TableViewSection.information.rawValue:
+            savedModel.information = textField.text ?? ""
+            informationLabel.text = savedModel.information
+        default:
+            break
+        }
+    }
 }
 
 // MARK: - ConfigurableViewProtocol
 
 extension ProfileViewController: ConfigurableViewProtocol {
     func configure(with model: ProfileViewModel) {
-        photoImageView.image = model.photo
         nameLabel.text = model.name
         informationLabel.text = model.information
+        if let photo = model.photo {
+            photoImageView.image = photo
+        }
     }
 }
 
@@ -248,6 +297,7 @@ extension ProfileViewController: UITableViewDataSource {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
         }
         cell.textField.delegate = self
+        cell.textField.tag = indexPath.row
         cell.configure(title: TableViewSection.allCases[indexPath.row].title)
         return cell
     }
@@ -258,6 +308,10 @@ extension ProfileViewController: UITableViewDataSource {
 extension ProfileViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        textField.addTarget(self, action: #selector(textFieldValueChanged), for: .editingDidEnd)
     }
 }
 
@@ -278,8 +332,46 @@ extension ProfileViewController {
                                                target: self,
                                                action: #selector(cancelButtonTapped))
             
-            let saveGCDAction = UIAction(title: "Save GCD") { action in
-                print("Save GCD")
+            let saveGCDAction = UIAction(title: "Save GCD") { [weak self] action in
+                guard let self = self else { return }
+                
+                self.view.endEditing(true)
+                
+                let activityIndicatorBarButton = UIBarButtonItem(customView: self.activityIndicator)
+                self.navigationItem.setRightBarButton(activityIndicatorBarButton, animated: true)
+                self.activityIndicator.startAnimating()
+                
+                if self.savedModel.name != self.displayModel.name {
+                    if let data = self.savedModel.name?.toData() {
+                        self.concurrencyService.saveData(data, as: .name) { error in
+                            if let error = error {
+                                print(error)
+                            }
+                        }
+                    }
+                }
+                
+                if self.savedModel.information != self.displayModel.information {
+                    if let data = self.savedModel.information?.toData() {
+                        self.concurrencyService.saveData(data, as: .information) { error in
+                            if let error = error {
+                                print(error)
+                            }
+                        }
+                    }
+                }
+                
+                if self.savedModel.photo != self.displayModel.photo {
+                    guard let data = self.savedModel.photo?.pngData() else { return }
+                    self.concurrencyService.saveData(data, as: .photo) { error in
+                        if let error = error {
+                            print(error)
+                        }
+                    }
+                }
+                
+                self.activityIndicator.stopAnimating()
+                self.setEditing(false, animated: true)
             }
             
             let saveOperationAction = UIAction(title: "Save Operation") { action in
@@ -287,10 +379,8 @@ extension ProfileViewController {
             }
             
             let saveMenu = UIMenu(children: [saveGCDAction, saveOperationAction])
-            
             let menuButton = UIBarButtonItem(image: UIImage(systemName: "ellipsis.circle"),
                                              menu: saveMenu)
-            
             navigationItem.setLeftBarButton(cancelButton, animated: true)
             navigationItem.setRightBarButton(menuButton, animated: true)
         } else {
@@ -303,7 +393,6 @@ extension ProfileViewController {
         super.setEditing(editing, animated: animated)
         updateNavBar(editing: editing)
         updateUI(editing: editing)
-        
         if let cell = nameAndInformationTableView.visibleCells.first as? ProfileEditCell, editing {
             cell.textField.becomeFirstResponder()
         }
@@ -312,7 +401,12 @@ extension ProfileViewController {
     @objc
     private func cancelButtonTapped() {
         setEditing(false, animated: true)
-        print("cancelButtonTapped")
+        configure(with: displayModel)
+        concurrencyService.saveProfile(profile: displayModel) { error in
+            if let error = error {
+                print(error)
+            }
+        }
     }
 }
 
