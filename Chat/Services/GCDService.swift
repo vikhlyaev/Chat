@@ -8,7 +8,7 @@ protocol ConcurrencyServiceProtocol {
 }
 
 final class GCDService {
-    private let queue = DispatchQueue(label: "GCDService.vikhlyaev", qos: .userInitiated, attributes: .concurrent)
+    private let queue = DispatchQueue(label: "GCDService.vikhlyaev", qos: .userInitiated)
     private lazy var dataManager: DataManagerProtocol = DataManager()
 }
 
