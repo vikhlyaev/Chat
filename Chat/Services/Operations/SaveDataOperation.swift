@@ -9,11 +9,11 @@ final class SaveDataOperation: Operation {
     init(data: Data, type: DataType) {
         self.data = data
         self.type = type
+        super.init()
     }
     
     override func main() {
         let operationQueue = OperationQueue()
-        operationQueue.maxConcurrentOperationCount = 1
         operationQueue.qualityOfService = .userInitiated
         operationQueue.addOperation { [weak self] in
             guard let self = self else { return }

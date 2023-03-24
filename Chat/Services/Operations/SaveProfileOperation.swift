@@ -7,6 +7,7 @@ final class SaveProfileOperation: Operation {
     
     init(profile: ProfileViewModel) {
         self.profile = profile
+        super.init()
     }
     
     override func main() {
