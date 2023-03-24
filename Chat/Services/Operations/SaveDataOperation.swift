@@ -13,15 +13,10 @@ final class SaveDataOperation: Operation {
     }
     
     override func main() {
-        let operationQueue = OperationQueue()
-        operationQueue.qualityOfService = .userInitiated
-        operationQueue.addOperation { [weak self] in
-            guard let self = self else { return }
-            self.dataManager.write(self.data, as: self.type, completion: { [weak self] error in
-                if let error = error {
-                    self?.error = error
-                }
-            })
-        }
+        dataManager.write(data, as: type, completion: { [weak self] error in
+            if let error = error {
+                self?.error = error
+            }
+        })
     }
 }

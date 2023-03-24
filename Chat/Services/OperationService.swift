@@ -3,7 +3,6 @@ import Foundation
 final class OperationService: ConcurrencyServiceProtocol {
     func loadProfile(completion: @escaping (Result<ProfileViewModel, DataManagerError>) -> Void) {
         let loadProfileOperation = LoadProfileOperation()
-        loadProfileOperation.qualityOfService = .userInitiated
         loadProfileOperation.completionBlock = {
             OperationQueue.main.addOperation {
                 if let profile = loadProfileOperation.profile {
@@ -13,12 +12,14 @@ final class OperationService: ConcurrencyServiceProtocol {
                 }
             }
         }
-        OperationQueue().addOperation(loadProfileOperation)
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
+        queue.addOperation(loadProfileOperation)
     }
     
     func saveProfile(profile: ProfileViewModel, completion: @escaping (DataManagerError?) -> Void) {
         let saveProfileOperation = SaveProfileOperation(profile: profile)
-        saveProfileOperation.qualityOfService = .userInitiated
         saveProfileOperation.completionBlock = {
             OperationQueue.main.addOperation {
                 if let error = saveProfileOperation.error {
@@ -26,11 +27,14 @@ final class OperationService: ConcurrencyServiceProtocol {
                 }
             }
         }
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 1
+        queue.addOperation(saveProfileOperation)
     }
     
     func saveData(_ data: Data, as type: DataType, completion: @escaping (DataManagerError?) -> Void) {
         let saveDataOperation = SaveDataOperation(data: data, type: type)
-        saveDataOperation.qualityOfService = .userInitiated
         saveDataOperation.completionBlock = {
             OperationQueue.main.addOperation {
                 if let error = saveDataOperation.error {
@@ -38,5 +42,9 @@ final class OperationService: ConcurrencyServiceProtocol {
                 }
             }
         }
+        let queue = OperationQueue()
+        queue.qualityOfService = .userInitiated
+        queue.maxConcurrentOperationCount = 3
+        queue.addOperation(saveDataOperation)
     }
 }
