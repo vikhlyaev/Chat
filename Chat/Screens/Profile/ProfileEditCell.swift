@@ -12,6 +12,7 @@ final class ProfileEditCell: UITableViewCell {
     
     lazy var textField: UITextField = {
         let textField = UITextField(frame: .zero)
+        textField.autocapitalizationType = .none
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
