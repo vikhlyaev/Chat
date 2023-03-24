@@ -17,6 +17,20 @@ final class ProfileViewController: UIViewController {
         }
     }
     
+    private enum ConcurrencyService {
+        case gcd
+        case operation
+        
+        var service: ConcurrencyServiceProtocol {
+            switch self {
+            case .gcd:
+                return GCDService()
+            case .operation:
+                return OperationService()
+            }
+        }
+    }
+    
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.backgroundColor = .clear
@@ -95,23 +109,14 @@ final class ProfileViewController: UIViewController {
     }()
     
     private var imagePicker: UIImagePickerController?
-    private var concurrencyService: ConcurrencyServiceProtocol
+    private var concurrencyService: ConcurrencyServiceProtocol = ConcurrencyService.gcd.service
     private var savedModel: ProfileViewModel = ProfileViewModel()
     private var displayModel: ProfileViewModel = ProfileViewModel() {
         didSet {
             configure(with: displayModel)
         }
     }
-    
-    init(concurrencyService: ConcurrencyServiceProtocol = GCDService()) {
-        self.concurrencyService = concurrencyService
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         loadProfile()
@@ -190,11 +195,11 @@ final class ProfileViewController: UIViewController {
         view.addGestureRecognizer(swipeScreen)
     }
     
-    private func showErrorAlert() {
+    private func showErrorAlert(concurrency: ConcurrencyService) {
         let alert = UIAlertController(title: "Could not save profile", message: "Try again", preferredStyle: .alert)
         let okAction = UIAlertAction(title: "OK", style: .cancel)
         let tryAgainAction = UIAlertAction(title: "Try again", style: .default) { [weak self] action in
-            self?.save()
+            self?.save(concurrency: concurrency)
         }
         alert.addAction(okAction)
         alert.addAction(tryAgainAction)
@@ -343,7 +348,9 @@ extension ProfileViewController {
         view.backgroundColor = editing ? .systemGray6 : .systemBackground
     }
     
-    private func save() {
+    private func save(concurrency: ConcurrencyService) {
+        let concurrencyService = concurrency.service
+        
         view.endEditing(true)
         
         let activityIndicatorBarButton = UIBarButtonItem(customView: activityIndicator)
@@ -354,7 +361,7 @@ extension ProfileViewController {
             if let data = savedModel.name?.toData() {
                 concurrencyService.saveData(data, as: .name) { [weak self] error in
                     if let _ = error {
-                        self?.showErrorAlert()
+                        self?.showErrorAlert(concurrency: concurrency)
                     }
                 }
             }
@@ -364,7 +371,7 @@ extension ProfileViewController {
             if let data = savedModel.information?.toData() {
                 concurrencyService.saveData(data, as: .information) { [weak self] error in
                     if let _ = error {
-                        self?.showErrorAlert()
+                        self?.showErrorAlert(concurrency: concurrency)
                     }
                 }
             }
@@ -374,7 +381,7 @@ extension ProfileViewController {
             guard let data = savedModel.photo?.pngData() else { return }
             concurrencyService.saveData(data, as: .photo) { [weak self] error in
                 if let _ = error {
-                    self?.showErrorAlert()
+                    self?.showErrorAlert(concurrency: concurrency)
                 }
             }
         }
@@ -392,11 +399,13 @@ extension ProfileViewController {
                                                action: #selector(cancelButtonTapped))
             
             let saveGCDAction = UIAction(title: "Save GCD") { [weak self] action in
-                self?.save()
+                self?.concurrencyService = GCDService()
+                self?.save(concurrency: .gcd)
             }
             
             let saveOperationAction = UIAction(title: "Save Operation") { [weak self] action in
-                self?.save()
+                self?.concurrencyService = OperationService()
+                self?.save(concurrency: .operation)
             }
             
             let saveMenu = UIMenu(children: [saveGCDAction, saveOperationAction])
