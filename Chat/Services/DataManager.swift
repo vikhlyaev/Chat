@@ -32,7 +32,6 @@ extension DataManager: DataManagerProtocol {
         }
         do {
             try element.write(to: url, options: .atomic)
-            completion(nil)
         } catch {
             completion(.writeFailure)
         }
@@ -43,7 +42,6 @@ enum DataType {
     case name
     case information
     case photo
-    case theme
     
     var fileName: String {
         switch self {
@@ -53,14 +51,13 @@ enum DataType {
             return "information.txt"
         case .photo:
             return "photo.txt"
-        case .theme:
-            return "theme.txt"
         }
     }
 }
 
 enum DataManagerError: Error {
     case badURL
+    case badData
     case writeFailure
     case readFailure
 }
