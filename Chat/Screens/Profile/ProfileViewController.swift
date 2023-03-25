@@ -17,20 +17,6 @@ final class ProfileViewController: UIViewController {
         }
     }
     
-    private enum ConcurrencyService {
-        case gcd
-        case operation
-        
-        var service: ConcurrencyServiceProtocol {
-            switch self {
-            case .gcd:
-                return GCDService()
-            case .operation:
-                return OperationService()
-            }
-        }
-    }
-    
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.backgroundColor = .clear
@@ -96,12 +82,6 @@ final class ProfileViewController: UIViewController {
                                                    target: self,
                                                    action: #selector(closeButtonTapped))
     
-    private lazy var rightBarButton: UIBarButtonItem = {
-        let button = UIBarButtonItem()
-        button.image = UIImage(systemName: "ellipsis.circle")
-        return button
-    }()
-    
     private lazy var activityIndicator: UIActivityIndicatorView = {
         let activityIndicator = UIActivityIndicatorView(style: .medium)
         activityIndicator.hidesWhenStopped = true
@@ -109,8 +89,13 @@ final class ProfileViewController: UIViewController {
     }()
     
     private var imagePicker: UIImagePickerController?
-    private var concurrencyService: ConcurrencyServiceProtocol = ConcurrencyService.gcd.service
+    
+    private var concurrencyService: ConcurrencyServiceProtocol = ConcurrencyService()
+    
+    private var alertPresenter: AlertPresenterProtocol = AlertPresenter()
+    
     private var savedModel: ProfileViewModel = ProfileViewModel()
+    
     private var displayModel: ProfileViewModel = ProfileViewModel() {
         didSet {
             configure(with: displayModel)
@@ -125,6 +110,21 @@ final class ProfileViewController: UIViewController {
         setDelegates()
         setConstraints()
         hideKeyboardByTapOnView()
+    }
+    
+    private func loadProfile() {
+        concurrencyService.loadProfile { [weak self] result in
+            switch result {
+            case .success(let model):
+                self?.displayModel = model
+            case .failure(_):
+                let alertModel = AlertViewModel(title: "No profile found",
+                                                message: "The default profile is loaded.",
+                                                button: AlertButton(text: "OK", action: nil))
+                guard let alert = self?.alertPresenter.prepare(model: alertModel) else { return }
+                self?.present(alert, animated: true)
+            }
+        }
     }
     
     private func setupNavBar() {
@@ -148,16 +148,7 @@ final class ProfileViewController: UIViewController {
         scrollView.addSubview(nameAndInformationTableView)
     }
     
-    private func loadProfile() {
-        concurrencyService.loadProfile { [weak self] result in
-            switch result {
-            case .success(let model):
-                self?.displayModel = model
-            case .failure(let error):
-                print(error)
-            }
-        }
-    }
+    
     
     private func takePhoto() {
         guard UIImagePickerController.isSourceTypeAvailable(.camera) else {
@@ -189,17 +180,17 @@ final class ProfileViewController: UIViewController {
         let tapScreen = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
         tapScreen.cancelsTouchesInView = false
         view.addGestureRecognizer(tapScreen)
-        
+    
         let swipeScreen = UISwipeGestureRecognizer(target: self, action: #selector(hideKeyboard))
         swipeScreen.cancelsTouchesInView = false
         view.addGestureRecognizer(swipeScreen)
     }
     
-    private func showErrorAlert(concurrency: ConcurrencyService) {
+    private func showErrorAlert() {
         let alert = UIAlertController(title: "Could not save profile", message: "Try again", preferredStyle: .alert)
         let okAction = UIAlertAction(title: "OK", style: .cancel)
         let tryAgainAction = UIAlertAction(title: "Try again", style: .default) { [weak self] action in
-            self?.save(concurrency: concurrency)
+            self?.saveButtonTapped()
         }
         alert.addAction(okAction)
         alert.addAction(tryAgainAction)
@@ -348,49 +339,6 @@ extension ProfileViewController {
         view.backgroundColor = editing ? .systemGray6 : .systemBackground
     }
     
-    private func save(concurrency: ConcurrencyService) {
-        let concurrencyService = concurrency.service
-        
-        view.endEditing(true)
-        
-        let activityIndicatorBarButton = UIBarButtonItem(customView: activityIndicator)
-        navigationItem.setRightBarButton(activityIndicatorBarButton, animated: true)
-        activityIndicator.startAnimating()
-        
-        if savedModel.name != displayModel.name {
-            if let data = savedModel.name?.toData() {
-                concurrencyService.saveData(data, as: .name) { [weak self] error in
-                    if let _ = error {
-                        self?.showErrorAlert(concurrency: concurrency)
-                    }
-                }
-            }
-        }
-        
-        if savedModel.information != displayModel.information {
-            if let data = savedModel.information?.toData() {
-                concurrencyService.saveData(data, as: .information) { [weak self] error in
-                    if let _ = error {
-                        self?.showErrorAlert(concurrency: concurrency)
-                    }
-                }
-            }
-        }
-        
-        if savedModel.photo != self.displayModel.photo {
-            guard let data = savedModel.photo?.pngData() else { return }
-            concurrencyService.saveData(data, as: .photo) { [weak self] error in
-                if let _ = error {
-                    self?.showErrorAlert(concurrency: concurrency)
-                }
-            }
-        }
-        
-        activityIndicator.stopAnimating()
-        setEditing(false, animated: true)
-        showSuccessAlert()
-    }
-    
     private func updateNavBar(editing: Bool) {
         if editing {
             let cancelButton = UIBarButtonItem(title: "Cancel",
@@ -398,21 +346,13 @@ extension ProfileViewController {
                                                target: self,
                                                action: #selector(cancelButtonTapped))
             
-            let saveGCDAction = UIAction(title: "Save GCD") { [weak self] action in
-                self?.concurrencyService = GCDService()
-                self?.save(concurrency: .gcd)
-            }
-            
-            let saveOperationAction = UIAction(title: "Save Operation") { [weak self] action in
-                self?.concurrencyService = OperationService()
-                self?.save(concurrency: .operation)
-            }
-            
-            let saveMenu = UIMenu(children: [saveGCDAction, saveOperationAction])
-            let menuButton = UIBarButtonItem(image: UIImage(systemName: "ellipsis.circle"),
-                                             menu: saveMenu)
+            let saveButton = UIBarButtonItem(title: "Save",
+                                             style: .plain,
+                                             target: self,
+                                             action: #selector(saveButtonTapped))
+
             navigationItem.setLeftBarButton(cancelButton, animated: true)
-            navigationItem.setRightBarButton(menuButton, animated: true)
+            navigationItem.setRightBarButton(saveButton, animated: true)
         } else {
             navigationItem.setLeftBarButton(closeButton, animated: true)
             navigationItem.setRightBarButton(editButtonItem, animated: true)
@@ -426,6 +366,42 @@ extension ProfileViewController {
         if let cell = nameAndInformationTableView.visibleCells.first as? ProfileEditCell, editing {
             cell.textField.becomeFirstResponder()
         }
+    }
+    
+    @objc
+    private func saveButtonTapped() {
+        view.endEditing(true)
+        
+        let activityIndicatorBarButton = UIBarButtonItem(customView: activityIndicator)
+        navigationItem.setRightBarButton(activityIndicatorBarButton, animated: true)
+        activityIndicator.startAnimating()
+        
+        if savedModel.name != displayModel.name {
+            if let data = savedModel.name?.toData() {
+                concurrencyService.saveData(data, as: .name) { [weak self] _ in
+                    self?.showErrorAlert()
+                }
+            }
+        }
+        
+        if savedModel.information != displayModel.information {
+            if let data = savedModel.information?.toData() {
+                concurrencyService.saveData(data, as: .information) { [weak self] _ in
+                    self?.showErrorAlert()
+                }
+            }
+        }
+        
+        if savedModel.photo != self.displayModel.photo {
+            guard let data = savedModel.photo?.pngData() else { return }
+            concurrencyService.saveData(data, as: .photo) { [weak self] _ in
+                self?.showErrorAlert()
+            }
+        }
+        
+        activityIndicator.stopAnimating()
+        setEditing(false, animated: true)
+        showSuccessAlert()
     }
     
     @objc
