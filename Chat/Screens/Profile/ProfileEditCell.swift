@@ -33,8 +33,9 @@ final class ProfileEditCell: UITableViewCell {
         contentView.addSubview(textField)
     }
     
-    func configure(title: String) {
+    func configure(title: String, value: String?) {
         titleLabel.text = title
+        textField.text = value
     }
 }
 
