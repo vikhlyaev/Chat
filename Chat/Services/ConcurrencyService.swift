@@ -104,7 +104,8 @@ extension ConcurrencyService: ConcurrencyServiceProtocol {
     }
     
     func saveData(_ data: Data, as type: DataType, completion: @escaping (DataManagerError?) -> Void) {
-        queue.async { [weak self] in
+        queue.sync { [weak self] in
+            sleep(2)
             self?.dataManager.write(data, as: type, completion: { error in
                 if let error = error {
                     completion(error)
