@@ -82,11 +82,7 @@ final class ProfileViewController: UIViewController {
                                                    target: self,
                                                    action: #selector(closeButtonTapped))
     
-    private lazy var activityIndicator: UIActivityIndicatorView = {
-        let activityIndicator = UIActivityIndicatorView(style: .medium)
-        activityIndicator.hidesWhenStopped = true
-        return activityIndicator
-    }()
+    private lazy var activityIndicator = UIActivityIndicatorView(style: .medium)
     
     private var imagePicker: UIImagePickerController?
     
@@ -99,6 +95,7 @@ final class ProfileViewController: UIViewController {
     private var displayModel: ProfileViewModel = ProfileViewModel() {
         didSet {
             configure(with: displayModel)
+            nameAndInformationTableView.reloadData()
         }
     }
 
@@ -312,7 +309,7 @@ extension ProfileViewController: UITableViewDataSource {
         }
         cell.textField.delegate = self
         cell.textField.tag = indexPath.row
-        cell.configure(title: TableViewSection.allCases[indexPath.row].title)
+        cell.configure(title: TableViewSection.allCases[indexPath.row].title, value: displayModel[indexPath.row])
         return cell
     }
 }
@@ -378,12 +375,14 @@ extension ProfileViewController {
         
         if savedModel.name != displayModel.name {
             if let data = savedModel.name?.toData() {
-                concurrencyService.saveData(data, as: .name) { [weak self] _ in
-                    self?.showErrorAlert()
+                concurrencyService.saveData(data, as: .name) { [weak self] error in
+                    if error != nil {
+                        self?.showErrorAlert()
+                    }
                 }
             }
         }
-        
+
         if savedModel.information != displayModel.information {
             if let data = savedModel.information?.toData() {
                 concurrencyService.saveData(data, as: .information) { [weak self] _ in
@@ -391,6 +390,7 @@ extension ProfileViewController {
                 }
             }
         }
+        
         
         if savedModel.photo != self.displayModel.photo {
             guard let data = savedModel.photo?.pngData() else { return }
@@ -400,6 +400,7 @@ extension ProfileViewController {
         }
         
         activityIndicator.stopAnimating()
+        
         setEditing(false, animated: true)
         showSuccessAlert()
     }
