@@ -12,7 +12,7 @@ final class DataManager {
 // MARK: - DataManagerProtocol
 
 extension DataManager: DataManagerProtocol {
-    func read(_ type: DataType, completion: @escaping (Result<Data, DataManagerError>) -> Void) {
+    func read(_ type: DataType, completion: (Result<Data, DataManagerError>) -> Void) {
         guard let url = documentDirectory?.appendingPathComponent(type.fileName) else {
             completion(.failure(.badURL))
             return
@@ -25,7 +25,7 @@ extension DataManager: DataManagerProtocol {
         }
     }
     
-    func write(_ element: Data, as type: DataType, completion: @escaping (DataManagerError?) -> Void) {
+    func write(_ element: Data, as type: DataType, completion: (DataManagerError?) -> Void) {
         guard let url = documentDirectory?.appendingPathComponent(type.fileName) else {
             completion(.badURL)
             return
