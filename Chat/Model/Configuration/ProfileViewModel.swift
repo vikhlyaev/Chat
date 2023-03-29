@@ -1,6 +1,6 @@
 import UIKit
 
-struct ProfileViewModel {
+struct ProfileViewModel: Equatable {
     var name: String?
     var information: String?
     var photo: UIImage?
@@ -11,5 +11,9 @@ struct ProfileViewModel {
         case 1: return information
         default: return nil
         }
+    }
+    
+    static func ==(lhs: ProfileViewModel, rhs: ProfileViewModel) -> Bool {
+        lhs.name == rhs.name && lhs.information == rhs.information && lhs.photo == rhs.photo
     }
 }
