@@ -199,6 +199,20 @@ final class ProfileViewController: UIViewController {
         present(alert, animated: true)
     }
     
+    private func saveProfile(completion: @escaping () -> Void) {
+        if savedModel != displayModel {
+            activityIndicator.startAnimating()
+            concurrencyService.saveProfile(profile: savedModel) { [weak self] error in
+                if let _ = error {
+                    self?.showErrorAlert()
+                } else {
+                    self?.activityIndicator.stopAnimating()
+                    completion()
+                }
+            }
+        }
+    }
+    
     @objc
     private func hideKeyboard() {
         view.endEditing(true)
@@ -370,19 +384,9 @@ extension ProfileViewController {
         let activityIndicatorBarButton = UIBarButtonItem(customView: activityIndicator)
         navigationItem.setRightBarButton(activityIndicatorBarButton, animated: true)
         
-        if savedModel != displayModel {
-            activityIndicator.startAnimating()
-            concurrencyService.saveProfile(profile: savedModel) { [weak self] error in
-                if let _ = error {
-                    self?.showErrorAlert()
-                } else {
-                    self?.activityIndicator.stopAnimating()
-                    self?.showSuccessAlert()
-                    self?.setEditing(false, animated: true)
-                }
-            }
-        } else {
-            setEditing(false, animated: true)
+        saveProfile { [weak self] in
+            self?.showSuccessAlert()
+            self?.setEditing(false, animated: true)
         }
     }
     
