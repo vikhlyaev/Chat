@@ -1,7 +1,7 @@
 import UIKit
 
 struct ProfileViewModel {
-    let name: String
-    let information: String?
-    var photo: UIImage
+    var name: String?
+    var information: String?
+    var photo: UIImage?
 }

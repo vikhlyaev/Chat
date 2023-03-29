@@ -3,6 +3,34 @@ import PhotosUI
 
 final class ProfileViewController: UIViewController {
     
+    private enum TableViewSection: Int, CaseIterable {
+        case name
+        case information
+        
+        var title: String {
+            switch self {
+            case .name:
+                return "Name"
+            case .information:
+                return "Bio"
+            }
+        }
+    }
+    
+    private enum ConcurrencyService {
+        case gcd
+        case operation
+        
+        var service: ConcurrencyServiceProtocol {
+            switch self {
+            case .gcd:
+                return GCDService()
+            case .operation:
+                return OperationService()
+            }
+        }
+    }
+    
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.backgroundColor = .clear
@@ -12,6 +40,7 @@ final class ProfileViewController: UIViewController {
     
     private lazy var photoImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.image = UIImage(named: "PlaceholderAvatar")
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 75
@@ -48,24 +77,64 @@ final class ProfileViewController: UIViewController {
         return label
     }()
     
+    private lazy var nameAndInformationTableView: UITableView = {
+        let tableView = UITableView(frame: .zero)
+        tableView.layer.borderWidth = 0.33
+        tableView.layer.borderColor = UIColor.separator.cgColor
+        tableView.bounces = false
+        tableView.allowsSelection = false
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
+        tableView.rowHeight = 44
+        tableView.isHidden = true
+        tableView.register(ProfileEditCell.self, forCellReuseIdentifier: ProfileEditCell.identifier)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        return tableView
+    }()
+    
     private lazy var closeButton = UIBarButtonItem(title: "Close",
                                                    style: .plain,
                                                    target: self,
                                                    action: #selector(closeButtonTapped))
     
-    private var imagePicker: UIImagePickerController?
+    private lazy var rightBarButton: UIBarButtonItem = {
+        let button = UIBarButtonItem()
+        button.image = UIImage(systemName: "ellipsis.circle")
+        return button
+    }()
     
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView(style: .medium)
+        activityIndicator.hidesWhenStopped = true
+        return activityIndicator
+    }()
+    
+    private var imagePicker: UIImagePickerController?
+    private var concurrencyService: ConcurrencyServiceProtocol = ConcurrencyService.gcd.service
+    private var savedModel: ProfileViewModel = ProfileViewModel()
+    private var displayModel: ProfileViewModel = ProfileViewModel() {
+        didSet {
+            configure(with: displayModel)
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        loadProfile()
         setupNavBar()
         setupView()
+        setDelegates()
         setConstraints()
+        hideKeyboardByTapOnView()
     }
     
     private func setupNavBar() {
         navigationItem.leftBarButtonItem = closeButton
         navigationItem.rightBarButtonItem = editButtonItem
         title = "My Profile"
+    }
+    
+    private func setDelegates() {
+        nameAndInformationTableView.dataSource = self
     }
     
     private func setupView() {
@@ -76,6 +145,18 @@ final class ProfileViewController: UIViewController {
         scrollView.addSubview(addPhotoButton)
         scrollView.addSubview(nameLabel)
         scrollView.addSubview(informationLabel)
+        scrollView.addSubview(nameAndInformationTableView)
+    }
+    
+    private func loadProfile() {
+        concurrencyService.loadProfile { [weak self] result in
+            switch result {
+            case .success(let model):
+                self?.displayModel = model
+            case .failure(let error):
+                print(error)
+            }
+        }
     }
     
     private func takePhoto() {
@@ -100,7 +181,41 @@ final class ProfileViewController: UIViewController {
     }
     
     private func updatePhoto(_ photo: UIImage) {
+        savedModel.photo = photo
         photoImageView.image = photo
+    }
+    
+    private func hideKeyboardByTapOnView() {
+        let tapScreen = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
+        tapScreen.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapScreen)
+        
+        let swipeScreen = UISwipeGestureRecognizer(target: self, action: #selector(hideKeyboard))
+        swipeScreen.cancelsTouchesInView = false
+        view.addGestureRecognizer(swipeScreen)
+    }
+    
+    private func showErrorAlert(concurrency: ConcurrencyService) {
+        let alert = UIAlertController(title: "Could not save profile", message: "Try again", preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .cancel)
+        let tryAgainAction = UIAlertAction(title: "Try again", style: .default) { [weak self] action in
+            self?.save(concurrency: concurrency)
+        }
+        alert.addAction(okAction)
+        alert.addAction(tryAgainAction)
+        present(alert, animated: true)
+    }
+    
+    private func showSuccessAlert() {
+        let alert = UIAlertController(title: "Success", message: "You are breathtaking", preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .cancel)
+        alert.addAction(okAction)
+        present(alert, animated: true)
+    }
+    
+    @objc
+    private func hideKeyboard() {
+        view.endEditing(true)
     }
     
     @objc
@@ -110,6 +225,8 @@ final class ProfileViewController: UIViewController {
     
     @objc
     private func addPhotoButtonTapped() {
+        setEditing(true, animated: true)
+        
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let takePhotoAction = UIAlertAction(title: "Take photo", style: .default) { [weak self] _ in
             self?.takePhoto()
@@ -123,15 +240,31 @@ final class ProfileViewController: UIViewController {
         alert.addAction(cancelAction)
         present(alert, animated: true)
     }
+    
+    @objc
+    private func textFieldValueChanged(_ textField: UITextField) {
+        switch textField.tag {
+        case TableViewSection.name.rawValue:
+            savedModel.name = textField.text ?? ""
+            nameLabel.text = savedModel.name
+        case TableViewSection.information.rawValue:
+            savedModel.information = textField.text ?? ""
+            informationLabel.text = savedModel.information
+        default:
+            break
+        }
+    }
 }
 
 // MARK: - ConfigurableViewProtocol
 
 extension ProfileViewController: ConfigurableViewProtocol {
     func configure(with model: ProfileViewModel) {
-        photoImageView.image = model.photo
         nameLabel.text = model.name
         informationLabel.text = model.information
+        if let photo = model.photo {
+            photoImageView.image = photo
+        }
     }
 }
 
@@ -167,6 +300,146 @@ extension ProfileViewController: UIImagePickerControllerDelegate {
 
 extension ProfileViewController: UINavigationControllerDelegate {}
 
+// MARK: - UITableViewDataSource
+
+extension ProfileViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        TableViewSection.allCases.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard
+            let cell = tableView.dequeueReusableCell(withIdentifier: ProfileEditCell.identifier,
+                                                     for: indexPath) as? ProfileEditCell
+        else {
+            return UITableViewCell()
+        }
+        
+        let indexLastCellInSection = TableViewSection.allCases.count - 1
+        if indexPath.row == indexLastCellInSection {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+        }
+        cell.textField.delegate = self
+        cell.textField.tag = indexPath.row
+        cell.configure(title: TableViewSection.allCases[indexPath.row].title)
+        return cell
+    }
+}
+
+// MARK: - UITextFieldDelegate
+
+extension ProfileViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        textField.addTarget(self, action: #selector(textFieldValueChanged), for: .editingDidEnd)
+    }
+}
+
+// MARK: - Editing State
+
+extension ProfileViewController {
+    private func updateUI(editing: Bool) {
+        nameLabel.isHidden = editing
+        informationLabel.isHidden = editing
+        nameAndInformationTableView.isHidden = !editing
+        view.backgroundColor = editing ? .systemGray6 : .systemBackground
+    }
+    
+    private func save(concurrency: ConcurrencyService) {
+        let concurrencyService = concurrency.service
+        
+        view.endEditing(true)
+        
+        let activityIndicatorBarButton = UIBarButtonItem(customView: activityIndicator)
+        navigationItem.setRightBarButton(activityIndicatorBarButton, animated: true)
+        activityIndicator.startAnimating()
+        
+        if savedModel.name != displayModel.name {
+            if let data = savedModel.name?.toData() {
+                concurrencyService.saveData(data, as: .name) { [weak self] error in
+                    if let _ = error {
+                        self?.showErrorAlert(concurrency: concurrency)
+                    }
+                }
+            }
+        }
+        
+        if savedModel.information != displayModel.information {
+            if let data = savedModel.information?.toData() {
+                concurrencyService.saveData(data, as: .information) { [weak self] error in
+                    if let _ = error {
+                        self?.showErrorAlert(concurrency: concurrency)
+                    }
+                }
+            }
+        }
+        
+        if savedModel.photo != self.displayModel.photo {
+            guard let data = savedModel.photo?.pngData() else { return }
+            concurrencyService.saveData(data, as: .photo) { [weak self] error in
+                if let _ = error {
+                    self?.showErrorAlert(concurrency: concurrency)
+                }
+            }
+        }
+        
+        activityIndicator.stopAnimating()
+        setEditing(false, animated: true)
+        showSuccessAlert()
+    }
+    
+    private func updateNavBar(editing: Bool) {
+        if editing {
+            let cancelButton = UIBarButtonItem(title: "Cancel",
+                                               style: .plain,
+                                               target: self,
+                                               action: #selector(cancelButtonTapped))
+            
+            let saveGCDAction = UIAction(title: "Save GCD") { [weak self] action in
+                self?.concurrencyService = GCDService()
+                self?.save(concurrency: .gcd)
+            }
+            
+            let saveOperationAction = UIAction(title: "Save Operation") { [weak self] action in
+                self?.concurrencyService = OperationService()
+                self?.save(concurrency: .operation)
+            }
+            
+            let saveMenu = UIMenu(children: [saveGCDAction, saveOperationAction])
+            let menuButton = UIBarButtonItem(image: UIImage(systemName: "ellipsis.circle"),
+                                             menu: saveMenu)
+            navigationItem.setLeftBarButton(cancelButton, animated: true)
+            navigationItem.setRightBarButton(menuButton, animated: true)
+        } else {
+            navigationItem.setLeftBarButton(closeButton, animated: true)
+            navigationItem.setRightBarButton(editButtonItem, animated: true)
+        }
+    }
+    
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        updateNavBar(editing: editing)
+        updateUI(editing: editing)
+        if let cell = nameAndInformationTableView.visibleCells.first as? ProfileEditCell, editing {
+            cell.textField.becomeFirstResponder()
+        }
+    }
+    
+    @objc
+    private func cancelButtonTapped() {
+        setEditing(false, animated: true)
+        configure(with: displayModel)
+        concurrencyService.saveProfile(profile: displayModel) { error in
+            if let error = error {
+                print(error)
+            }
+        }
+    }
+}
+
 // MARK: - Setting Constraints
 
 extension ProfileViewController {
@@ -192,7 +465,12 @@ extension ProfileViewController {
             informationLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 10),
             informationLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             informationLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            informationLabel.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -16)
+            informationLabel.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -16),
+            
+            nameAndInformationTableView.topAnchor.constraint(equalTo: addPhotoButton.bottomAnchor, constant: 24),
+            nameAndInformationTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            nameAndInformationTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            nameAndInformationTableView.heightAnchor.constraint(equalToConstant: 88)
         ])
     }
 }
