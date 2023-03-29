@@ -113,7 +113,9 @@ final class ProfileViewController: UIViewController {
         concurrencyService.loadProfile { [weak self] result in
             switch result {
             case .success(let model):
-                self?.displayModel = model
+                DispatchQueue.main.async {
+                    self?.displayModel = model
+                }
             case .failure(_):
                 let alertModel = AlertViewModel(title: "No profile found",
                                                 message: "The default profile is loaded.",
