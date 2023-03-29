@@ -7,7 +7,7 @@ protocol ConcurrencyServiceProtocol {
 }
 
 final class ConcurrencyService {
-    private let queue = DispatchQueue(label: "ConcurrencyService.vikhlyaev", qos: .userInitiated, attributes: .concurrent)
+    private let queue = DispatchQueue(label: "ConcurrencyService.vikhlyaev", qos: .userInitiated)
     private lazy var dataManager: DataManagerProtocol = DataManager()
     
     private func load(type: DataType, completion: @escaping (Result<Data, DataManagerError>) -> Void) {

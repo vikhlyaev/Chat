@@ -145,8 +145,6 @@ final class ProfileViewController: UIViewController {
         scrollView.addSubview(nameAndInformationTableView)
     }
     
-    
-    
     private func takePhoto() {
         guard UIImagePickerController.isSourceTypeAvailable(.camera) else {
             chooseFromGallery()
@@ -371,47 +369,33 @@ extension ProfileViewController {
         
         let activityIndicatorBarButton = UIBarButtonItem(customView: activityIndicator)
         navigationItem.setRightBarButton(activityIndicatorBarButton, animated: true)
-        activityIndicator.startAnimating()
         
-        if savedModel.name != displayModel.name {
-            if let data = savedModel.name?.toData() {
-                concurrencyService.saveData(data, as: .name) { [weak self] error in
-                    if error != nil {
-                        self?.showErrorAlert()
-                    }
-                }
-            }
-        }
-
-        if savedModel.information != displayModel.information {
-            if let data = savedModel.information?.toData() {
-                concurrencyService.saveData(data, as: .information) { [weak self] _ in
+        if savedModel != displayModel {
+            activityIndicator.startAnimating()
+            concurrencyService.saveProfile(profile: savedModel) { [weak self] error in
+                if let _ = error {
                     self?.showErrorAlert()
+                } else {
+                    self?.activityIndicator.stopAnimating()
+                    self?.showSuccessAlert()
+                    self?.setEditing(false, animated: true)
                 }
             }
+        } else {
+            setEditing(false, animated: true)
         }
-        
-        
-        if savedModel.photo != self.displayModel.photo {
-            guard let data = savedModel.photo?.pngData() else { return }
-            concurrencyService.saveData(data, as: .photo) { [weak self] _ in
-                self?.showErrorAlert()
-            }
-        }
-        
-        activityIndicator.stopAnimating()
-        
-        setEditing(false, animated: true)
-        showSuccessAlert()
     }
     
     @objc
     private func cancelButtonTapped() {
         setEditing(false, animated: true)
         configure(with: displayModel)
-        concurrencyService.saveProfile(profile: displayModel) { error in
-            if let error = error {
-                print(error)
+        concurrencyService.saveProfile(profile: displayModel) { [weak self] error in
+            guard let self = self else { return }
+            if let _ = error {
+                self.showErrorAlert()
+            } else {
+                self.savedModel = self.displayModel
             }
         }
     }
