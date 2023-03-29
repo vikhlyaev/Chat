@@ -4,11 +4,10 @@ import Dispatch
 protocol ConcurrencyServiceProtocol {
     func loadProfile(completion: @escaping (Result<ProfileViewModel, DataManagerError>) -> Void)
     func saveProfile(profile: ProfileViewModel, completion: @escaping (DataManagerError?) -> Void)
-    func saveData(_ data: Data, as type: DataType, completion: @escaping (DataManagerError?) -> Void)
 }
 
 final class ConcurrencyService {
-    private let queue = DispatchQueue(label: "ConcurrencyService.vikhlyaev", qos: .userInitiated)
+    private let queue = DispatchQueue(label: "ConcurrencyService.vikhlyaev", qos: .userInitiated, attributes: .concurrent)
     private lazy var dataManager: DataManagerProtocol = DataManager()
     
     private func load(type: DataType, completion: @escaping (Result<Data, DataManagerError>) -> Void) {
@@ -16,6 +15,14 @@ final class ConcurrencyService {
             self?.dataManager.read(type) { result in
                 completion(result)
             }
+        }
+    }
+    
+    private func save(_ data: Data, as type: DataType, completion: @escaping (DataManagerError?) -> Void) {
+        queue.async { [weak self] in
+            self?.dataManager.write(data, as: type, completion: { error in
+                completion(error)
+            })
         }
     }
 }
@@ -85,32 +92,38 @@ extension ConcurrencyService: ConcurrencyServiceProtocol {
         }
     }
     
-    func saveProfile(profile: ProfileViewModel, completion: @escaping (DataManagerError?) -> Void){
-        if let nameData = profile.name?.toData() {
-            saveData(nameData, as: .name) { error in
-                DispatchQueue.main.async { completion(error) }
-            }
-        }
-        if let infoData = profile.information?.toData() {
-            saveData(infoData, as: .information) { error in
-                DispatchQueue.main.async { completion(error) }
-            }
-        }
-        if let photoData = profile.photo?.pngData() {
-            saveData(photoData, as: .photo) { error in
-                DispatchQueue.main.async { completion(error) }
-            }
-        }
-    }
-    
-    func saveData(_ data: Data, as type: DataType, completion: @escaping (DataManagerError?) -> Void) {
-        queue.sync { [weak self] in
-            sleep(2)
-            self?.dataManager.write(data, as: type, completion: { error in
-                if let error = error {
-                    completion(error)
+    func saveProfile(profile: ProfileViewModel, completion: @escaping (DataManagerError?) -> Void) {
+        let saveName = DispatchWorkItem { [weak self] in
+            if let nameData = profile.name?.toData() {
+                self?.save(nameData, as: .name) { error in
+                    DispatchQueue.main.async { completion(error) }
                 }
-            })
+            }
+        }
+        
+        let saveInfo = DispatchWorkItem { [weak self] in
+            if let infoData = profile.information?.toData() {
+                self?.save(infoData, as: .information) { error in
+                    DispatchQueue.main.async { completion(error) }
+                }
+            }
+        }
+        
+        let savePhoto = DispatchWorkItem { [weak self] in
+            if let photoData = profile.photo?.pngData() {
+                self?.save(photoData, as: .photo) { error in
+                    DispatchQueue.main.async { completion(error) }
+                }
+            }
+        }
+        
+        let group = DispatchGroup()
+        queue.async(group: group, execute: saveName)
+        queue.async(group: group, execute: saveInfo)
+        queue.async(group: group, execute: savePhoto)
+        
+        group.notify(queue: .main) {
+            completion(nil)
         }
     }
 }
