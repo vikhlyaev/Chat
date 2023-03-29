@@ -113,15 +113,13 @@ final class ProfileViewController: UIViewController {
         concurrencyService.loadProfile { [weak self] result in
             switch result {
             case .success(let model):
-                DispatchQueue.main.async {
-                    self?.displayModel = model
-                }
+                DispatchQueue.main.async { self?.displayModel = model }
             case .failure(_):
                 let alertModel = AlertViewModel(title: "No profile found",
                                                 message: "The default profile is loaded.",
                                                 button: AlertButton(text: "OK", action: nil))
                 guard let alert = self?.alertPresenter.prepare(model: alertModel) else { return }
-                self?.present(alert, animated: true)
+                DispatchQueue.main.async { self?.present(alert, animated: true) }
             }
         }
     }
@@ -387,8 +385,10 @@ extension ProfileViewController {
         navigationItem.setRightBarButton(activityIndicatorBarButton, animated: true)
         
         saveProfile { [weak self] in
-            self?.showSuccessAlert()
-            self?.setEditing(false, animated: true)
+            DispatchQueue.main.async {
+                self?.showSuccessAlert()
+                self?.setEditing(false, animated: true)
+            }
         }
     }
     
