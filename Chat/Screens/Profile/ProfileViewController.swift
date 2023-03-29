@@ -55,10 +55,6 @@ final class ProfileViewController: UIViewController {
     
     private var imagePicker: UIImagePickerController?
     
-    override func loadView() {
-        view = ProfileView()
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavBar()
@@ -73,7 +69,8 @@ final class ProfileViewController: UIViewController {
     }
     
     private func setupView() {
-//        view.backgroundColor = .systemBackground
+        view.backgroundColor = .systemBackground
+        
         view.addSubview(scrollView)
         scrollView.addSubview(photoImageView)
         scrollView.addSubview(addPhotoButton)

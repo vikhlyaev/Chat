@@ -32,10 +32,6 @@ final class SettingsViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func loadView() {
-        view = SettingsView()
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -87,11 +83,15 @@ extension SettingsViewController: UITableViewDataSource {
 
 extension SettingsViewController: ThemesCellDelegate {
     func didDayButtonTapped() {
-        themesManager.apply(theme: .day)
+        themesManager.apply(theme: .light) { style in
+            UIApplication.shared.windows.first?.overrideUserInterfaceStyle = style
+        }
     }
     
     func didNightButtonTapped() {
-        themesManager.apply(theme: .night)
+        themesManager.apply(theme: .dark) { style in
+            UIApplication.shared.windows.first?.overrideUserInterfaceStyle = style
+        }
     }
 }
 

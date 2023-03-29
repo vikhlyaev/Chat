@@ -22,7 +22,8 @@ final class ThemesButton: UIButton {
     
     private lazy var checkmarkImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.tintColor = .systemBlue
+        imageView.tintColor = .systemGray
+        imageView.image = uncheckedImage
         imageView.contentMode = .center
         imageView.isUserInteractionEnabled = false
         imageView.isExclusiveTouch = false
@@ -46,10 +47,10 @@ final class ThemesButton: UIButton {
         }
     }
     
-    private let theme: Theme
+    private let theme: UIUserInterfaceStyle
     private let completion: () -> Void
     
-    required init(theme: Theme, completion: @escaping () -> Void) {
+    required init(theme: UIUserInterfaceStyle, completion: @escaping () -> Void) {
         self.theme = theme
         self.completion = completion
         super.init(frame: .zero)
@@ -73,12 +74,13 @@ final class ThemesButton: UIButton {
     
     private func prepareButton() {
         switch theme {
-        case .day:
+        case .light:
             interfaceImageView.image = UIImage(named: "ThemeDayButton")
-            label.text = theme.title
-        case .night:
+            label.text = "Day"
+        case .dark:
             interfaceImageView.image = UIImage(named: "ThemeNightButton")
-            label.text = theme.title
+            label.text = "Night"
+        default: break
         }
     }
     

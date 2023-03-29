@@ -4,8 +4,8 @@ final class ThemesCell: UITableViewCell {
     
     static let identifier = String(describing: ThemesCell.self)
     
-    private lazy var dayThemeButton = ThemesButton(theme: .day, completion: dayThemeButtonTapped)
-    private lazy var nightThemeButton = ThemesButton(theme: .night, completion: nightThemeButtonTapped)
+    private lazy var dayThemeButton = ThemesButton(theme: .light, completion: dayThemeButtonTapped)
+    private lazy var nightThemeButton = ThemesButton(theme: .dark, completion: nightThemeButtonTapped)
     
     private lazy var themeButtonsStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [dayThemeButton, nightThemeButton])
@@ -45,14 +45,16 @@ final class ThemesCell: UITableViewCell {
     }
     
     private func checkCurrentTheme() {
-        guard let currentTheme = ThemesManager.currentTheme else { return }
-        switch currentTheme {
-        case .day:
+        switch ThemesManager().currentTheme {
+        case .light:
             dayThemeButton.isSelected = true
             nightThemeButton.isSelected = false
-        case .night:
-            nightThemeButton.isSelected = true
+        case .dark:
             dayThemeButton.isSelected = false
+            nightThemeButton.isSelected = true
+        default:
+            dayThemeButton.isSelected = false
+            nightThemeButton.isSelected = false
         }
     }
 }

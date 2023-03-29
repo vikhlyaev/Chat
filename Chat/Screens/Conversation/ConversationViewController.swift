@@ -15,8 +15,8 @@ final class ConversationViewController: UIViewController {
         return tableView
     }()
     
-    private lazy var wrapperView: WrapperView = {
-        let view =  WrapperView()
+    private lazy var wrapperView: UIView = {
+        let view =  UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -25,10 +25,12 @@ final class ConversationViewController: UIViewController {
         let textView = UITextView()
         textView.font = .systemFont(ofSize: 17)
         textView.isScrollEnabled = false
+        textView.text = "Type message"
+        textView.textColor = .systemGray
         textView.textContainerInset = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 36)
         textView.layer.cornerRadius = 18
         textView.layer.borderWidth = 1
-        textView.layer.borderColor = UIColor(red: 0.235, green: 0.235, blue: 0.263, alpha: 0.36).cgColor
+        textView.layer.borderColor = UIColor.systemGray.cgColor
         textView.translatesAutoresizingMaskIntoConstraints = false
         return textView
     }()
@@ -55,10 +57,6 @@ final class ConversationViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func loadView() {
-        view = AppView()
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -80,6 +78,8 @@ final class ConversationViewController: UIViewController {
     }
     
     private func setupView() {
+        view.backgroundColor = .systemBackground
+        
         view.addSubview(chatTableView)
         view.addSubview(customNavBar)
         view.addSubview(wrapperView)
@@ -90,6 +90,7 @@ final class ConversationViewController: UIViewController {
     private func setDelegates() {
         chatTableView.dataSource = self
         chatTableView.delegate = self
+        textView.delegate = self
     }
     
     private func setupNavBar() {
@@ -147,14 +148,36 @@ final class ConversationViewController: UIViewController {
         }, completion: nil)
     }
     
-    private func backButtonTapped() {
-        navigationController?.popViewController(animated: true)
+    private lazy var backButtonTapped = { [weak self] in
+        self?.navigationController?.popViewController(animated: true)
     }
     
     @objc
     private func sendMessageButtonTapped() {
         if let text = textView.text {
             print(text)
+        }
+    }
+    
+    deinit {
+        print("conversation deinit")
+    }
+}
+
+// MARK: - UITextViewDelegate
+
+extension ConversationViewController: UITextViewDelegate {
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if textView.textColor == .systemGray {
+            textView.text = nil
+            textView.textColor = .label
+        }
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text.isEmpty {
+            textView.text = "Type message"
+            textView.textColor = .systemGray
         }
     }
 }

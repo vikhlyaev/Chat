@@ -9,22 +9,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow(frame: UIScreen.main.bounds)
         let navigationController = UINavigationController(rootViewController: ConversationsListViewController())
         window?.rootViewController = navigationController
-        window?.overrideUserInterfaceStyle = .light
+        window?.overrideUserInterfaceStyle = ThemesManager().currentTheme
         window?.makeKeyAndVisible()
-        
-        ThemesManager().loadTheme { [ weak self ] themeIndex in
-            guard let theme = Theme(rawValue: themeIndex) else {
-                self?.window?.overrideUserInterfaceStyle = .light
-                return
-            }
-            switch theme {
-            case .day:
-                self?.window?.overrideUserInterfaceStyle = .light
-            case .night:
-                self?.window?.overrideUserInterfaceStyle = .dark
-            }
-        }
-        
         return true
     }
 }

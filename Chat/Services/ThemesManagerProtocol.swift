@@ -1,7 +1,5 @@
-import Foundation
+import UIKit
 
 protocol ThemesManagerProtocol: AnyObject {
-    func loadTheme(completion: @escaping (Int) -> Void)
-    func saveTheme()
-    func apply(theme: Theme)
+    func apply(theme: UIUserInterfaceStyle, completion: @escaping (UIUserInterfaceStyle) -> Void)
 }

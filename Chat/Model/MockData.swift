@@ -26,6 +26,18 @@ final class MockData {
         User(name: "Larae Jones", information: "Lawyer", withPhoto: nil),
         User(name: "Elza Hatfield", information: "iOS Developer", withPhotoString: "4"),
         User(name: "Johnie Espinoza", information: "Marketing Manager", withPhoto: nil),
+        User(name: "Nolan Garner", information: "Marketing Manager", withPhotoString: "2"),
+        User(name: "Kacy Brown", information: "Android Developer", withPhoto: nil),
+        User(name: "Shemika Farrell", information: "Economist", withPhotoString: "3"),
+        User(name: "Larae Jones", information: "Lawyer", withPhoto: nil),
+        User(name: "Elza Hatfield", information: "iOS Developer", withPhotoString: "4"),
+        User(name: "Johnie Espinoza", information: "Marketing Manager", withPhoto: nil),
+        User(name: "Nolan Garner", information: "Marketing Manager", withPhotoString: "2"),
+        User(name: "Kacy Brown", information: "Android Developer", withPhoto: nil),
+        User(name: "Shemika Farrell", information: "Economist", withPhotoString: "3"),
+        User(name: "Larae Jones", information: "Lawyer", withPhoto: nil),
+        User(name: "Elza Hatfield", information: "iOS Developer", withPhotoString: "4"),
+        User(name: "Johnie Espinoza", information: "Marketing Manager", withPhoto: nil),
     ]
     
     var users: [User] {

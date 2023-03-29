@@ -78,11 +78,11 @@ final class ConversationCell: UITableViewCell {
     private func setTextColor(type: MessageType) {
         switch type {
         case .sent:
-            messageLabel.textColor = .white
-            timeLabel.textColor = .white
+            messageLabel.textColor = .appBubbleTextSent
+            timeLabel.textColor = .appBubbleTextSent
         case .received:
-            messageLabel.textColor = .black
-            timeLabel.textColor = .white
+            messageLabel.textColor = .appBubbleTextReceived
+            timeLabel.textColor = .appBubbleTextReceived
         }
     }
     

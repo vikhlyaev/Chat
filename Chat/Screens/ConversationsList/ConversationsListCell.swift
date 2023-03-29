@@ -59,6 +59,7 @@ final class ConversationsListCell: UITableViewCell {
     private lazy var dateAndTimeLabel: UILabel = {
         let label =  UILabel()
         label.font = .systemFont(ofSize: 15)
+        label.textColor = .label
         label.alpha = 0.3
         label.numberOfLines = 1
         label.adjustsFontSizeToFitWidth = false
@@ -69,14 +70,15 @@ final class ConversationsListCell: UITableViewCell {
     private lazy var disclosureImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "chevron.right")
+        imageView.tintColor = .label
         imageView.alpha = 0.3
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
-    lazy var customSeparator: CustomSeparator = {
-        let view = CustomSeparator()
-        view.alpha = 0.3
+    lazy var customSeparator: UIView = {
+        let view = UIView()
+        view.backgroundColor = .separator
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
