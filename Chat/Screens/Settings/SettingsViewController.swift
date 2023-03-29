@@ -83,15 +83,11 @@ extension SettingsViewController: UITableViewDataSource {
 
 extension SettingsViewController: ThemesCellDelegate {
     func didDayButtonTapped() {
-        themesManager.apply(theme: .light) { style in
-            UIApplication.shared.windows.first?.overrideUserInterfaceStyle = style
-        }
+        themesManager.apply(theme: .light)
     }
     
     func didNightButtonTapped() {
-        themesManager.apply(theme: .dark) { style in
-            UIApplication.shared.windows.first?.overrideUserInterfaceStyle = style
-        }
+        themesManager.apply(theme: .dark)
     }
 }
 

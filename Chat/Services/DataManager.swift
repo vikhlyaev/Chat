@@ -12,7 +12,7 @@ final class DataManager {
 // MARK: - DataManagerProtocol
 
 extension DataManager: DataManagerProtocol {
-    func read(_ type: DataType, completion: @escaping (Result<Data, DataManagerError>) -> Void) {
+    func read(_ type: DataType, completion: (Result<Data, DataManagerError>) -> Void) {
         guard let url = documentDirectory?.appendingPathComponent(type.fileName) else {
             completion(.failure(.badURL))
             return
@@ -25,14 +25,13 @@ extension DataManager: DataManagerProtocol {
         }
     }
     
-    func write(_ element: Data, as type: DataType, completion: @escaping (DataManagerError?) -> Void) {
+    func write(_ element: Data, as type: DataType, completion: (DataManagerError?) -> Void) {
         guard let url = documentDirectory?.appendingPathComponent(type.fileName) else {
             completion(.badURL)
             return
         }
         do {
             try element.write(to: url, options: .atomic)
-            completion(nil)
         } catch {
             completion(.writeFailure)
         }
@@ -43,7 +42,6 @@ enum DataType {
     case name
     case information
     case photo
-    case theme
     
     var fileName: String {
         switch self {
@@ -53,14 +51,13 @@ enum DataType {
             return "information.txt"
         case .photo:
             return "photo.txt"
-        case .theme:
-            return "theme.txt"
         }
     }
 }
 
 enum DataManagerError: Error {
     case badURL
+    case badData
     case writeFailure
     case readFailure
 }

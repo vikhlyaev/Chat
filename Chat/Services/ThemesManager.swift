@@ -1,7 +1,7 @@
 import UIKit
 
 protocol ThemesManagerProtocol: AnyObject {
-    func apply(theme: UIUserInterfaceStyle, completion: @escaping (UIUserInterfaceStyle) -> Void)
+    func apply(theme: UIUserInterfaceStyle)
 }
 
 final class ThemesManager {
@@ -14,9 +14,9 @@ final class ThemesManager {
 // MARK: - ThemesManagerProtocol
 
 extension ThemesManager: ThemesManagerProtocol {        
-    func apply(theme: UIUserInterfaceStyle, completion: @escaping (UIUserInterfaceStyle) -> Void) {
+    func apply(theme: UIUserInterfaceStyle) {
         UserDefaults.standard.set(theme.rawValue, forKey: key)
-        completion(theme)
+        UIApplication.shared.windows.first?.overrideUserInterfaceStyle = theme
     }
 }
 

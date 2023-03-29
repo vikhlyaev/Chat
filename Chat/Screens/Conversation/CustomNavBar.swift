@@ -43,9 +43,9 @@ final class CustomNavBar: UIView {
         return view
     }()
     
-    private let completion: () -> UIViewController?
+    private let completion: () -> Void
     
-    init(name: String, photo: UIImage, completion: @escaping () -> UIViewController?) {
+    init(name: String, photo: UIImage, completion: @escaping () -> Void) {
         self.completion = completion
         super.init(frame: .zero)
         
@@ -73,7 +73,7 @@ final class CustomNavBar: UIView {
     
     @objc
     private func backButtonTapped() {
-        let _ = completion()
+        completion()
     }
     
     deinit {
