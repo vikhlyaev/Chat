@@ -145,6 +145,7 @@ final class ConversationViewController: UIViewController {
     
     private lazy var backButtonTapped = { [weak self] in
         self?.navigationController?.popViewController(animated: true)
+        return
     }
     
     @objc
