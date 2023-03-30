@@ -98,7 +98,7 @@ final class ProfileViewController: UIViewController {
             nameAndInformationTableView.reloadData()
         }
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         loadProfile()
@@ -113,9 +113,11 @@ final class ProfileViewController: UIViewController {
         concurrencyService.loadProfile { [weak self] result in
             switch result {
             case .success(let model):
-                DispatchQueue.main.async { self?.displayModel = model }
+                DispatchQueue.main.async {
+                    self?.displayModel = model
+                }
             case .failure(_):
-                let alertModel = AlertViewModel(title: "No profile found",
+                let alertModel = AlertViewModel(title: "User data not found",
                                                 message: "The default profile is loaded.",
                                                 button: AlertButton(text: "OK", action: nil))
                 guard let alert = self?.alertPresenter.prepare(model: alertModel) else { return }
@@ -175,7 +177,7 @@ final class ProfileViewController: UIViewController {
         let tapScreen = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
         tapScreen.cancelsTouchesInView = false
         view.addGestureRecognizer(tapScreen)
-    
+        
         let swipeScreen = UISwipeGestureRecognizer(target: self, action: #selector(hideKeyboard))
         swipeScreen.cancelsTouchesInView = false
         view.addGestureRecognizer(swipeScreen)
@@ -183,8 +185,12 @@ final class ProfileViewController: UIViewController {
     
     private func showErrorAlert() {
         let alert = UIAlertController(title: "Could not save profile", message: "Try again", preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "OK", style: .cancel)
-        let tryAgainAction = UIAlertAction(title: "Try again", style: .default) { [weak self] action in
+        let okAction = UIAlertAction(title: "OK", style: .cancel) { [weak self] _ in
+            guard let self = self else { return }
+            self.setEditing(false, animated: true)
+            self.configure(with: self.displayModel)
+        }
+        let tryAgainAction = UIAlertAction(title: "Try again", style: .default) { [weak self] _ in
             self?.saveButtonTapped()
         }
         alert.addAction(okAction)
@@ -199,16 +205,12 @@ final class ProfileViewController: UIViewController {
         present(alert, animated: true)
     }
     
-    private func saveProfile(completion: @escaping () -> Void) {
-        if savedModel != displayModel {
-            activityIndicator.startAnimating()
-            concurrencyService.saveProfile(profile: savedModel) { [weak self] error in
-                if let _ = error {
-                    self?.showErrorAlert()
-                } else {
-                    self?.activityIndicator.stopAnimating()
-                    completion()
-                }
+    private func saveProfile(_ profile: ProfileViewModel, completion: @escaping () -> Void) {
+        concurrencyService.saveProfile(profile) { [weak self] error in
+            if let _ = error {
+                self?.showErrorAlert()
+            } else {
+                completion()
             }
         }
     }
@@ -248,7 +250,7 @@ final class ProfileViewController: UIViewController {
             savedModel.name = textField.text ?? ""
             nameLabel.text = savedModel.name
         case TableViewSection.information.rawValue:
-            savedModel.information = textField.text ?? ""
+            savedModel.information = textField.text ?? "5555"
             informationLabel.text = savedModel.information
         default:
             break
@@ -260,8 +262,8 @@ final class ProfileViewController: UIViewController {
 
 extension ProfileViewController: ConfigurableViewProtocol {
     func configure(with model: ProfileViewModel) {
-        nameLabel.text = model.name
-        informationLabel.text = model.information
+        nameLabel.text = model.name != "" ? model.name : "No name"
+        informationLabel.text = model.information != "" ? model.information : "No bio specified"
         if let photo = model.photo {
             photoImageView.image = photo
         }
@@ -359,7 +361,7 @@ extension ProfileViewController {
                                              style: .plain,
                                              target: self,
                                              action: #selector(saveButtonTapped))
-
+            
             navigationItem.setLeftBarButton(cancelButton, animated: true)
             navigationItem.setRightBarButton(saveButton, animated: true)
         } else {
@@ -383,9 +385,11 @@ extension ProfileViewController {
         
         let activityIndicatorBarButton = UIBarButtonItem(customView: activityIndicator)
         navigationItem.setRightBarButton(activityIndicatorBarButton, animated: true)
+        activityIndicator.startAnimating()
         
-        saveProfile { [weak self] in
+        saveProfile(savedModel) { [weak self] in
             DispatchQueue.main.async {
+                self?.activityIndicator.stopAnimating()
                 self?.showSuccessAlert()
                 self?.setEditing(false, animated: true)
             }
@@ -396,13 +400,9 @@ extension ProfileViewController {
     private func cancelButtonTapped() {
         setEditing(false, animated: true)
         configure(with: displayModel)
-        concurrencyService.saveProfile(profile: displayModel) { [weak self] error in
+        saveProfile(displayModel) { [weak self] in
             guard let self = self else { return }
-            if let _ = error {
-                self.showErrorAlert()
-            } else {
-                self.savedModel = self.displayModel
-            }
+            DispatchQueue.main.async { self.savedModel = self.displayModel }
         }
     }
 }
@@ -416,7 +416,7 @@ extension ProfileViewController {
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        
+            
             photoImageView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 88),
             photoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             photoImageView.widthAnchor.constraint(equalToConstant: 150),
