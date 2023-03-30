@@ -1,7 +1,8 @@
 import Foundation
+import Combine
 
 protocol DataManagerProtocol: AnyObject {
-    func read(type: DataManagerType, completion: (Result<Data, DataManagerError>) -> Void)
+    func readPublisher(type: DataManagerType) -> AnyPublisher<Data, Error>
     func write(_ data: Data, as type: DataManagerType, completion: (DataManagerError?) -> Void)
 }
 
@@ -12,17 +13,22 @@ final class DataManager {
 // MARK: - DataManagerProtocol
 
 extension DataManager: DataManagerProtocol {
-    func read(type: DataManagerType, completion: (Result<Data, DataManagerError>) -> Void) {
-        guard let url = documentDirectory?.appendingPathComponent(type.fileName) else {
-            completion(.failure(.badURL))
-            return
-        }
-        do {
-            let data = try Data(contentsOf: url)
-            completion(.success(data))
-        } catch {
-            completion(.failure(.dataReadError))
-        }
+    
+    func readPublisher(type: DataManagerType) -> AnyPublisher<Data, Error> {
+        Deferred {
+            Future { promise in
+                guard let url = self.documentDirectory?.appendingPathComponent("") else {
+                    promise(.failure(DataManagerError.badURL))
+                    return
+                }
+                do {
+                    let data = try Data(contentsOf: url)
+                    promise(.success(data))
+                } catch {
+                    promise(.failure(DataManagerError.dataReadError))
+                }
+            }
+        }.eraseToAnyPublisher()
     }
     
     func write(_ data: Data, as type: DataManagerType, completion: (DataManagerError?) -> Void) {

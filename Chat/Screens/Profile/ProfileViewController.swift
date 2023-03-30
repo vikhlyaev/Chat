@@ -1,5 +1,6 @@
 import UIKit
 import PhotosUI
+import Combine
 
 final class ProfileViewController: UIViewController {
     
@@ -99,6 +100,8 @@ final class ProfileViewController: UIViewController {
         }
     }
     
+    private var profileRequest: Cancellable?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         loadProfile()
@@ -110,20 +113,24 @@ final class ProfileViewController: UIViewController {
     }
     
     private func loadProfile() {
-        concurrencyService.loadProfile { [weak self] result in
-            switch result {
-            case .success(let model):
-                DispatchQueue.main.async {
-                    self?.displayModel = model
+        profileRequest = concurrencyService
+            .loadProfilePublisher()
+            .receive(on: DispatchQueue.main)
+            .subscribe(on: DispatchQueue.global(qos: .userInitiated))
+            .sink { [ weak self ] completion in
+                switch completion {
+                case .finished:
+                    print("profile loaded")
+                case .failure(_):
+                    let alertModel = AlertViewModel(title: "User data not found",
+                                                    message: "The default profile is loaded.",
+                                                    button: AlertButton(text: "OK", action: nil))
+                    guard let alert = self?.alertPresenter.prepare(model: alertModel) else { return }
+                    self?.present(alert, animated: true)
                 }
-            case .failure(_):
-                let alertModel = AlertViewModel(title: "User data not found",
-                                                message: "The default profile is loaded.",
-                                                button: AlertButton(text: "OK", action: nil))
-                guard let alert = self?.alertPresenter.prepare(model: alertModel) else { return }
-                DispatchQueue.main.async { self?.present(alert, animated: true) }
+            } receiveValue: { model in
+                self.displayModel = model
             }
-        }
     }
     
     private func setupNavBar() {

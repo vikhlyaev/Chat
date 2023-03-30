@@ -1,8 +1,9 @@
 import UIKit
 import Dispatch
+import Combine
 
 protocol ConcurrencyServiceProtocol: AnyObject {
-    func loadProfile(completion: @escaping (Result<ProfileViewModel, Error>) -> Void)
+    func loadProfilePublisher() -> AnyPublisher<ProfileViewModel,Error>
     func saveProfile(_ profile: ProfileViewModel, completion: @escaping (Error?) -> Void)
 }
 
@@ -14,45 +15,31 @@ final class ConcurrencyService {
 // MARK: - ConcurrencyServiceProtocol
 
 extension ConcurrencyService: ConcurrencyServiceProtocol {
-    func loadProfile(completion: @escaping (Result<ProfileViewModel, Error>) -> Void) {
-        var resultProfile = ProfileViewModel()
-        
-        let loadData = DispatchWorkItem { [weak self] in
-            self?.dataManager.read(type: .plistData) { result in
-                switch result {
-                case .success(let plistData):
-                    if let profile = try? PropertyListDecoder().decode(ProfileViewModel.self, from: plistData) {
-                        resultProfile.name = profile.name
-                        resultProfile.information = profile.information
-                    } else {
-                        DispatchQueue.main.async { completion(.failure(ConcurrencyServiceError.decodingError)) }
-                    }
-                case .failure(_):
-                    DispatchQueue.main.async { completion(.failure(DataManagerError.dataReadError)) }
-                }
-            }
-        }
-        
-        let loadPhoto = DispatchWorkItem { [weak self] in
-            self?.dataManager.read(type: .photo) { result in
-                switch result {
-                case .success(let photoData):
-                    if let photo = UIImage(data: photoData) {
-                        resultProfile.photo = photo
-                    }
-                case .failure(_):
-                    resultProfile.photo = UIImage(named: "PlaceholderAvatar")
-                }
-            }
-        }
     
-        let group = DispatchGroup()
-        queue.async(group: group, execute: loadData)
-        queue.async(group: group, execute: loadPhoto)
-        group.notify(queue: .main) {
-            completion(.success(resultProfile))
-            print("Loaded profile")
-        }
+    func loadProfilePublisher() -> AnyPublisher<ProfileViewModel, Error> {
+        Deferred {
+            Future(self.loadProfile)
+        }.eraseToAnyPublisher()
+    }
+    
+    private func loadProfile(completion: @escaping (Result<ProfileViewModel, Error>) -> Void) {
+        var resultProfile = ProfileViewModel()
+
+        let loadProfileData = dataManager.readPublisher(type: .plistData)
+            .decode(type: ProfileViewModel.self, decoder: PropertyListDecoder())
+            
+        let loadProfilePhoto = dataManager.readPublisher(type: .photo)
+            .map({ UIImage(data: $0) })
+           
+        _ = Publishers.CombineLatest(loadProfileData, loadProfilePhoto)
+                .sink(receiveCompletion: { completion in
+                    print(completion)
+                }, receiveValue: { profile, photo in
+                    resultProfile = profile
+                    resultProfile.photo = photo
+                })
+        
+        completion(.success(resultProfile))
     }
     
     func saveProfile(_ profile: ProfileViewModel, completion: @escaping (Error?) -> Void) {
