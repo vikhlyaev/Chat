@@ -1,8 +1,8 @@
 import Foundation
 
 protocol DataManagerProtocol: AnyObject {
-    func read(_ type: DataType, completion: @escaping (Result<Data, DataManagerError>) -> Void)
-    func write(_ element: Data, as type: DataType, completion: @escaping (DataManagerError?) -> Void)
+    func read(type: DataManagerType, completion: (Result<Data, DataManagerError>) -> Void)
+    func write(_ data: Data, as type: DataManagerType, completion: (DataManagerError?) -> Void)
 }
 
 final class DataManager {
@@ -12,7 +12,7 @@ final class DataManager {
 // MARK: - DataManagerProtocol
 
 extension DataManager: DataManagerProtocol {
-    func read(_ type: DataType, completion: (Result<Data, DataManagerError>) -> Void) {
+    func read(type: DataManagerType, completion: (Result<Data, DataManagerError>) -> Void) {
         guard let url = documentDirectory?.appendingPathComponent(type.fileName) else {
             completion(.failure(.badURL))
             return
@@ -21,36 +21,34 @@ extension DataManager: DataManagerProtocol {
             let data = try Data(contentsOf: url)
             completion(.success(data))
         } catch {
-            completion(.failure(.readFailure))
+            completion(.failure(.dataReadError))
         }
     }
     
-    func write(_ element: Data, as type: DataType, completion: (DataManagerError?) -> Void) {
+    func write(_ data: Data, as type: DataManagerType, completion: (DataManagerError?) -> Void) {
         guard let url = documentDirectory?.appendingPathComponent(type.fileName) else {
             completion(.badURL)
             return
         }
         do {
-            try element.write(to: url, options: .atomic)
+            try data.write(to: url, options: .atomic)
+            completion(nil)
         } catch {
-            completion(.writeFailure)
+            completion(.dataWriteError)
         }
     }
 }
 
-enum DataType {
-    case name
-    case information
+enum DataManagerType {
+    case plistData
     case photo
     
     var fileName: String {
         switch self {
-        case .name:
-            return "name.txt"
-        case .information:
-            return "information.txt"
+        case .plistData:
+            return "data.plist"
         case .photo:
-            return "photo.txt"
+            return "photo.png"
         }
     }
 }
@@ -58,6 +56,6 @@ enum DataType {
 enum DataManagerError: Error {
     case badURL
     case badData
-    case writeFailure
-    case readFailure
+    case dataWriteError
+    case dataReadError
 }
