@@ -1,129 +1,87 @@
 import UIKit
 import Dispatch
 
-protocol ConcurrencyServiceProtocol {
-    func loadProfile(completion: @escaping (Result<ProfileViewModel, DataManagerError>) -> Void)
-    func saveProfile(profile: ProfileViewModel, completion: @escaping (DataManagerError?) -> Void)
+protocol ConcurrencyServiceProtocol: AnyObject {
+    func loadProfile(completion: @escaping (Result<ProfileViewModel, Error>) -> Void)
+    func saveProfile(_ profile: ProfileViewModel, completion: @escaping (Error?) -> Void)
 }
 
 final class ConcurrencyService {
-    private let queue = DispatchQueue(label: "ConcurrencyService.vikhlyaev", qos: .userInitiated)
-    private lazy var dataManager: DataManagerProtocol = DataManager()
-    
-    private func load(type: DataType, completion: @escaping (Result<Data, DataManagerError>) -> Void) {
-        queue.async { [weak self] in
-            self?.dataManager.read(type) { result in
-                completion(result)
-            }
-        }
-    }
-    
-    private func save(_ data: Data, as type: DataType, completion: @escaping (DataManagerError?) -> Void) {
-        queue.async { [weak self] in
-            self?.dataManager.write(data, as: type, completion: { error in
-                completion(error)
-            })
-        }
-    }
+    private let queue = DispatchQueue(label: "ConcurrencyService.vikhlyaev", qos: .userInitiated, attributes: .concurrent)
+    private let dataManager: DataManagerProtocol = DataManager()
 }
 
 // MARK: - ConcurrencyServiceProtocol
 
 extension ConcurrencyService: ConcurrencyServiceProtocol {
-    func loadProfile(completion: @escaping (Result<ProfileViewModel, DataManagerError>) -> Void) {
-        var name: String = "No name"
-        var information: String = "No bio specified"
-        var photo: UIImage?
+    func loadProfile(completion: @escaping (Result<ProfileViewModel, Error>) -> Void) {
+        var resultProfile = ProfileViewModel()
         
-        let loadNameItem = DispatchWorkItem { [weak self] in
-            self?.load(type: .name) { result in
+        let loadData = DispatchWorkItem { [weak self] in
+            self?.dataManager.read(type: .plistData) { result in
                 switch result {
-                case .success(let nameData):
-                    if let nameString = String(data: nameData, encoding: .utf8) {
-                        name = nameString
+                case .success(let plistData):
+                    if let profile = try? PropertyListDecoder().decode(ProfileViewModel.self, from: plistData) {
+                        resultProfile.name = profile.name
+                        resultProfile.information = profile.information
                     } else {
-                        DispatchQueue.main.async { completion(.failure(.badData)) }
+                        DispatchQueue.main.async { completion(.failure(ConcurrencyServiceError.decodingError)) }
                     }
-                case .failure(let error):
-                    DispatchQueue.main.async { completion(.failure(error)) }
+                case .failure(_):
+                    DispatchQueue.main.async { completion(.failure(DataManagerError.dataReadError)) }
                 }
             }
         }
         
-        let loadInfoItem = DispatchWorkItem { [weak self] in
-            self?.load(type: .information) { result in
-                switch result {
-                case .success(let informationData):
-                    if let informationString = String(data: informationData, encoding: .utf8) {
-                        information = informationString
-                    } else {
-                        DispatchQueue.main.async { completion(.failure(.badData)) }
-                    }
-                case .failure(let error):
-                    DispatchQueue.main.async {  completion(.failure(error)) }
-                }
-            }
-        }
-        
-        let loadPhotoItem = DispatchWorkItem { [weak self] in
-            self?.load(type: .photo) { result in
+        let loadPhoto = DispatchWorkItem { [weak self] in
+            self?.dataManager.read(type: .photo) { result in
                 switch result {
                 case .success(let photoData):
-                    if let photoImage = UIImage(data: photoData) {
-                        photo = photoImage
-                    } else {
-                        DispatchQueue.main.async { completion(.failure(.badData)) }
+                    if let photo = UIImage(data: photoData) {
+                        resultProfile.photo = photo
                     }
-                case .failure(let error):
-                    DispatchQueue.main.async { completion(.failure(error)) }
+                case .failure(_):
+                    resultProfile.photo = UIImage(named: "PlaceholderAvatar")
                 }
             }
         }
-        
+    
         let group = DispatchGroup()
-        queue.async(group: group, execute: loadNameItem)
-        queue.async(group: group, execute: loadInfoItem)
-        queue.async(group: group, execute: loadPhotoItem)
-        
+        queue.async(group: group, execute: loadData)
+        queue.async(group: group, execute: loadPhoto)
         group.notify(queue: .main) {
-            completion(.success(ProfileViewModel(name: name,
-                                                 information: information,
-                                                 photo: photo)))
+            completion(.success(resultProfile))
+            print("Loaded profile")
         }
     }
     
-    func saveProfile(profile: ProfileViewModel, completion: @escaping (DataManagerError?) -> Void) {
-        let saveName = DispatchWorkItem { [weak self] in
-            if let nameData = profile.name?.toData() {
-                self?.save(nameData, as: .name) { error in
-                    DispatchQueue.main.async { completion(error) }
-                }
-            }
-        }
-        
-        let saveInfo = DispatchWorkItem { [weak self] in
-            if let infoData = profile.information?.toData() {
-                self?.save(infoData, as: .information) { error in
-                    DispatchQueue.main.async { completion(error) }
-                }
-            }
+    func saveProfile(_ profile: ProfileViewModel, completion: @escaping (Error?) -> Void) {
+        let saveData = DispatchWorkItem { [weak self] in
+            guard let plistData = try? PropertyListEncoder().encode(profile) else { return }
+            self?.dataManager.write(plistData, as: .plistData, completion: { error in
+                DispatchQueue.main.async { completion(error) }
+            })
         }
         
         let savePhoto = DispatchWorkItem { [weak self] in
-            if let photoData = profile.photo?.pngData() {
-                self?.save(photoData, as: .photo) { error in
-                    DispatchQueue.main.async { completion(error) }
-                }
-            }
+            guard let photo = profile.photo, let photoData = photo.pngData() else { return }
+            sleep(3)
+            self?.dataManager.write(photoData, as: .photo, completion: { error in
+                DispatchQueue.main.async { completion(error) }
+            })
         }
         
         let group = DispatchGroup()
-        queue.async(group: group, execute: saveName)
-        queue.async(group: group, execute: saveInfo)
+        queue.async(group: group, execute: saveData)
         queue.async(group: group, execute: savePhoto)
-        
         group.notify(queue: .main) {
             completion(nil)
+            print("Saved profile")
         }
     }
+}
+
+enum ConcurrencyServiceError: Error {
+    case decodingError
+    case encodingError
 }
