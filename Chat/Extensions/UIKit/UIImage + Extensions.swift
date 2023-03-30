@@ -49,4 +49,9 @@ extension UIImage {
         
         return image ?? placeholder
     }
+    
+    func toPngString() -> String {
+        guard let data = pngData() else { return "" }
+        return data.base64EncodedString(options: .endLineWithLineFeed)
+    }
 }
