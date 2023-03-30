@@ -1,4 +1,5 @@
 import UIKit
+import Combine
 
 final class ConversationsListViewController: UIViewController {
     
@@ -32,7 +33,20 @@ final class ConversationsListViewController: UIViewController {
                                                       target: self,
                                                       action: #selector(settingsButtonTapped))
     
-    private lazy var profileButton = UIBarButtonItem()
+    private lazy var photoButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setBackgroundImage(UIImage.makeRandomAvatar(with: MockData.shared.user.name), for: .normal)
+        button.addTarget(self, action: #selector(profileButtonTapped), for: .touchUpInside)
+        button.layer.cornerRadius = 16
+        button.clipsToBounds = true
+        return button
+    }()
+    
+    private lazy var profileButton: UIBarButtonItem = {
+        let barButton = UIBarButtonItem()
+        barButton.customView = photoButton
+        return barButton
+    }()
     
     private lazy var conversationsTableView: UITableView = {
         let tableView = UITableView(frame: .zero)
@@ -46,6 +60,25 @@ final class ConversationsListViewController: UIViewController {
         return tableView
     }()
     
+    private var combineService = CombineService()
+    
+    private var photoUpdater: AnyCancellable?
+    
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nil, bundle: nil)
+        
+        photoUpdater = combineService.photoPublisher
+            .subscribe(on: DispatchQueue.global(qos: .userInitiated))
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] photo in
+                self?.photoButton.setBackgroundImage(photo, for: .normal)
+            }
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -57,8 +90,6 @@ final class ConversationsListViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        setupProfileButton()
         navigationController?.isNavigationBarHidden = false
     }
     
@@ -72,21 +103,6 @@ final class ConversationsListViewController: UIViewController {
         navigationItem.rightBarButtonItem = profileButton
         navigationController?.navigationBar.prefersLargeTitles = true
         title = "Chat"
-    }
-    
-    private func setupProfileButton() {
-        let button = UIButton(type: .custom)
-        button.setBackgroundImage(UIImage.makeRandomAvatar(with: MockData.shared.user.name), for: .normal)
-        button.addTarget(self, action: #selector(profileButtonTapped), for: .touchUpInside)
-        button.layer.cornerRadius = 16
-        button.clipsToBounds = true
-    
-        profileButton.customView = button
-
-        NSLayoutConstraint.activate([
-            button.widthAnchor.constraint(equalToConstant: 32),
-            button.heightAnchor.constraint(equalToConstant: 32)
-        ])
     }
     
     private func setDelegates() {
@@ -175,7 +191,10 @@ extension ConversationsListViewController {
             conversationsTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             conversationsTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             conversationsTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            conversationsTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            conversationsTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            photoButton.widthAnchor.constraint(equalToConstant: 32),
+            photoButton.heightAnchor.constraint(equalToConstant: 32)
         ])
     }
 }

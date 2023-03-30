@@ -87,7 +87,7 @@ final class ProfileViewController: UIViewController {
     
     private var imagePicker: UIImagePickerController?
     
-    private var concurrencyService: ConcurrencyServiceProtocol = ConcurrencyService()
+    private var combineService = CombineService()
     
     private var alertPresenter: AlertPresenterProtocol = AlertPresenter()
     
@@ -101,6 +101,9 @@ final class ProfileViewController: UIViewController {
     }
     
     private var profileRequest: Cancellable?
+    private var photoRequest: Cancellable?
+    private var nameTextFieldRequest: Cancellable?
+    private var infoTextFieldRequest: Cancellable?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -113,7 +116,7 @@ final class ProfileViewController: UIViewController {
     }
     
     private func loadProfile() {
-        profileRequest = concurrencyService
+        profileRequest = combineService
             .loadProfilePublisher()
             .receive(on: DispatchQueue.main)
             .subscribe(on: DispatchQueue.global(qos: .userInitiated))
@@ -176,8 +179,12 @@ final class ProfileViewController: UIViewController {
     }
     
     private func updatePhoto(_ photo: UIImage) {
-        savedModel.photo = photo
-        photoImageView.image = photo
+        combineService.updatePhoto(photo)
+        photoRequest = combineService.photoPublisher
+            .sink { [weak self] photo in
+                self?.savedModel.photo = photo
+                self?.photoImageView.image = photo
+            }
     }
     
     private func hideKeyboardByTapOnView() {
@@ -212,15 +219,6 @@ final class ProfileViewController: UIViewController {
         present(alert, animated: true)
     }
     
-    private func saveProfile(_ profile: ProfileViewModel, completion: @escaping () -> Void) {
-        concurrencyService.saveProfile(profile) { [weak self] error in
-            if let _ = error {
-                self?.showErrorAlert()
-            } else {
-                completion()
-            }
-        }
-    }
     
     @objc
     private func hideKeyboard() {
@@ -254,11 +252,17 @@ final class ProfileViewController: UIViewController {
     private func textFieldValueChanged(_ textField: UITextField) {
         switch textField.tag {
         case TableViewSection.name.rawValue:
-            savedModel.name = textField.text ?? ""
-            nameLabel.text = savedModel.name
+            nameTextFieldRequest = textField.textPublisher()
+                .handleEvents(receiveOutput: { [weak self] name in
+                    self?.savedModel.name = name ?? ""
+                })
+                .assign(to: \.text, onWeak: nameLabel)
         case TableViewSection.information.rawValue:
-            savedModel.information = textField.text ?? "5555"
-            informationLabel.text = savedModel.information
+            infoTextFieldRequest = textField.textPublisher()
+                .handleEvents(receiveOutput: { [weak self] information in
+                    self?.savedModel.information = information ?? ""
+                })
+                .assign(to: \.text, onWeak: informationLabel)
         default:
             break
         }
@@ -389,28 +393,21 @@ extension ProfileViewController {
     @objc
     private func saveButtonTapped() {
         view.endEditing(true)
-        
         let activityIndicatorBarButton = UIBarButtonItem(customView: activityIndicator)
         navigationItem.setRightBarButton(activityIndicatorBarButton, animated: true)
         activityIndicator.startAnimating()
-        
-        saveProfile(savedModel) { [weak self] in
-            DispatchQueue.main.async {
-                self?.activityIndicator.stopAnimating()
-                self?.showSuccessAlert()
-                self?.setEditing(false, animated: true)
-            }
-        }
+        combineService.saveProfile(savedModel)
+        activityIndicator.stopAnimating()
+        showSuccessAlert()
+        setEditing(false, animated: true)
     }
     
     @objc
     private func cancelButtonTapped() {
         setEditing(false, animated: true)
         configure(with: displayModel)
-        saveProfile(displayModel) { [weak self] in
-            guard let self = self else { return }
-            DispatchQueue.main.async { self.savedModel = self.displayModel }
-        }
+        combineService.saveProfile(displayModel)
+        self.savedModel = self.displayModel
     }
 }
 
