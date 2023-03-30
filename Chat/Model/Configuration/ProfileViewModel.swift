@@ -1,9 +1,14 @@
 import UIKit
 
-struct ProfileViewModel: Equatable {
-    var name: String?
-    var information: String?
+struct ProfileViewModel: Codable {
+    var name = ""
+    var information = ""
     var photo: UIImage?
+    
+    private enum CodingKeys: String, CodingKey {
+       case name
+       case information
+   }
     
     subscript(index: Int) -> String? {
         switch index {
@@ -11,9 +16,5 @@ struct ProfileViewModel: Equatable {
         case 1: return information
         default: return nil
         }
-    }
-    
-    static func ==(lhs: ProfileViewModel, rhs: ProfileViewModel) -> Bool {
-        lhs.name == rhs.name && lhs.information == rhs.information && lhs.photo == rhs.photo
     }
 }
