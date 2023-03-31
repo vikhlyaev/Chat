@@ -18,28 +18,31 @@ extension ConcurrencyService: ConcurrencyServiceProtocol {
     
     func loadProfilePublisher() -> AnyPublisher<ProfileViewModel, Error> {
         Deferred {
-            Future(self.loadProfile)
+            Future { promise in
+                var resultProfile = ProfileViewModel()
+                
+                let loadProfileData = self.dataManager.readPublisher(type: .plistData)
+                    .decode(type: ProfileViewModel.self, decoder: PropertyListDecoder())
+                    
+                let loadProfilePhoto = self.dataManager.readPublisher(type: .photo)
+                    .map({ UIImage(data: $0) })
+                   
+                _ = Publishers.CombineLatest(loadProfileData, loadProfilePhoto)
+                        .sink(receiveCompletion: { completion in
+                            switch completion {
+                            case .finished:
+                                print("profile loaded")
+                            case .failure(let error):
+                                promise(.failure(error))
+                            }
+                        }, receiveValue: { profile, photo in
+                            resultProfile = profile
+                            resultProfile.photo = photo
+                        })
+                
+                promise(.success(resultProfile))
+            }
         }.eraseToAnyPublisher()
-    }
-    
-    private func loadProfile(completion: @escaping (Result<ProfileViewModel, Error>) -> Void) {
-        var resultProfile = ProfileViewModel()
-
-        let loadProfileData = dataManager.readPublisher(type: .plistData)
-            .decode(type: ProfileViewModel.self, decoder: PropertyListDecoder())
-            
-        let loadProfilePhoto = dataManager.readPublisher(type: .photo)
-            .map({ UIImage(data: $0) })
-           
-        _ = Publishers.CombineLatest(loadProfileData, loadProfilePhoto)
-                .sink(receiveCompletion: { completion in
-                    print(completion)
-                }, receiveValue: { profile, photo in
-                    resultProfile = profile
-                    resultProfile.photo = photo
-                })
-        
-        completion(.success(resultProfile))
     }
     
     func saveProfile(_ profile: ProfileViewModel, completion: @escaping (Error?) -> Void) {
