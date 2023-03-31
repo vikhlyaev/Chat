@@ -104,22 +104,24 @@ final class ProfileViewController: UIViewController {
     
     private func loadProfile() {
         profileRequest = concurrencyService
-            .loadProfilePublisher()
+            .profilePublisher()
             .receive(on: DispatchQueue.main)
             .subscribe(on: DispatchQueue.global(qos: .userInitiated))
             .sink { [ weak self ] completion in
+                guard let self = self else { return }
                 switch completion {
                 case .finished:
                     print("profile loaded")
                 case .failure(_):
+                    self.configure(with: self.model)
                     let alertModel = AlertViewModel(title: "User data not found",
                                                     message: "The default profile is loaded.",
                                                     button: AlertButton(text: "OK", action: nil))
-                    guard let alert = self?.alertPresenter.prepare(model: alertModel) else { return }
-                    self?.present(alert, animated: true)
+                    let alert = self.alertPresenter.prepare(model: alertModel)
+                    self.present(alert, animated: true)
                 }
-            } receiveValue: { model in
-                self.model = model
+            } receiveValue: { [weak self] model in
+                self?.model = model
             }
     }
     
@@ -167,6 +169,7 @@ final class ProfileViewController: UIViewController {
     private func updatePhoto(_ photo: UIImage) {
         photoImageView.image = photo
         model.photo = photo
+        concurrencyService.photoSubject.send(photo)
     }
     
     private func hideKeyboardByTapOnView() {
@@ -199,16 +202,6 @@ final class ProfileViewController: UIViewController {
         let okAction = UIAlertAction(title: "OK", style: .cancel)
         alert.addAction(okAction)
         present(alert, animated: true)
-    }
-    
-    private func saveProfile(_ profile: ProfileViewModel, completion: @escaping () -> Void) {
-        concurrencyService.saveProfile(profile) { [weak self] error in
-            if let _ = error {
-                self?.showErrorAlert()
-            } else {
-                completion()
-            }
-        }
     }
     
     @objc
@@ -381,13 +374,11 @@ extension ProfileViewController {
         navigationItem.setRightBarButton(activityIndicatorBarButton, animated: true)
         activityIndicator.startAnimating()
         
-        saveProfile(model) { [weak self] in
-            DispatchQueue.main.async {
-                self?.activityIndicator.stopAnimating()
-                self?.showSuccessAlert()
-                self?.setEditing(false, animated: true)
-            }
-        }
+        concurrencyService.profileSubject.send(model)
+        
+        activityIndicator.stopAnimating()
+        showSuccessAlert()
+        setEditing(false, animated: true)
     }
     
     @objc
