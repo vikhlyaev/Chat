@@ -17,7 +17,7 @@ extension DataManager: DataManagerProtocol {
     func readPublisher(type: DataManagerType) -> AnyPublisher<Data, Error> {
         Deferred {
             Future { promise in
-                guard let url = self.documentDirectory?.appendingPathComponent("") else {
+                guard let url = self.documentDirectory?.appendingPathComponent(type.fileName) else {
                     promise(.failure(DataManagerError.badURL))
                     return
                 }
