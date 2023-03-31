@@ -18,16 +18,8 @@ final class ProfileViewController: UIViewController {
         }
     }
     
-    private lazy var scrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.backgroundColor = .clear
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        return scrollView
-    }()
-    
     private lazy var photoImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "PlaceholderAvatar")
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 75
@@ -87,23 +79,19 @@ final class ProfileViewController: UIViewController {
     
     private var imagePicker: UIImagePickerController?
     
-    private var combineService = CombineService()
+    private var concurrencyService: ConcurrencyServiceProtocol = ConcurrencyService()
     
     private var alertPresenter: AlertPresenterProtocol = AlertPresenter()
     
-    private var savedModel: ProfileViewModel = ProfileViewModel()
-    
-    private var displayModel: ProfileViewModel = ProfileViewModel() {
+    private var model: ProfileViewModel = ProfileViewModel() {
         didSet {
-            configure(with: displayModel)
+            configure(with: model)
             nameAndInformationTableView.reloadData()
         }
     }
     
     private var profileRequest: Cancellable?
-    private var photoRequest: Cancellable?
-    private var nameTextFieldRequest: Cancellable?
-    private var infoTextFieldRequest: Cancellable?
+    private var cancellables = Set<AnyCancellable>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -116,23 +104,25 @@ final class ProfileViewController: UIViewController {
     }
     
     private func loadProfile() {
-        profileRequest = combineService
-            .loadProfilePublisher()
+        profileRequest = concurrencyService
+            .profilePublisher()
             .receive(on: DispatchQueue.main)
             .subscribe(on: DispatchQueue.global(qos: .userInitiated))
             .sink { [ weak self ] completion in
+                guard let self = self else { return }
                 switch completion {
                 case .finished:
                     print("profile loaded")
                 case .failure(_):
+                    self.configure(with: self.model)
                     let alertModel = AlertViewModel(title: "User data not found",
                                                     message: "The default profile is loaded.",
                                                     button: AlertButton(text: "OK", action: nil))
-                    guard let alert = self?.alertPresenter.prepare(model: alertModel) else { return }
-                    self?.present(alert, animated: true)
+                    let alert = self.alertPresenter.prepare(model: alertModel)
+                    self.present(alert, animated: true)
                 }
-            } receiveValue: { model in
-                self.displayModel = model
+            } receiveValue: { [weak self] model in
+                self?.model = model
             }
     }
     
@@ -149,12 +139,11 @@ final class ProfileViewController: UIViewController {
     private func setupView() {
         view.backgroundColor = .systemBackground
         
-        view.addSubview(scrollView)
-        scrollView.addSubview(photoImageView)
-        scrollView.addSubview(addPhotoButton)
-        scrollView.addSubview(nameLabel)
-        scrollView.addSubview(informationLabel)
-        scrollView.addSubview(nameAndInformationTableView)
+        view.addSubview(photoImageView)
+        view.addSubview(addPhotoButton)
+        view.addSubview(nameLabel)
+        view.addSubview(informationLabel)
+        view.addSubview(nameAndInformationTableView)
     }
     
     private func takePhoto() {
@@ -179,12 +168,9 @@ final class ProfileViewController: UIViewController {
     }
     
     private func updatePhoto(_ photo: UIImage) {
-        combineService.updatePhoto(photo)
-        photoRequest = combineService.photoPublisher
-            .sink { [weak self] photo in
-                self?.savedModel.photo = photo
-                self?.photoImageView.image = photo
-            }
+        photoImageView.image = photo
+        model.photo = photo
+        concurrencyService.photoSubject.send(photo)
     }
     
     private func hideKeyboardByTapOnView() {
@@ -202,7 +188,7 @@ final class ProfileViewController: UIViewController {
         let okAction = UIAlertAction(title: "OK", style: .cancel) { [weak self] _ in
             guard let self = self else { return }
             self.setEditing(false, animated: true)
-            self.configure(with: self.displayModel)
+            self.configure(with: self.model)
         }
         let tryAgainAction = UIAlertAction(title: "Try again", style: .default) { [weak self] _ in
             self?.saveButtonTapped()
@@ -218,7 +204,6 @@ final class ProfileViewController: UIViewController {
         alert.addAction(okAction)
         present(alert, animated: true)
     }
-    
     
     @objc
     private func hideKeyboard() {
@@ -252,17 +237,15 @@ final class ProfileViewController: UIViewController {
     private func textFieldValueChanged(_ textField: UITextField) {
         switch textField.tag {
         case TableViewSection.name.rawValue:
-            nameTextFieldRequest = textField.textPublisher()
-                .handleEvents(receiveOutput: { [weak self] name in
-                    self?.savedModel.name = name ?? ""
-                })
+            textField.textPublisher()
                 .assign(to: \.text, onWeak: nameLabel)
+                .store(in: &cancellables)
+            model.name = textField.text
         case TableViewSection.information.rawValue:
-            infoTextFieldRequest = textField.textPublisher()
-                .handleEvents(receiveOutput: { [weak self] information in
-                    self?.savedModel.information = information ?? ""
-                })
+            textField.textPublisher()
                 .assign(to: \.text, onWeak: informationLabel)
+                .store(in: &cancellables)
+            model.information = textField.text
         default:
             break
         }
@@ -273,11 +256,9 @@ final class ProfileViewController: UIViewController {
 
 extension ProfileViewController: ConfigurableViewProtocol {
     func configure(with model: ProfileViewModel) {
-        nameLabel.text = model.name != "" ? model.name : "No name"
-        informationLabel.text = model.information != "" ? model.information : "No bio specified"
-        if let photo = model.photo {
-            photoImageView.image = photo
-        }
+        nameLabel.text = model.name != nil ? model.name : "No name"
+        informationLabel.text = model.information != nil ? model.information : "No bio specified"
+        photoImageView.image = model.photo != nil ? model.photo : UIImage(named: "PlaceholderAvatar")
     }
 }
 
@@ -334,7 +315,7 @@ extension ProfileViewController: UITableViewDataSource {
         }
         cell.textField.delegate = self
         cell.textField.tag = indexPath.row
-        cell.configure(title: TableViewSection.allCases[indexPath.row].title, value: displayModel[indexPath.row])
+        cell.configure(title: TableViewSection.allCases[indexPath.row].title, value: model[indexPath.row])
         return cell
     }
 }
@@ -393,10 +374,13 @@ extension ProfileViewController {
     @objc
     private func saveButtonTapped() {
         view.endEditing(true)
+        
         let activityIndicatorBarButton = UIBarButtonItem(customView: activityIndicator)
         navigationItem.setRightBarButton(activityIndicatorBarButton, animated: true)
         activityIndicator.startAnimating()
-        combineService.saveProfile(savedModel)
+        
+        concurrencyService.profileSubject.send(model)
+        
         activityIndicator.stopAnimating()
         showSuccessAlert()
         setEditing(false, animated: true)
@@ -405,9 +389,7 @@ extension ProfileViewController {
     @objc
     private func cancelButtonTapped() {
         setEditing(false, animated: true)
-        configure(with: displayModel)
-        combineService.saveProfile(displayModel)
-        self.savedModel = self.displayModel
+        configure(with: model)
     }
 }
 
@@ -416,12 +398,7 @@ extension ProfileViewController {
 extension ProfileViewController {
     private func setConstraints() {
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
-            photoImageView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 88),
+            photoImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 88),
             photoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             photoImageView.widthAnchor.constraint(equalToConstant: 150),
             photoImageView.heightAnchor.constraint(equalToConstant: 150),
@@ -436,7 +413,6 @@ extension ProfileViewController {
             informationLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 10),
             informationLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             informationLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            informationLabel.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: -16),
             
             nameAndInformationTableView.topAnchor.constraint(equalTo: addPhotoButton.bottomAnchor, constant: 24),
             nameAndInformationTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),

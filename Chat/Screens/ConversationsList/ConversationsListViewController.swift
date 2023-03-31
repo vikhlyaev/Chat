@@ -33,9 +33,9 @@ final class ConversationsListViewController: UIViewController {
                                                       target: self,
                                                       action: #selector(settingsButtonTapped))
     
-    private lazy var photoButton: UIButton = {
+    private lazy var profileViewButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.setBackgroundImage(UIImage.makeRandomAvatar(with: MockData.shared.user.name), for: .normal)
+        button.setBackgroundImage(UIImage(named: "PlaceholderAvatar"), for: .normal)
         button.addTarget(self, action: #selector(profileButtonTapped), for: .touchUpInside)
         button.layer.cornerRadius = 16
         button.clipsToBounds = true
@@ -44,7 +44,7 @@ final class ConversationsListViewController: UIViewController {
     
     private lazy var profileButton: UIBarButtonItem = {
         let barButton = UIBarButtonItem()
-        barButton.customView = photoButton
+        barButton.customView = profileViewButton
         return barButton
     }()
     
@@ -60,28 +60,12 @@ final class ConversationsListViewController: UIViewController {
         return tableView
     }()
     
-    private var combineService = CombineService()
+    private lazy var concurrencyService: ConcurrencyServiceProtocol = ConcurrencyService()
     
-    private var photoUpdater: AnyCancellable?
-    
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nil, bundle: nil)
-        
-        photoUpdater = combineService.photoPublisher
-            .subscribe(on: DispatchQueue.global(qos: .userInitiated))
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] photo in
-                self?.photoButton.setBackgroundImage(photo, for: .normal)
-            }
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    private var cancellable: Cancellable?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupNavBar()
         setupView()
         setConstraints()
@@ -96,6 +80,14 @@ final class ConversationsListViewController: UIViewController {
     private func setupView() {
         view.backgroundColor = .systemBackground
         view.addSubview(conversationsTableView)
+        
+         cancellable = concurrencyService.photoSubject
+            .sink { completion in
+                print("photo loaded")
+            } receiveValue: { [weak self] image in
+                self?.profileViewButton.setBackgroundImage(image, for: .normal)
+                print("receive image")
+            }
     }
     
     private func setupNavBar() {
@@ -188,13 +180,13 @@ extension ConversationsListViewController: UITableViewDataSource {
 extension ConversationsListViewController {
     private func setConstraints() {
         NSLayoutConstraint.activate([
+            profileViewButton.widthAnchor.constraint(equalToConstant: 32),
+            profileViewButton.heightAnchor.constraint(equalToConstant: 32),
+            
             conversationsTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             conversationsTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             conversationsTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            conversationsTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
-            photoButton.widthAnchor.constraint(equalToConstant: 32),
-            photoButton.heightAnchor.constraint(equalToConstant: 32)
+            conversationsTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
 }

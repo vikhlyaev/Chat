@@ -1,8 +1,8 @@
 import UIKit
 
 struct ProfileViewModel: Codable {
-    var name = ""
-    var information = ""
+    var name: String?
+    var information: String?
     var photo: UIImage?
     
     private enum CodingKeys: String, CodingKey {
