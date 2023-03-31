@@ -1,4 +1,5 @@
 import UIKit
+import Combine
 
 final class ConversationsListViewController: UIViewController {
     
@@ -32,7 +33,20 @@ final class ConversationsListViewController: UIViewController {
                                                       target: self,
                                                       action: #selector(settingsButtonTapped))
     
-    private lazy var profileButton = UIBarButtonItem()
+    private lazy var profileViewButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setBackgroundImage(UIImage(named: "PlaceholderAvatar"), for: .normal)
+        button.addTarget(self, action: #selector(profileButtonTapped), for: .touchUpInside)
+        button.layer.cornerRadius = 16
+        button.clipsToBounds = true
+        return button
+    }()
+    
+    private lazy var profileButton: UIBarButtonItem = {
+        let barButton = UIBarButtonItem()
+        barButton.customView = profileViewButton
+        return barButton
+    }()
     
     private lazy var conversationsTableView: UITableView = {
         let tableView = UITableView(frame: .zero)
@@ -46,9 +60,12 @@ final class ConversationsListViewController: UIViewController {
         return tableView
     }()
     
+    private lazy var concurrencyService: ConcurrencyServiceProtocol = ConcurrencyService()
+    
+    private var cancellable: Cancellable?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupNavBar()
         setupView()
         setConstraints()
@@ -57,14 +74,20 @@ final class ConversationsListViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        setupProfileButton()
         navigationController?.isNavigationBarHidden = false
     }
     
     private func setupView() {
         view.backgroundColor = .systemBackground
         view.addSubview(conversationsTableView)
+        
+         cancellable = concurrencyService.photoSubject
+            .sink { completion in
+                print("photo loaded")
+            } receiveValue: { [weak self] image in
+                self?.profileViewButton.setBackgroundImage(image, for: .normal)
+                print("receive image")
+            }
     }
     
     private func setupNavBar() {
@@ -72,21 +95,6 @@ final class ConversationsListViewController: UIViewController {
         navigationItem.rightBarButtonItem = profileButton
         navigationController?.navigationBar.prefersLargeTitles = true
         title = "Chat"
-    }
-    
-    private func setupProfileButton() {
-        let button = UIButton(type: .custom)
-        button.setBackgroundImage(UIImage.makeRandomAvatar(with: MockData.shared.user.name), for: .normal)
-        button.addTarget(self, action: #selector(profileButtonTapped), for: .touchUpInside)
-        button.layer.cornerRadius = 16
-        button.clipsToBounds = true
-    
-        profileButton.customView = button
-
-        NSLayoutConstraint.activate([
-            button.widthAnchor.constraint(equalToConstant: 32),
-            button.heightAnchor.constraint(equalToConstant: 32)
-        ])
     }
     
     private func setDelegates() {
@@ -172,6 +180,9 @@ extension ConversationsListViewController: UITableViewDataSource {
 extension ConversationsListViewController {
     private func setConstraints() {
         NSLayoutConstraint.activate([
+            profileViewButton.widthAnchor.constraint(equalToConstant: 32),
+            profileViewButton.heightAnchor.constraint(equalToConstant: 32),
+            
             conversationsTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             conversationsTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             conversationsTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
