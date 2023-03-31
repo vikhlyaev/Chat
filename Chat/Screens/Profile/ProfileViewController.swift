@@ -91,6 +91,7 @@ final class ProfileViewController: UIViewController {
     }
     
     private var profileRequest: Cancellable?
+    private var cancellables = Set<AnyCancellable>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -236,11 +237,15 @@ final class ProfileViewController: UIViewController {
     private func textFieldValueChanged(_ textField: UITextField) {
         switch textField.tag {
         case TableViewSection.name.rawValue:
+            textField.textPublisher()
+                .assign(to: \.text, onWeak: nameLabel)
+                .store(in: &cancellables)
             model.name = textField.text
-            nameLabel.text = model.name
         case TableViewSection.information.rawValue:
+            textField.textPublisher()
+                .assign(to: \.text, onWeak: informationLabel)
+                .store(in: &cancellables)
             model.information = textField.text
-            informationLabel.text = model.information
         default:
             break
         }
