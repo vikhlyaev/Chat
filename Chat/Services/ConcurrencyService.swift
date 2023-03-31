@@ -3,28 +3,84 @@ import Dispatch
 import Combine
 
 protocol ConcurrencyServiceProtocol: AnyObject {
-    func loadProfilePublisher() -> AnyPublisher<ProfileViewModel,Error>
-    func saveProfile(_ profile: ProfileViewModel, completion: @escaping (Error?) -> Void)
+    var profileSubject: PassthroughSubject<ProfileViewModel, Error> { get set }
+    var photoSubject: CurrentValueSubject<UIImage?, Error> { get set }
+    func profilePublisher() -> AnyPublisher<ProfileViewModel, Error>
 }
 
 final class ConcurrencyService {
-    private let queue = DispatchQueue(label: "ConcurrencyService.vikhlyaev", qos: .userInitiated, attributes: .concurrent)
-    private let dataManager: DataManagerProtocol = DataManager()
+    private let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+    private var cancellables = Set<AnyCancellable>()
+    
+    var profileSubject = PassthroughSubject<ProfileViewModel, Error>()
+    var photoSubject = CurrentValueSubject<UIImage?, Error>(UIImage(named: "PlaceholderAvatar"))
+    
+    init() {
+        profilePublisher()
+            .sink { completion in
+                print(completion)
+            } receiveValue: { profile in
+                self.profileSubject.send(profile)
+                self.photoSubject.send(profile.photo)
+            }
+            .store(in: &cancellables)
+        
+        profileSubject
+            .encode(encoder: PropertyListEncoder())
+            .subscribe(on: DispatchQueue.main)
+            .receive(on: DispatchQueue.global(qos: .utility))
+            .sink { completion in
+                print("profile saved")
+            } receiveValue: { [weak self] profileData in
+                guard let url = self?.documentDirectory?.appendingPathComponent(DataType.plistData.fileName) else { return }
+                try? profileData.write(to: url)
+            }
+            .store(in: &cancellables)
+        
+        photoSubject
+            .map({ $0?.pngData() ?? Data() })
+            .subscribe(on: DispatchQueue.main)
+            .receive(on: DispatchQueue.global(qos: .utility))
+            .sink(receiveCompletion: { completion in
+                print("photo saved")
+            }, receiveValue: { [weak self] photo in
+                guard let url = self?.documentDirectory?.appendingPathComponent(DataType.photo.fileName) else { return }
+                try? photo.write(to: url)
+            })
+            .store(in: &cancellables)
+    }
+
 }
 
 // MARK: - ConcurrencyServiceProtocol
 
 extension ConcurrencyService: ConcurrencyServiceProtocol {
+    private func readPublisher(type: DataType) -> AnyPublisher<Data, Error> {
+        Deferred {
+            Future { promise in
+                guard let url = self.documentDirectory?.appendingPathComponent(type.fileName) else {
+                    promise(.failure(ConcurrencyServiceError.badUrl))
+                    return
+                }
+                do {
+                    let data = try Data(contentsOf: url)
+                    promise(.success(data))
+                } catch {
+                    promise(.failure(ConcurrencyServiceError.dataReadError))
+                }
+            }
+        }.eraseToAnyPublisher()
+    }
     
-    func loadProfilePublisher() -> AnyPublisher<ProfileViewModel, Error> {
+    func profilePublisher() -> AnyPublisher<ProfileViewModel, Error> {
         Deferred {
             Future { promise in
                 var resultProfile = ProfileViewModel()
                 
-                let loadProfileData = self.dataManager.readPublisher(type: .plistData)
+                let loadProfileData = self.readPublisher(type: .plistData)
                     .decode(type: ProfileViewModel.self, decoder: PropertyListDecoder())
                     
-                let loadProfilePhoto = self.dataManager.readPublisher(type: .photo)
+                let loadProfilePhoto = self.readPublisher(type: .photo)
                     .map({ UIImage(data: $0) })
                    
                 _ = Publishers.CombineLatest(loadProfileData, loadProfilePhoto)
@@ -35,43 +91,35 @@ extension ConcurrencyService: ConcurrencyServiceProtocol {
                             case .failure(let error):
                                 promise(.failure(error))
                             }
-                        }, receiveValue: { profile, photo in
+                        }, receiveValue: { [weak self] profile, photo in
                             resultProfile = profile
                             resultProfile.photo = photo
+                            self?.photoSubject.send(photo)
                         })
                 
                 promise(.success(resultProfile))
             }
         }.eraseToAnyPublisher()
     }
-    
-    func saveProfile(_ profile: ProfileViewModel, completion: @escaping (Error?) -> Void) {
-        let saveData = DispatchWorkItem { [weak self] in
-            guard let plistData = try? PropertyListEncoder().encode(profile) else { return }
-            self?.dataManager.write(plistData, as: .plistData, completion: { error in
-                DispatchQueue.main.async { completion(error) }
-            })
-        }
-        
-        let savePhoto = DispatchWorkItem { [weak self] in
-            guard let photo = profile.photo, let photoData = photo.pngData() else { return }
-            sleep(3)
-            self?.dataManager.write(photoData, as: .photo, completion: { error in
-                DispatchQueue.main.async { completion(error) }
-            })
-        }
-        
-        let group = DispatchGroup()
-        queue.async(group: group, execute: saveData)
-        queue.async(group: group, execute: savePhoto)
-        group.notify(queue: .main) {
-            completion(nil)
-            print("Saved profile")
-        }
-    }
 }
 
 enum ConcurrencyServiceError: Error {
     case decodingError
     case encodingError
+    case badUrl
+    case dataReadError
+}
+
+enum DataType {
+    case plistData
+    case photo
+    
+    var fileName: String {
+        switch self {
+        case .plistData:
+            return "data.plist"
+        case .photo:
+            return "photo.png"
+        }
+    }
 }
