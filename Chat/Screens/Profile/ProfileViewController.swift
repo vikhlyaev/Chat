@@ -113,7 +113,7 @@ final class ProfileViewController: UIViewController {
                 switch completion {
                 case .finished:
                     print("profile loaded")
-                case .failure(_):
+                case .failure:
                     self.configure(with: self.model)
                     let alertModel = AlertViewModel(title: "User data not found",
                                                     message: "The default profile is loaded.",
@@ -151,7 +151,7 @@ final class ProfileViewController: UIViewController {
             chooseFromGallery()
             return
         }
-        imagePicker =  UIImagePickerController()
+        imagePicker = UIImagePickerController()
         guard let imagePicker = imagePicker else { return }
         imagePicker.delegate = self
         imagePicker.sourceType = .camera
@@ -269,7 +269,7 @@ extension ProfileViewController: PHPickerViewControllerDelegate {
         picker.dismiss(animated: true)
         guard let itemProvider = results.first?.itemProvider,
               itemProvider.canLoadObject(ofClass: UIImage.self) else { return }
-        itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
+        itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, _ in
             if let image = image as? UIImage {
                 DispatchQueue.main.async { [weak self] in
                     self?.updatePhoto(image)
@@ -282,7 +282,7 @@ extension ProfileViewController: PHPickerViewControllerDelegate {
 // MARK: - UIImagePickerControllerDelegate
 
 extension ProfileViewController: UIImagePickerControllerDelegate {
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         guard let imagePicker = imagePicker,
               let image = info[.originalImage] as? UIImage else { return }
         imagePicker.dismiss(animated: true, completion: nil)

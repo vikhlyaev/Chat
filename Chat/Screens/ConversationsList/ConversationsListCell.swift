@@ -36,7 +36,7 @@ final class ConversationsListCell: UITableViewCell {
     }()
     
     private lazy var nameLabel: UILabel = {
-        let label =  UILabel()
+        let label = UILabel()
         label.font = .systemFont(ofSize: 17, weight: .bold)
         label.numberOfLines = 1
         label.adjustsFontSizeToFitWidth = false
@@ -46,7 +46,7 @@ final class ConversationsListCell: UITableViewCell {
     }()
     
     private lazy var lastMessageLabel: UILabel = {
-        let label =  UILabel()
+        let label = UILabel()
         label.font = .systemFont(ofSize: 15)
         label.alpha = 0.6
         label.numberOfLines = 2
@@ -57,7 +57,7 @@ final class ConversationsListCell: UITableViewCell {
     }()
     
     private lazy var dateAndTimeLabel: UILabel = {
-        let label =  UILabel()
+        let label = UILabel()
         label.font = .systemFont(ofSize: 15)
         label.textColor = .label
         label.alpha = 0.3
@@ -113,7 +113,7 @@ final class ConversationsListCell: UITableViewCell {
             onlineView.topAnchor.constraint(equalTo: photoView.topAnchor),
             onlineView.trailingAnchor.constraint(equalTo: photoView.trailingAnchor),
             onlineView.widthAnchor.constraint(equalToConstant: 16),
-            onlineView.heightAnchor.constraint(equalToConstant: 16),
+            onlineView.heightAnchor.constraint(equalToConstant: 16)
         ])
     }
     
@@ -123,7 +123,7 @@ final class ConversationsListCell: UITableViewCell {
             onlineView.topAnchor.constraint(equalTo: photoView.topAnchor),
             onlineView.trailingAnchor.constraint(equalTo: photoView.trailingAnchor),
             onlineView.widthAnchor.constraint(equalToConstant: 16),
-            onlineView.heightAnchor.constraint(equalToConstant: 16),
+            onlineView.heightAnchor.constraint(equalToConstant: 16)
         ])
     }
     

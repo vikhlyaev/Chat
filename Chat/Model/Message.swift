@@ -14,4 +14,3 @@ enum MessageType: CaseIterable {
 protocol DayCategorizable {
     var date: Date { get }
 }
-

@@ -99,7 +99,7 @@ extension SettingsViewController {
             settingsTableView.topAnchor.constraint(equalTo: view.topAnchor),
             settingsTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             settingsTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            settingsTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            settingsTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
 }

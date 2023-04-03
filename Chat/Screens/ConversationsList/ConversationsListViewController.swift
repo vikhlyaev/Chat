@@ -82,7 +82,7 @@ final class ConversationsListViewController: UIViewController {
         view.addSubview(conversationsTableView)
         
          cancellable = concurrencyService.photoSubject
-            .sink { completion in
+            .sink { _ in
                 print("photo loaded")
             } receiveValue: { [weak self] image in
                 self?.profileViewButton.setBackgroundImage(image, for: .normal)
@@ -190,4 +190,3 @@ extension ConversationsListViewController {
         ])
     }
 }
-

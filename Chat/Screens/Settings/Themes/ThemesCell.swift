@@ -67,7 +67,7 @@ extension ThemesCell {
             themeButtonsStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
             themeButtonsStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             themeButtonsStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            themeButtonsStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24),
+            themeButtonsStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24)
         ])
     }
 }

@@ -50,7 +50,7 @@ extension ProfileEditCell {
             
             textField.leadingAnchor.constraint(equalTo: titleLabel.trailingAnchor, constant: 8),
             textField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            textField.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            textField.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
 }

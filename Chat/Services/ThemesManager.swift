@@ -19,4 +19,3 @@ extension ThemesManager: ThemesManagerProtocol {
         UIApplication.shared.windows.first?.overrideUserInterfaceStyle = theme
     }
 }
-

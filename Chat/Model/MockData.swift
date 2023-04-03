@@ -37,7 +37,7 @@ final class MockData {
         User(name: "Shemika Farrell", information: "Economist", withPhotoString: "3"),
         User(name: "Larae Jones", information: "Lawyer", withPhoto: nil),
         User(name: "Elza Hatfield", information: "iOS Developer", withPhotoString: "4"),
-        User(name: "Johnie Espinoza", information: "Marketing Manager", withPhoto: nil),
+        User(name: "Johnie Espinoza", information: "Marketing Manager", withPhoto: nil)
     ]
     
     var users: [User] {
@@ -64,7 +64,7 @@ final class MockData {
                                    .init(text: "And I need to go on and on, and on, and on",
                                          date: Date("04.02.2023 22:01"),
                                          type: .received),
-                                   .init(text: "We are the champions, my friends We are the champions, my friends We are the champions, my friends We are the champions, my friends",
+                                   .init(text: "We are the champions, my friends We are the champions, my friends We are the champions, my friends",
                                          date: Date("04.02.2023 21:52"),
                                          type: .sent),
                                    .init(text: "And we'll keep on fighting till the end",
@@ -87,7 +87,7 @@ final class MockData {
                                          type: .sent),
                                    .init(text: "I've paid my dues, time after time",
                                          date: Date("29.12.2022 22:18"),
-                                         type: .sent),
+                                         type: .sent)
                 ].reversed()
             }
             if index == 1 {

@@ -6,7 +6,10 @@ extension UIImage {
         let initials = name.split(separator: " ").compactMap { String($0).first }.map { String($0) }.prefix(2).joined()
         let placeholder = UIImage(named: "Placeholder") ?? UIImage()
         let gradient = CAGradientLayer()
-        let defaultColorsGradient = [UIColor(red: 0.95, green: 0.62, blue: 0.71, alpha: 1.00).cgColor,                                                         UIColor(red: 0.93, green: 0.48, blue: 0.58, alpha: 1.00).cgColor]
+        let defaultColorsGradient = [
+            UIColor(red: 0.95, green: 0.62, blue: 0.71, alpha: 1.00).cgColor,
+            UIColor(red: 0.93, green: 0.48, blue: 0.58, alpha: 1.00).cgColor
+        ]
         let colors = [[UIColor(red: 0.21, green: 0.82, blue: 0.86, alpha: 1.00).cgColor,
                        UIColor(red: 0.36, green: 0.53, blue: 0.90, alpha: 1.00).cgColor],
                       [UIColor(red: 0.27, green: 0.63, blue: 0.55, alpha: 1.00).cgColor,

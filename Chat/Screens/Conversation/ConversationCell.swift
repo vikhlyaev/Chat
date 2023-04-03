@@ -63,7 +63,9 @@ final class ConversationCell: UITableViewCell {
             bubbleImage = image
         }
         
-        bubbleImageView.image = bubbleImage.resizableImage(withCapInsets: UIEdgeInsets(top: 17, left: 21, bottom: 17, right: 21), resizingMode: .stretch).withRenderingMode(.alwaysTemplate)
+        bubbleImageView.image = bubbleImage.resizableImage(withCapInsets: UIEdgeInsets(top: 17, left: 21,
+                                                                                       bottom: 17, right: 21),
+                                                           resizingMode: .stretch).withRenderingMode(.alwaysTemplate)
     }
     
     private func setBubbleColor(type: MessageType) {
@@ -141,7 +143,7 @@ extension ConversationCell {
             messageLabel.topAnchor.constraint(equalTo: messageView.topAnchor, constant: 6),
             messageLabel.leadingAnchor.constraint(equalTo: messageView.leadingAnchor, constant: 12),
             messageLabel.trailingAnchor.constraint(equalTo: timeLabel.leadingAnchor, constant: -4),
-            messageLabel.bottomAnchor.constraint(equalTo: messageView.bottomAnchor, constant: -6),
+            messageLabel.bottomAnchor.constraint(equalTo: messageView.bottomAnchor, constant: -6)
         ])
     }
 }

@@ -103,7 +103,7 @@ extension CustomNavBar {
             bottomBorder.bottomAnchor.constraint(equalTo: bottomAnchor),
             bottomBorder.leadingAnchor.constraint(equalTo: leadingAnchor),
             bottomBorder.trailingAnchor.constraint(equalTo: trailingAnchor),
-            bottomBorder.heightAnchor.constraint(equalToConstant: 1),
+            bottomBorder.heightAnchor.constraint(equalToConstant: 1)
         ])
     }
 }

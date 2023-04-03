@@ -16,7 +16,7 @@ final class ConversationViewController: UIViewController {
     }()
     
     private lazy var wrapperView: UIView = {
-        let view =  UIView()
+        let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()

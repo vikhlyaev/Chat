@@ -5,11 +5,11 @@ extension Array where Element: DayCategorizable {
         var result: [Date: [Element]] = [:]
         let calendar = Calendar.current
         forEach { item in
-            let i = calendar.startOfDay(for: item.date)
-            if result.keys.contains(i) {
-                result[i]?.append(item)
+            let startOfDay = calendar.startOfDay(for: item.date)
+            if result.keys.contains(startOfDay) {
+                result[startOfDay]?.append(item)
             } else {
-                result[i] = [item]
+                result[startOfDay] = [item]
             }
         }
         return result
