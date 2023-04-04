@@ -2,7 +2,7 @@ import Foundation
 
 struct Message: DayCategorizable {
     let text: String
-    var date: Date
+    let date: Date
     let type: MessageType
 }
 
