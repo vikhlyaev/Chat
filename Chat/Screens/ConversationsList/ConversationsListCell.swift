@@ -67,7 +67,6 @@ final class ConversationsListCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
         setupView()
         setConstraints()
     }
@@ -78,7 +77,6 @@ final class ConversationsListCell: UITableViewCell {
     
     private func setupView() {
         backgroundColor = .clear
-        
         contentView.addSubview(photoView)
         photoView.addSubview(photoImageView)
         contentView.addSubview(wrapperView)
@@ -105,7 +103,7 @@ extension ConversationsListCell: ConfigurableViewProtocol {
         nameLabel.text = model.name
         photoImageView.image = model.photo
         dateAndTimeLabel.text = model.date?.toString()
-        
+
         if let message = model.message {
             lastMessageLabel.text = message
         } else {
