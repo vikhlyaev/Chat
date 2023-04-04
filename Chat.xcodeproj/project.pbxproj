@@ -26,6 +26,7 @@
 		0A4D605529DB3EAA00585535 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF3178F29A3C1BB005417A5 /* ProfileViewController.swift */; };
 		0A63C5D829A8F6BD0000173B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A63C5D729A8F6BD0000173B /* User.swift */; };
 		0A63C5DF29AA17710000173B /* State + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A63C5DE29AA17700000173B /* State + Extensions.swift */; };
+		0A714C0329DB4B7A007D76C5 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A714C0229DB4B7A007D76C5 /* TabBarController.swift */; };
 		0A9F45B129D74FF400BB7A4A /* UITextField + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9F45B029D74FF400BB7A4A /* UITextField + Extensions.swift */; };
 		0A9F45B329D750B000BB7A4A /* Publisher + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9F45B229D750B000BB7A4A /* Publisher + Extensions.swift */; };
 		0AA5CE6329A7867400C4BBE4 /* Logger + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA5CE6229A7867400C4BBE4 /* Logger + Extensions.swift */; };
@@ -67,6 +68,7 @@
 		0A41D71A29C97FE600F7987D /* ProfileEditCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditCell.swift; sourceTree = "<group>"; };
 		0A63C5D729A8F6BD0000173B /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		0A63C5DE29AA17700000173B /* State + Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "State + Extensions.swift"; sourceTree = "<group>"; };
+		0A714C0229DB4B7A007D76C5 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		0A9F45B029D74FF400BB7A4A /* UITextField + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField + Extensions.swift"; sourceTree = "<group>"; };
 		0A9F45B229D750B000BB7A4A /* Publisher + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher + Extensions.swift"; sourceTree = "<group>"; };
 		0AA5CE6229A7867400C4BBE4 /* Logger + Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Logger + Extensions.swift"; sourceTree = "<group>"; };
@@ -278,6 +280,7 @@
 				0A03CD6E29B99BB300B9CC8E /* Conversation */,
 				0A63C5DA29A900D50000173B /* ConversationsList */,
 				0A63C5D929A900CD0000173B /* Profile */,
+				0A714C0229DB4B7A007D76C5 /* TabBarController.swift */,
 			);
 			path = Screens;
 			sourceTree = "<group>";
@@ -454,6 +457,7 @@
 				0A03CD5F29B988EE00B9CC8E /* Date + Extensions.swift in Sources */,
 				0AB6B5C629C1EC6A00361A2C /* ThemesButton.swift in Sources */,
 				0A3D726229C9CB9A002774AE /* ConcurrencyService.swift in Sources */,
+				0A714C0329DB4B7A007D76C5 /* TabBarController.swift in Sources */,
 				0A03CD7029B99BBE00B9CC8E /* ConversationViewController.swift in Sources */,
 				0A03CD7629B9DA0C00B9CC8E /* Array + Extensions.swift in Sources */,
 				0AB6B5C429C1EC3E00361A2C /* ThemesCellDelegate.swift in Sources */,
