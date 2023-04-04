@@ -38,7 +38,7 @@ final class CustomNavBar: UIView {
     
     private lazy var bottomBorder: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemGray4
+        view.backgroundColor = .separator
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -103,7 +103,7 @@ extension CustomNavBar {
             bottomBorder.bottomAnchor.constraint(equalTo: bottomAnchor),
             bottomBorder.leadingAnchor.constraint(equalTo: leadingAnchor),
             bottomBorder.trailingAnchor.constraint(equalTo: trailingAnchor),
-            bottomBorder.heightAnchor.constraint(equalToConstant: 1)
+            bottomBorder.heightAnchor.constraint(equalToConstant: 0.5)
         ])
     }
 }

@@ -30,7 +30,7 @@ final class ConversationViewController: UIViewController {
         textView.textContainerInset = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 36)
         textView.layer.cornerRadius = 18
         textView.layer.borderWidth = 1
-        textView.layer.borderColor = UIColor.systemGray.cgColor
+        textView.layer.borderColor = UIColor.separator.cgColor
         textView.translatesAutoresizingMaskIntoConstraints = false
         return textView
     }()
