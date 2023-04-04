@@ -19,16 +19,6 @@ final class ConversationsListCell: UITableViewCell {
         return imageView
     }()
     
-    private lazy var onlineView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .appGreen
-        view.layer.borderWidth = 2
-        view.layer.borderColor = UIColor.white.cgColor
-        view.layer.cornerRadius = 8
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
     private lazy var wrapperView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -76,13 +66,6 @@ final class ConversationsListCell: UITableViewCell {
         return imageView
     }()
     
-    lazy var customSeparator: UIView = {
-        let view = UIView()
-        view.backgroundColor = .separator
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -99,32 +82,11 @@ final class ConversationsListCell: UITableViewCell {
         
         contentView.addSubview(photoView)
         photoView.addSubview(photoImageView)
-        contentView.addSubview(customSeparator)
         contentView.addSubview(wrapperView)
         wrapperView.addSubview(nameLabel)
         wrapperView.addSubview(dateAndTimeLabel)
         wrapperView.addSubview(lastMessageLabel)
         wrapperView.addSubview(disclosureImageView)
-    }
-    
-    private func addOnlineBadge() {
-        photoView.addSubview(onlineView)
-        NSLayoutConstraint.activate([
-            onlineView.topAnchor.constraint(equalTo: photoView.topAnchor),
-            onlineView.trailingAnchor.constraint(equalTo: photoView.trailingAnchor),
-            onlineView.widthAnchor.constraint(equalToConstant: 16),
-            onlineView.heightAnchor.constraint(equalToConstant: 16)
-        ])
-    }
-    
-    private func removeOnlineBadge() {
-        onlineView.removeFromSuperview()
-        NSLayoutConstraint.deactivate([
-            onlineView.topAnchor.constraint(equalTo: photoView.topAnchor),
-            onlineView.trailingAnchor.constraint(equalTo: photoView.trailingAnchor),
-            onlineView.widthAnchor.constraint(equalToConstant: 16),
-            onlineView.heightAnchor.constraint(equalToConstant: 16)
-        ])
     }
     
     func resetCell() {
@@ -134,7 +96,6 @@ final class ConversationsListCell: UITableViewCell {
         lastMessageLabel.text = nil
         lastMessageLabel.font = .systemFont(ofSize: 15, weight: .regular)
         lastMessageLabel.alpha = 0.6
-        removeOnlineBadge()
     }
 }
 
@@ -156,10 +117,6 @@ extension ConversationsListCell: ConfigurableViewProtocol {
         if model.hasUnreadMessages {
             lastMessageLabel.font = .boldSystemFont(ofSize: 15)
             lastMessageLabel.alpha = 1
-        }
-        
-        if model.isOnline {
-            addOnlineBadge()
         }
     }
 }
@@ -193,15 +150,10 @@ extension ConversationsListCell {
             disclosureImageView.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor),
             disclosureImageView.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor),
             
-            lastMessageLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor),
+            lastMessageLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 2),
             lastMessageLabel.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor),
             lastMessageLabel.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor),
-            lastMessageLabel.bottomAnchor.constraint(equalTo: wrapperView.bottomAnchor),
-            
-            customSeparator.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            customSeparator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            customSeparator.widthAnchor.constraint(equalTo: wrapperView.widthAnchor),
-            customSeparator.heightAnchor.constraint(equalToConstant: 0.333)
+            lastMessageLabel.bottomAnchor.constraint(equalTo: wrapperView.bottomAnchor)
         ])
     }
 }
