@@ -71,7 +71,6 @@ final class ConversationsListViewController: UIViewController {
         navigationItem.rightBarButtonItem = addChannelsButton
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.prefersLargeTitles = true
-        
         title = "Channels"
     }
     
@@ -118,13 +117,14 @@ extension ConversationsListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ConversationsListCell.identifier,
-                                                       for: indexPath) as? ConversationsListCell else { return UITableViewCell() }
+                                                       for: indexPath) as? ConversationsListCell
+        else { return UITableViewCell() }
         
         let indexLastCellInSection = TableViewSection.allCases[indexPath.section].array.count - 1
         if indexPath.row == indexLastCellInSection {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
         }
-        
+
         let currentUser = TableViewSection.allCases[indexPath.section].array[indexPath.row]
         let model = convert(user: currentUser)
         cell.resetCell()
