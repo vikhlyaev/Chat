@@ -16,8 +16,8 @@ final class SettingsViewController: UIViewController {
     private lazy var settingsTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.allowsSelection = false
-        tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(ThemesCell.self, forCellReuseIdentifier: ThemesCell.identifier)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
     
