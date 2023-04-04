@@ -85,9 +85,9 @@ extension CustomNavBar {
     private func setConstraints() {
         NSLayoutConstraint.activate([
             backButton.topAnchor.constraint(equalTo: topAnchor, constant: 71),
-            backButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            backButton.widthAnchor.constraint(equalToConstant: 32),
-            backButton.heightAnchor.constraint(equalToConstant: 32),
+            backButton.leadingAnchor.constraint(equalTo: leadingAnchor),
+            backButton.widthAnchor.constraint(equalToConstant: 44),
+            backButton.heightAnchor.constraint(equalToConstant: 44),
             
             titleView.centerXAnchor.constraint(equalTo: centerXAnchor),
             titleView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
