@@ -5,9 +5,7 @@ import Combine
 final class ProfileViewController: UIViewController {
     
     private enum TableViewSection: Int, CaseIterable {
-        case name
-        case information
-        
+        case name, information
         var title: String {
             switch self {
             case .name:
@@ -70,28 +68,17 @@ final class ProfileViewController: UIViewController {
         return tableView
     }()
     
-    private lazy var closeButton = UIBarButtonItem(title: "Close",
-                                                   style: .plain,
-                                                   target: self,
-                                                   action: #selector(closeButtonTapped))
-    
-    private lazy var activityIndicator = UIActivityIndicatorView(style: .medium)
-    
     private var imagePicker: UIImagePickerController?
-    
+    private lazy var activityIndicator = UIActivityIndicatorView(style: .medium)
     private var concurrencyService: ConcurrencyServiceProtocol = ConcurrencyService()
-    
     private var alertPresenter: AlertPresenterProtocol = AlertPresenter()
-    
+    private var cancellables = Set<AnyCancellable>()
     private var model: ProfileViewModel = ProfileViewModel() {
         didSet {
             configure(with: model)
             nameAndInformationTableView.reloadData()
         }
     }
-    
-    private var profileRequest: Cancellable?
-    private var cancellables = Set<AnyCancellable>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -104,7 +91,7 @@ final class ProfileViewController: UIViewController {
     }
     
     private func loadProfile() {
-        profileRequest = concurrencyService
+        concurrencyService
             .profilePublisher()
             .receive(on: DispatchQueue.main)
             .subscribe(on: DispatchQueue.global(qos: .userInitiated))
@@ -124,10 +111,10 @@ final class ProfileViewController: UIViewController {
             } receiveValue: { [weak self] model in
                 self?.model = model
             }
+            .store(in: &cancellables)
     }
     
     private func setupNavBar() {
-        navigationItem.leftBarButtonItem = closeButton
         navigationItem.rightBarButtonItem = editButtonItem
         title = "Profile"
     }
@@ -344,20 +331,12 @@ extension ProfileViewController {
     
     private func updateNavBar(editing: Bool) {
         if editing {
-            let cancelButton = UIBarButtonItem(title: "Cancel",
-                                               style: .plain,
-                                               target: self,
-                                               action: #selector(cancelButtonTapped))
-            
-            let saveButton = UIBarButtonItem(title: "Save",
-                                             style: .plain,
-                                             target: self,
-                                             action: #selector(saveButtonTapped))
-            
+            let cancelButton = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(cancelButtonTapped))
+            let saveButton = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(saveButtonTapped))
             navigationItem.setLeftBarButton(cancelButton, animated: true)
             navigationItem.setRightBarButton(saveButton, animated: true)
         } else {
-            navigationItem.setLeftBarButton(closeButton, animated: true)
+            navigationItem.leftBarButtonItem = nil
             navigationItem.setRightBarButton(editButtonItem, animated: true)
         }
     }
@@ -398,7 +377,7 @@ extension ProfileViewController {
 extension ProfileViewController {
     private func setConstraints() {
         NSLayoutConstraint.activate([
-            photoImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 88),
+            photoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
             photoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             photoImageView.widthAnchor.constraint(equalToConstant: 150),
             photoImageView.heightAnchor.constraint(equalToConstant: 150),
@@ -417,7 +396,7 @@ extension ProfileViewController {
             nameAndInformationTableView.topAnchor.constraint(equalTo: addPhotoButton.bottomAnchor, constant: 24),
             nameAndInformationTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             nameAndInformationTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            nameAndInformationTableView.heightAnchor.constraint(equalToConstant: 88)
+            nameAndInformationTableView.heightAnchor.constraint(equalToConstant: 90)
         ])
     }
 }
