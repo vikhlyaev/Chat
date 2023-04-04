@@ -59,9 +59,8 @@ final class ConversationsListCell: UITableViewCell {
     
     private lazy var disclosureImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "chevron.right")
+        imageView.image = UIImage(named: "IconChevronRight")
         imageView.tintColor = .label
-        imageView.alpha = 0.3
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
