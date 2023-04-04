@@ -129,7 +129,7 @@ final class ProfileViewController: UIViewController {
     private func setupNavBar() {
         navigationItem.leftBarButtonItem = closeButton
         navigationItem.rightBarButtonItem = editButtonItem
-        title = "My Profile"
+        title = "Profile"
     }
     
     private func setDelegates() {
