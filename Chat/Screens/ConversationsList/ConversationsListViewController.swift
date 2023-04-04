@@ -1,32 +1,8 @@
 import UIKit
 import Combine
+import TFSChatTransport
 
 final class ConversationsListViewController: UIViewController {
-    
-    private enum TableViewSection: CaseIterable {
-        case online
-        case history
-        
-        var title: String {
-            switch self {
-            case .online:
-                return "Online".uppercased()
-            case .history:
-                return "History".uppercased()
-            }
-        }
-        
-        var array: [User] {
-            switch self {
-            case .online:
-                return MockData.shared.users.filter { $0.isOnline == true }
-            case .history:
-                return MockData.shared.users.filter {
-                    $0.isOnline == false && ($0.messages != nil || $0.messages?.isEmpty ?? false)
-                }
-            }
-        }
-    }
     
     private lazy var conversationsTableView: UITableView = {
         let tableView = UITableView(frame: .zero)
@@ -40,9 +16,7 @@ final class ConversationsListViewController: UIViewController {
         return tableView
     }()
     
-    private lazy var concurrencyService: ConcurrencyServiceProtocol = ConcurrencyService()
-    
-    private var cancellable: Cancellable?
+    private var channels: [Channel]?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -79,13 +53,11 @@ final class ConversationsListViewController: UIViewController {
         conversationsTableView.dataSource = self
     }
     
-    private func convert(user: User) -> ConversationsListCellModel {
-        return ConversationsListCellModel(name: user.name,
-                                          message: user.messages?.last?.text,
-                                          date: user.messages?.last?.date,
-                                          isOnline: user.isOnline,
-                                          hasUnreadMessages: user.hasUnreadMessages,
-                                          photo: user.photo)
+    private func convert(channel: Channel) -> ConversationsListCellModel {
+        ConversationsListCellModel(name: channel.name,
+                                   logoURL: channel.logoURL,
+                                   lastMessage: channel.lastMessage,
+                                   lastActivity: channel.lastActivity)
     }
     
     @objc private func addChannelTapped() {
@@ -98,9 +70,9 @@ final class ConversationsListViewController: UIViewController {
 extension ConversationsListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let user = TableViewSection.allCases[indexPath.section].array[indexPath.row]
-        let conversationViewController = ConversationViewController(user: user)
-        navigationController?.pushViewController(conversationViewController, animated: true)
+//        let user = TableViewSection.allCases[indexPath.section].array[indexPath.row]
+//        let conversationViewController = ConversationViewController(user: user)
+//        navigationController?.pushViewController(conversationViewController, animated: true)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -112,21 +84,24 @@ extension ConversationsListViewController: UITableViewDelegate {
 
 extension ConversationsListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        TableViewSection.allCases[section].array.count
+        channels?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: ConversationsListCell.identifier,
-                                                       for: indexPath) as? ConversationsListCell
-        else { return UITableViewCell() }
-        
-        let indexLastCellInSection = TableViewSection.allCases[indexPath.section].array.count - 1
+        guard
+            let cell = tableView.dequeueReusableCell(withIdentifier: ConversationsListCell.identifier,
+                                                     for: indexPath) as? ConversationsListCell,
+            let channels = channels
+        else {
+            return UITableViewCell()
+        }
+    
+        let indexLastCellInSection = channels.count - 1
         if indexPath.row == indexLastCellInSection {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
         }
 
-        let currentUser = TableViewSection.allCases[indexPath.section].array[indexPath.row]
-        let model = convert(user: currentUser)
+        let model = convert(channel: channels[indexPath.row])
         cell.resetCell()
         cell.configure(with: model)
         return cell

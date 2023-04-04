@@ -1,4 +1,5 @@
 import UIKit
+import TFSChatTransport
 
 final class ConversationViewController: UIViewController {
     
@@ -44,12 +45,16 @@ final class ConversationViewController: UIViewController {
         return button
     }()
     
-    private lazy var customNavBar = CustomNavBar(name: user.name, photo: user.photo, completion: backButtonTapped)
+    private lazy var customNavBar = CustomNavBar(name: channel.name,
+                                                 image: channel.logoURL,
+                                                 completion: backButtonTapped)
     
-    private let user: User
+    private var sortedMessages: [SortedMessages]?
     
-    init(user: User) {
-        self.user = user
+    private let channel: Channel
+    
+    init(channel: Channel) {
+        self.channel = channel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -67,10 +72,6 @@ final class ConversationViewController: UIViewController {
         addObserverKeyboard()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-    
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         removeObserverKeyboard()
@@ -78,7 +79,6 @@ final class ConversationViewController: UIViewController {
     
     private func setupView() {
         view.backgroundColor = .systemBackground
-        
         view.addSubview(chatTableView)
         view.addSubview(customNavBar)
         view.addSubview(wrapperView)
@@ -127,13 +127,11 @@ final class ConversationViewController: UIViewController {
         let keyboardFrameInView = view.convert(keyboardFrame, from: nil)
         let safeAreaFrame = view.safeAreaLayoutGuide.layoutFrame.insetBy(dx: 0, dy: -additionalSafeAreaInsets.bottom)
         let intersection = safeAreaFrame.intersection(keyboardFrameInView)
-        
         let keyboardAnimationDuration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey]
         let animationDuration: TimeInterval = (keyboardAnimationDuration as? NSNumber)?.doubleValue ?? 0
         let animationCurveRawNSN = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? NSNumber
         let animationCurveRaw = animationCurveRawNSN?.uintValue ?? UIView.AnimationOptions.curveEaseInOut.rawValue
         let animationCurve = UIView.AnimationOptions(rawValue: animationCurveRaw)
-        
         UIView.animate(withDuration: animationDuration,
                        delay: 0,
                        options: animationCurve,
@@ -155,8 +153,12 @@ final class ConversationViewController: UIViewController {
         }
     }
     
-    deinit {
-        print("conversation deinit")
+    private func sortedMessages(_ messages: [Message]) -> [SortedMessages] {
+        var sortedMessages: [SortedMessages] = []
+        for (date, messages) in messages.daySorted {
+            sortedMessages.append(SortedMessages(date: date, messages: messages))
+        }
+        return sortedMessages.sorted { $0.date < $1.date }
     }
 }
 
@@ -182,19 +184,17 @@ extension ConversationViewController: UITextViewDelegate {
 
 extension ConversationViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        guard let sortedMessages = user.sortedMessage else { return 0 }
-        return sortedMessages.count
+        sortedMessages?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let sortedMessages = user.sortedMessage else { return 0 }
-        return sortedMessages[section].messages.count
+        sortedMessages?[section].messages.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ConversationCell.identifier,
                                                        for: indexPath) as? ConversationCell else { return UITableViewCell() }
-        guard let message = user.sortedMessage?[indexPath.section].messages[indexPath.row] else { return UITableViewCell() }
+        guard let message = sortedMessages?[indexPath.section].messages[indexPath.row] else { return UITableViewCell() }
         let model = convert(message: message)
         cell.resetCell()
         cell.configure(with: model)
@@ -206,9 +206,7 @@ extension ConversationViewController: UITableViewDataSource {
 
 extension ConversationViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard let sortedMessages = user.sortedMessage else { return nil }
-        let header = ConversationsHeader(title: sortedMessages[section].date.onlyDayAndMonth())
-        return header
+        ConversationsHeader(title: sortedMessages?[section].date.onlyDayAndMonth() ?? Date().onlyDayAndMonth())
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {

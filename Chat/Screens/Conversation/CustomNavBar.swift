@@ -45,12 +45,11 @@ final class CustomNavBar: UIView {
     
     private let completion: () -> Void
     
-    init(name: String, photo: UIImage, completion: @escaping () -> Void) {
+    init(name: String, image: String?, completion: @escaping () -> Void) {
         self.completion = completion
         super.init(frame: .zero)
-        
         nameLabel.text = name
-        photoImageView.image = photo
+        photoImageView.load(url: image)
         
         setupView()
         setConstraints()

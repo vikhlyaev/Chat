@@ -101,19 +101,14 @@ final class ConversationsListCell: UITableViewCell {
 extension ConversationsListCell: ConfigurableViewProtocol {
     func configure(with model: ConversationsListCellModel) {
         nameLabel.text = model.name
-        photoImageView.image = model.photo
-        dateAndTimeLabel.text = model.date?.toString()
+        photoImageView.load(url: model.logoURL)
+        dateAndTimeLabel.text = model.lastActivity?.toString()
 
-        if let message = model.message {
+        if let message = model.lastMessage {
             lastMessageLabel.text = message
         } else {
             lastMessageLabel.text = "No messages yet"
             lastMessageLabel.font = .italicSystemFont(ofSize: 15)
-        }
-        
-        if model.hasUnreadMessages {
-            lastMessageLabel.font = .boldSystemFont(ofSize: 15)
-            lastMessageLabel.alpha = 1
         }
     }
 }
