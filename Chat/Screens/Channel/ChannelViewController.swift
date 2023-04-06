@@ -1,9 +1,9 @@
 import UIKit
 import TFSChatTransport
 
-final class ConversationViewController: UIViewController {
+final class ChannelViewController: UIViewController {
     
-    private lazy var chatTableView: UITableView = {
+    private lazy var channelTableView: UITableView = {
         let tableView = UITableView(frame: .zero)
         if #available(iOS 15.0, *) {
             tableView.sectionHeaderTopPadding = 0
@@ -11,7 +11,7 @@ final class ConversationViewController: UIViewController {
         tableView.allowsSelection = false
         tableView.separatorStyle = .none
         tableView.keyboardDismissMode = .onDrag
-        tableView.register(ConversationCell.self, forCellReuseIdentifier: ConversationCell.identifier)
+        tableView.register(ChannelCell.self, forCellReuseIdentifier: ChannelCell.identifier)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
@@ -79,7 +79,7 @@ final class ConversationViewController: UIViewController {
     
     private func setupView() {
         view.backgroundColor = .systemBackground
-        view.addSubview(chatTableView)
+        view.addSubview(channelTableView)
         view.addSubview(customNavBar)
         view.addSubview(wrapperView)
         wrapperView.addSubview(textView)
@@ -87,8 +87,8 @@ final class ConversationViewController: UIViewController {
     }
     
     private func setDelegates() {
-        chatTableView.dataSource = self
-        chatTableView.delegate = self
+        channelTableView.dataSource = self
+        channelTableView.delegate = self
         textView.delegate = self
     }
     
@@ -164,7 +164,7 @@ final class ConversationViewController: UIViewController {
 
 // MARK: - UITextViewDelegate
 
-extension ConversationViewController: UITextViewDelegate {
+extension ChannelViewController: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.textColor == .systemGray {
             textView.text = nil
@@ -182,7 +182,7 @@ extension ConversationViewController: UITextViewDelegate {
 
 // MARK: - UITableViewDataSource
 
-extension ConversationViewController: UITableViewDataSource {
+extension ChannelViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         sortedMessages?.count ?? 0
     }
@@ -192,8 +192,8 @@ extension ConversationViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: ConversationCell.identifier,
-                                                       for: indexPath) as? ConversationCell else { return UITableViewCell() }
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: ChannelCell.identifier,
+                                                       for: indexPath) as? ChannelCell else { return UITableViewCell() }
         guard let message = sortedMessages?[indexPath.section].messages[indexPath.row] else { return UITableViewCell() }
         let model = convert(message: message)
         cell.resetCell()
@@ -204,9 +204,9 @@ extension ConversationViewController: UITableViewDataSource {
 
 // MARK: - UITableViewDelegate
 
-extension ConversationViewController: UITableViewDelegate {
+extension ChannelViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        ConversationsHeader(title: sortedMessages?[section].date.onlyDayAndMonth() ?? Date().onlyDayAndMonth())
+        ChannelHeader(title: sortedMessages?[section].date.onlyDayAndMonth() ?? Date().onlyDayAndMonth())
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -216,7 +216,7 @@ extension ConversationViewController: UITableViewDelegate {
 
 // MARK: - Setting Constraints
 
-extension ConversationViewController {
+extension ChannelViewController {
     private func setConstraints() {
         NSLayoutConstraint.activate([
             customNavBar.topAnchor.constraint(equalTo: view.topAnchor),
@@ -224,10 +224,10 @@ extension ConversationViewController {
             customNavBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             customNavBar.heightAnchor.constraint(equalToConstant: 137),
             
-            chatTableView.topAnchor.constraint(equalTo: customNavBar.bottomAnchor),
-            chatTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            chatTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            chatTableView.bottomAnchor.constraint(equalTo: wrapperView.topAnchor, constant: -4),
+            channelTableView.topAnchor.constraint(equalTo: customNavBar.bottomAnchor),
+            channelTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            channelTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            channelTableView.bottomAnchor.constraint(equalTo: wrapperView.topAnchor, constant: -4),
             
             wrapperView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             wrapperView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),

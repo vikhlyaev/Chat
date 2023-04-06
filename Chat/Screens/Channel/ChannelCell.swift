@@ -1,8 +1,8 @@
 import UIKit
 
-final class ConversationCell: UITableViewCell {
+final class ChannelCell: UITableViewCell {
     
-    static let identifier = String(describing: ConversationCell.self)
+    static let identifier = String(describing: ChannelCell.self)
     
     private lazy var messageView: UIView = {
         let view = UIView()
@@ -106,7 +106,7 @@ final class ConversationCell: UITableViewCell {
 
 // MARK: - ConfigurableViewProtocol
 
-extension ConversationCell: ConfigurableViewProtocol {
+extension ChannelCell: ConfigurableViewProtocol {
     func configure(with model: MessageCellModel) {
         messageLabel.text = model.text
         timeLabel.text = model.date.onlyHoursAndMinutes()
@@ -119,7 +119,7 @@ extension ConversationCell: ConfigurableViewProtocol {
 
 // MARK: - Setting Constraints
 
-extension ConversationCell {
+extension ChannelCell {
     private func setConstraints() {
         let messageViewWidth = messageView.widthAnchor.constraint(lessThanOrEqualToConstant: frame.width * 0.75)
         messageViewWidth.priority = UILayoutPriority(999)

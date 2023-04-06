@@ -1,6 +1,6 @@
 import UIKit
 
-final class ConversationsHeader: UIView {
+final class ChannelHeader: UIView {
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()

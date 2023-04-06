@@ -74,10 +74,6 @@ final class CustomNavBar: UIView {
     private func backButtonTapped() {
         completion()
     }
-    
-    deinit {
-        print("custombar deinit")
-    }
 }
 
 extension CustomNavBar {
