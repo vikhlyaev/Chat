@@ -1,8 +1,8 @@
 import UIKit
 
-final class ConversationsListCell: UITableViewCell {
+final class ChannelsListCell: UITableViewCell {
     
-    static let identifier = String(describing: ConversationsListCell.self)
+    static let identifier = String(describing: ChannelsListCell.self)
     
     private lazy var photoView: UIView = {
         let view = UIView()
@@ -98,11 +98,11 @@ final class ConversationsListCell: UITableViewCell {
 
 // MARK: - ConfigurableViewProtocol
 
-extension ConversationsListCell: ConfigurableViewProtocol {
+extension ChannelsListCell: ConfigurableViewProtocol {
     func configure(with model: ChannelsListCellModel) {
         nameLabel.text = model.name
         if let url = model.logoURL {
-            photoImageView.load(url: model.logoURL)
+            photoImageView.load(url: url)
         } else {
             photoImageView.image = UIImage(named: "PlaceholderChannel")
         }
@@ -119,7 +119,7 @@ extension ConversationsListCell: ConfigurableViewProtocol {
 
 // MARK: - Setting Constraints
 
-extension ConversationsListCell {
+extension ChannelsListCell {
     private func setConstraints() {
         
         nameLabel.setContentCompressionResistancePriority(UILayoutPriority(999), for: .horizontal)
@@ -142,13 +142,14 @@ extension ConversationsListCell {
             
             nameLabel.topAnchor.constraint(equalTo: wrapperView.topAnchor),
             nameLabel.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor),
+            nameLabel.trailingAnchor.constraint(equalTo: dateAndTimeLabel.leadingAnchor, constant: -4),
             
-            dateAndTimeLabel.leadingAnchor.constraint(equalTo: nameLabel.trailingAnchor, constant: 4),
-            dateAndTimeLabel.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor),
-            
-            disclosureImageView.leadingAnchor.constraint(equalTo: dateAndTimeLabel.trailingAnchor, constant: 14),
             disclosureImageView.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor),
             disclosureImageView.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor),
+            disclosureImageView.widthAnchor.constraint(equalToConstant: 6.42),
+            
+            dateAndTimeLabel.trailingAnchor.constraint(equalTo: disclosureImageView.leadingAnchor, constant: -14),
+            dateAndTimeLabel.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor),
             
             lastMessageLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 2),
             lastMessageLabel.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor),

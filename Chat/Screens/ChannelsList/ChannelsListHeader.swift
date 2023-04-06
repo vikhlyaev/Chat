@@ -1,6 +1,6 @@
 import UIKit
 
-final class ConversationsListHeader: UIView {
+final class ChannelsListHeader: UIView {
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -30,7 +30,7 @@ final class ConversationsListHeader: UIView {
 
 // MARK: - Setting Constraints
 
-extension ConversationsListHeader {
+extension ChannelsListHeader {
     private func setConstraints() {
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),

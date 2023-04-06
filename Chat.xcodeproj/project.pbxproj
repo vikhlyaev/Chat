@@ -11,7 +11,7 @@
 		0A03CD5F29B988EE00B9CC8E /* Date + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A03CD5E29B988EE00B9CC8E /* Date + Extensions.swift */; };
 		0A03CD6329B98A2300B9CC8E /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A03CD6229B98A2300B9CC8E /* ProfileViewModel.swift */; };
 		0A03CD6529B98B4400B9CC8E /* ConfigurableViewProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A03CD6429B98B4400B9CC8E /* ConfigurableViewProtocol.swift */; };
-		0A03CD6B29B9907400B9CC8E /* ConversationsListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A03CD6A29B9907400B9CC8E /* ConversationsListCell.swift */; };
+		0A03CD6B29B9907400B9CC8E /* ChannelsListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A03CD6A29B9907400B9CC8E /* ChannelsListCell.swift */; };
 		0A03CD6D29B9910200B9CC8E /* ChannelsListCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A03CD6C29B9910200B9CC8E /* ChannelsListCellModel.swift */; };
 		0A03CD7029B99BBE00B9CC8E /* ChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A03CD6F29B99BBE00B9CC8E /* ChannelViewController.swift */; };
 		0A03CD7229B99C1300B9CC8E /* ChannelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A03CD7129B99C1300B9CC8E /* ChannelCell.swift */; };
@@ -31,7 +31,7 @@
 		0AB6B5C429C1EC3E00361A2C /* ThemesCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB6B5C329C1EC3E00361A2C /* ThemesCellDelegate.swift */; };
 		0AB6B5C629C1EC6A00361A2C /* ThemesButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB6B5C529C1EC6A00361A2C /* ThemesButton.swift */; };
 		0AB6B5CA29C1ED8700361A2C /* ThemesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB6B5C929C1ED8700361A2C /* ThemesManager.swift */; };
-		0AB6B5CE29C20E1B00361A2C /* ConversationsListHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB6B5CD29C20E1B00361A2C /* ConversationsListHeader.swift */; };
+		0AB6B5CE29C20E1B00361A2C /* ChannelsListHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB6B5CD29C20E1B00361A2C /* ChannelsListHeader.swift */; };
 		0AB6B5D629C25B4100361A2C /* ChannelHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB6B5D529C25B4100361A2C /* ChannelHeader.swift */; };
 		0ABA25B929DF0D1900BEC0DB /* Message + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABA25B829DF0D1900BEC0DB /* Message + Extensions.swift */; };
 		0ABA25BB29DF0DAC00BEC0DB /* SortedMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABA25BA29DF0DAC00BEC0DB /* SortedMessage.swift */; };
@@ -51,7 +51,7 @@
 		0A03CD5E29B988EE00B9CC8E /* Date + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date + Extensions.swift"; sourceTree = "<group>"; };
 		0A03CD6229B98A2300B9CC8E /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		0A03CD6429B98B4400B9CC8E /* ConfigurableViewProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurableViewProtocol.swift; sourceTree = "<group>"; };
-		0A03CD6A29B9907400B9CC8E /* ConversationsListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationsListCell.swift; sourceTree = "<group>"; };
+		0A03CD6A29B9907400B9CC8E /* ChannelsListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsListCell.swift; sourceTree = "<group>"; };
 		0A03CD6C29B9910200B9CC8E /* ChannelsListCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsListCellModel.swift; sourceTree = "<group>"; };
 		0A03CD6F29B99BBE00B9CC8E /* ChannelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelViewController.swift; sourceTree = "<group>"; };
 		0A03CD7129B99C1300B9CC8E /* ChannelCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelCell.swift; sourceTree = "<group>"; };
@@ -70,7 +70,7 @@
 		0AB6B5C329C1EC3E00361A2C /* ThemesCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemesCellDelegate.swift; sourceTree = "<group>"; };
 		0AB6B5C529C1EC6A00361A2C /* ThemesButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemesButton.swift; sourceTree = "<group>"; };
 		0AB6B5C929C1ED8700361A2C /* ThemesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemesManager.swift; sourceTree = "<group>"; };
-		0AB6B5CD29C20E1B00361A2C /* ConversationsListHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationsListHeader.swift; sourceTree = "<group>"; };
+		0AB6B5CD29C20E1B00361A2C /* ChannelsListHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsListHeader.swift; sourceTree = "<group>"; };
 		0AB6B5D529C25B4100361A2C /* ChannelHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelHeader.swift; sourceTree = "<group>"; };
 		0ABA25B829DF0D1900BEC0DB /* Message + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message + Extensions.swift"; sourceTree = "<group>"; };
 		0ABA25BA29DF0DAC00BEC0DB /* SortedMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortedMessage.swift; sourceTree = "<group>"; };
@@ -159,8 +159,8 @@
 			isa = PBXGroup;
 			children = (
 				0AF3176B29A0D667005417A5 /* ChannelsListViewController.swift */,
-				0A03CD6A29B9907400B9CC8E /* ConversationsListCell.swift */,
-				0AB6B5CD29C20E1B00361A2C /* ConversationsListHeader.swift */,
+				0A03CD6A29B9907400B9CC8E /* ChannelsListCell.swift */,
+				0AB6B5CD29C20E1B00361A2C /* ChannelsListHeader.swift */,
 			);
 			path = ChannelsList;
 			sourceTree = "<group>";
@@ -427,13 +427,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0A03CD6B29B9907400B9CC8E /* ConversationsListCell.swift in Sources */,
+				0A03CD6B29B9907400B9CC8E /* ChannelsListCell.swift in Sources */,
 				0AF3176C29A0D667005417A5 /* ChannelsListViewController.swift in Sources */,
 				0AB6B5CA29C1ED8700361A2C /* ThemesManager.swift in Sources */,
 				0A9F45B129D74FF400BB7A4A /* UITextField + Extensions.swift in Sources */,
 				0ABA25BB29DF0DAC00BEC0DB /* SortedMessage.swift in Sources */,
 				0AF3176829A0D667005417A5 /* AppDelegate.swift in Sources */,
-				0AB6B5CE29C20E1B00361A2C /* ConversationsListHeader.swift in Sources */,
+				0AB6B5CE29C20E1B00361A2C /* ChannelsListHeader.swift in Sources */,
 				0A714C0B29DC5F89007D76C5 /* UIImageView + Extensions.swift in Sources */,
 				0A03CD7429B9A18800B9CC8E /* MessageCellModel.swift in Sources */,
 				0ABA817929CF1B5C002D053D /* AlertViewModel.swift in Sources */,

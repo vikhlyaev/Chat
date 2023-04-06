@@ -13,7 +13,7 @@ final class ChannelsListViewController: UIViewController {
         }
         tableView.tableHeaderView = UIView()
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 73, bottom: 0, right: 0)
-        tableView.register(ConversationsListCell.self, forCellReuseIdentifier: ConversationsListCell.identifier)
+        tableView.register(ChannelsListCell.self, forCellReuseIdentifier: ChannelsListCell.identifier)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
@@ -180,8 +180,8 @@ extension ChannelsListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard
-            let cell = tableView.dequeueReusableCell(withIdentifier: ConversationsListCell.identifier,
-                                                     for: indexPath) as? ConversationsListCell,
+            let cell = tableView.dequeueReusableCell(withIdentifier: ChannelsListCell.identifier,
+                                                     for: indexPath) as? ChannelsListCell,
             let channels = channels
         else {
             return UITableViewCell()
