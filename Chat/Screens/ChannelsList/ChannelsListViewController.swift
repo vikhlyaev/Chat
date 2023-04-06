@@ -83,8 +83,22 @@ final class ChannelsListViewController: UIViewController {
         chatService.loadChannels()
             .subscribe(on: DispatchQueue.main)
             .receive(on: DispatchQueue.global(qos: .utility))
-            .sink { _ in
-                print("channels loaded")
+            .sink { [weak self] completion in
+                switch completion {
+                case .finished:
+                    print("channels loaded")
+                case .failure:
+                    let alert = UIAlertController(title: "Error", message: "Could not load channels", preferredStyle: .alert)
+                    let okAction = UIAlertAction(title: "OK", style: .default)
+                    let tryAgainAction = UIAlertAction(title: "Try again", style: .default) { [weak self] _ in
+                        self?.loadChannels()
+                    }
+                    alert.addAction(okAction)
+                    alert.addAction(tryAgainAction)
+                    DispatchQueue.main.async { [weak self] in
+                        self?.present(alert, animated: true)
+                    }
+                }
             } receiveValue: { [weak self] channels in
                 self?.channels = channels.sorted { ($0.lastActivity ?? Date()) > ($1.lastActivity ?? Date()) }
             }
@@ -145,9 +159,10 @@ final class ChannelsListViewController: UIViewController {
 extension ChannelsListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-//        let user = TableViewSection.allCases[indexPath.section].array[indexPath.row]
-//        let conversationViewController = ConversationViewController(user: user)
-//        navigationController?.pushViewController(conversationViewController, animated: true)
+        
+        guard let channel = channels?[indexPath.row] else { return }
+        let channelViewController = ChannelViewController(channel: channel)
+        navigationController?.pushViewController(channelViewController, animated: true)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -171,7 +186,7 @@ extension ChannelsListViewController: UITableViewDataSource {
             return UITableViewCell()
         }
     
-        let indexLastCellInSection = channels.count - 1
+        let indexLastCellInSection = channels.isEmpty ? 0 : channels.count - 1
         if indexPath.row == indexLastCellInSection {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
         }
