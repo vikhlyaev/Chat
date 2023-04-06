@@ -71,7 +71,6 @@ final class ProfileViewController: UIViewController {
     private var imagePicker: UIImagePickerController?
     private lazy var activityIndicator = UIActivityIndicatorView(style: .medium)
     private var concurrencyService: ConcurrencyServiceProtocol = ConcurrencyService()
-    private var alertPresenter: AlertPresenterProtocol = AlertPresenter()
     private var cancellables = Set<AnyCancellable>()
     private var model: ProfileViewModel = ProfileViewModel() {
         didSet {
@@ -102,10 +101,11 @@ final class ProfileViewController: UIViewController {
                     print("profile loaded")
                 case .failure:
                     self.configure(with: self.model)
-                    let alertModel = AlertViewModel(title: "User data not found",
-                                                    message: "The default profile is loaded.",
-                                                    button: AlertButton(text: "OK", action: nil))
-                    let alert = self.alertPresenter.prepare(model: alertModel)
+                    let alert = UIAlertController(title: "User data not found",
+                                                  message: "The default profile is loaded.",
+                                                  preferredStyle: .alert)
+                    let okAction = UIAlertAction(title: "OK", style: .default)
+                    alert.addAction(okAction)
                     self.present(alert, animated: true)
                 }
             } receiveValue: { [weak self] model in
