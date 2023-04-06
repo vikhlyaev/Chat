@@ -31,7 +31,6 @@ final class ChannelsListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadChannels()
         setupNavBar()
         setupView()
         setConstraints()
@@ -42,6 +41,7 @@ final class ChannelsListViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.isNavigationBarHidden = false
+        loadChannels()
     }
     
     private func setupView() {
