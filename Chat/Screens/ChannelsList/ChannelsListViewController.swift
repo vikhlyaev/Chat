@@ -73,10 +73,11 @@ final class ChannelsListViewController: UIViewController {
     }
     
     private func convert(channel: Channel) -> ChannelsListCellModel {
+        
         ChannelsListCellModel(name: channel.name,
-                                   logoURL: channel.logoURL,
-                                   lastMessage: channel.lastMessage,
-                                   lastActivity: channel.lastActivity)
+                              logoURL: channel.logoURL,
+                              lastMessage: channel.lastMessage,
+                              lastActivity: channel.lastActivity)
     }
     
     private func loadChannels() {
@@ -185,12 +186,12 @@ extension ChannelsListViewController: UITableViewDataSource {
         else {
             return UITableViewCell()
         }
-    
+        
         let indexLastCellInSection = channels.isEmpty ? 0 : channels.count - 1
         if indexPath.row == indexLastCellInSection {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
         }
-
+        
         let model = convert(channel: channels[indexPath.row])
         cell.resetCell()
         cell.configure(with: model)
