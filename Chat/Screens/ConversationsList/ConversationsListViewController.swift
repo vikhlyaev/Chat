@@ -86,7 +86,7 @@ final class ConversationsListViewController: UIViewController {
             .sink { _ in
                 print("channels loaded")
             } receiveValue: { [weak self] channels in
-                self?.channels = channels
+                self?.channels = channels.sorted { ($0.lastActivity ?? Date()) > ($1.lastActivity ?? Date()) }
             }
             .store(in: &cancellables)
     }
@@ -96,9 +96,9 @@ final class ConversationsListViewController: UIViewController {
             .subscribe(on: DispatchQueue.main)
             .receive(on: DispatchQueue.global(qos: .utility))
             .sink { _ in
-                print("channels loaded")
-            } receiveValue: { newChannel in
-                print(newChannel.name)
+                print("channel created")
+            } receiveValue: { [weak self] newChannel in
+                self?.channels?.insert(newChannel, at: 0)
             }
             .store(in: &cancellables)
     }
