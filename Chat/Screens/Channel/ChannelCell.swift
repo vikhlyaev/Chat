@@ -34,6 +34,16 @@ final class ChannelCell: UITableViewCell {
         return label
     }()
     
+    private lazy var nameLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 11)
+        label.alpha = 0.6
+        label.numberOfLines = 1
+        label.lineBreakMode = .byClipping
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -46,6 +56,7 @@ final class ChannelCell: UITableViewCell {
     }
     
     private func setupView() {
+        contentView.addSubview(nameLabel)
         contentView.addSubview(messageView)
         messageView.addSubview(bubbleImageView)
         messageView.addSubview(messageLabel)
@@ -98,6 +109,7 @@ final class ChannelCell: UITableViewCell {
     }
     
     func resetCell() {
+        nameLabel.text = nil
         messageLabel.text = nil
         timeLabel.text = nil
         bubbleImageView.image = nil
@@ -108,6 +120,7 @@ final class ChannelCell: UITableViewCell {
 
 extension ChannelCell: ConfigurableViewProtocol {
     func configure(with model: MessageCellModel) {
+        nameLabel.text = model.name == UserID.value ? nil : model.name
         messageLabel.text = model.text
         timeLabel.text = model.date.onlyHoursAndMinutes()
         setBubbleImage(type: model.type)
@@ -128,7 +141,11 @@ extension ChannelCell {
         timeLabel.setContentCompressionResistancePriority(UILayoutPriority(1000), for: .horizontal)
 
         NSLayoutConstraint.activate([
-            messageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4),
+            nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            nameLabel.leadingAnchor.constraint(equalTo: messageView.leadingAnchor, constant: 12),
+            nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
+            
+            messageView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4),
             messageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
             messageViewWidth,
             
