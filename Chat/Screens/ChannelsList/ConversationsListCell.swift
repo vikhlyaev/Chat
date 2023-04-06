@@ -99,7 +99,7 @@ final class ConversationsListCell: UITableViewCell {
 // MARK: - ConfigurableViewProtocol
 
 extension ConversationsListCell: ConfigurableViewProtocol {
-    func configure(with model: ConversationsListCellModel) {
+    func configure(with model: ChannelsListCellModel) {
         nameLabel.text = model.name
         photoImageView.load(url: model.logoURL)
         dateAndTimeLabel.text = model.lastActivity?.toString()

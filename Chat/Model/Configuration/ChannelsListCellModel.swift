@@ -1,6 +1,6 @@
 import UIKit
 
-struct ConversationsListCellModel {
+struct ChannelsListCellModel {
     let name: String
     let logoURL: String?
     let lastMessage: String?

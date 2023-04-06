@@ -26,7 +26,7 @@ final class TabBarController: UITabBarController {
         viewControllers = dataSource.map {
             switch $0 {
             case .channels:
-                return UINavigationController(rootViewController: ConversationsListViewController())
+                return UINavigationController(rootViewController: ChannelsListViewController())
             case .settings:
                 return UINavigationController(rootViewController: SettingsViewController())
             case .profile:

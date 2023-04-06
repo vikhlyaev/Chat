@@ -2,11 +2,11 @@ import UIKit
 import Combine
 import TFSChatTransport
 
-final class ConversationsListViewController: UIViewController {
+final class ChannelsListViewController: UIViewController {
     
     private lazy var refreshControl = UIRefreshControl()
     
-    private lazy var conversationsTableView: UITableView = {
+    private lazy var channelsTableView: UITableView = {
         let tableView = UITableView(frame: .zero)
         if #available(iOS 15.0, *) {
             tableView.sectionHeaderTopPadding = 0
@@ -22,7 +22,7 @@ final class ConversationsListViewController: UIViewController {
     private var channels: [Channel]? {
         didSet {
             DispatchQueue.main.async { [weak self] in
-                self?.conversationsTableView.reloadData()
+                self?.channelsTableView.reloadData()
             }
         }
     }
@@ -46,7 +46,7 @@ final class ConversationsListViewController: UIViewController {
     
     private func setupView() {
         view.backgroundColor = .systemBackground
-        view.addSubview(conversationsTableView)
+        view.addSubview(channelsTableView)
     }
     
     private func setupNavBar() {
@@ -64,16 +64,16 @@ final class ConversationsListViewController: UIViewController {
     private func setupRefreshControl() {
         refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
         refreshControl.addTarget(self, action: #selector(handleRefreshControl), for: .valueChanged)
-        conversationsTableView.refreshControl = refreshControl
+        channelsTableView.refreshControl = refreshControl
     }
     
     private func setDelegates() {
-        conversationsTableView.delegate = self
-        conversationsTableView.dataSource = self
+        channelsTableView.delegate = self
+        channelsTableView.dataSource = self
     }
     
-    private func convert(channel: Channel) -> ConversationsListCellModel {
-        ConversationsListCellModel(name: channel.name,
+    private func convert(channel: Channel) -> ChannelsListCellModel {
+        ChannelsListCellModel(name: channel.name,
                                    logoURL: channel.logoURL,
                                    lastMessage: channel.lastMessage,
                                    lastActivity: channel.lastActivity)
@@ -142,7 +142,7 @@ final class ConversationsListViewController: UIViewController {
 
 // MARK: - UITableViewDelegate
 
-extension ConversationsListViewController: UITableViewDelegate {
+extension ChannelsListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 //        let user = TableViewSection.allCases[indexPath.section].array[indexPath.row]
@@ -157,7 +157,7 @@ extension ConversationsListViewController: UITableViewDelegate {
 
 // MARK: - UITableViewDataSource
 
-extension ConversationsListViewController: UITableViewDataSource {
+extension ChannelsListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         channels?.count ?? 0
     }
@@ -185,13 +185,13 @@ extension ConversationsListViewController: UITableViewDataSource {
 
 // MARK: - Setting Constraints
 
-extension ConversationsListViewController {
+extension ChannelsListViewController {
     private func setConstraints() {
         NSLayoutConstraint.activate([
-            conversationsTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            conversationsTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            conversationsTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            conversationsTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            channelsTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            channelsTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            channelsTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            channelsTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
 }
