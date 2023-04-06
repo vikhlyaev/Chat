@@ -35,7 +35,7 @@
 		0AB6B5D629C25B4100361A2C /* ChannelHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB6B5D529C25B4100361A2C /* ChannelHeader.swift */; };
 		0ABA25B929DF0D1900BEC0DB /* Message + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABA25B829DF0D1900BEC0DB /* Message + Extensions.swift */; };
 		0ABA25BB29DF0DAC00BEC0DB /* SortedMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABA25BA29DF0DAC00BEC0DB /* SortedMessage.swift */; };
-		0ABA25BD29DF0EBD00BEC0DB /* UserID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABA25BC29DF0EBD00BEC0DB /* UserID.swift */; };
+		0ABA25BD29DF0EBD00BEC0DB /* UserDataStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABA25BC29DF0EBD00BEC0DB /* UserDataStorage.swift */; };
 		0ABA25BF29DF109F00BEC0DB /* MessageType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABA25BE29DF109F00BEC0DB /* MessageType.swift */; };
 		0ABA817929CF1B5C002D053D /* AlertViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABA817829CF1B5C002D053D /* AlertViewModel.swift */; };
 		0AF3176829A0D667005417A5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF3176729A0D667005417A5 /* AppDelegate.swift */; };
@@ -74,7 +74,7 @@
 		0AB6B5D529C25B4100361A2C /* ChannelHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelHeader.swift; sourceTree = "<group>"; };
 		0ABA25B829DF0D1900BEC0DB /* Message + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message + Extensions.swift"; sourceTree = "<group>"; };
 		0ABA25BA29DF0DAC00BEC0DB /* SortedMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortedMessage.swift; sourceTree = "<group>"; };
-		0ABA25BC29DF0EBD00BEC0DB /* UserID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserID.swift; sourceTree = "<group>"; };
+		0ABA25BC29DF0EBD00BEC0DB /* UserDataStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDataStorage.swift; sourceTree = "<group>"; };
 		0ABA25BE29DF109F00BEC0DB /* MessageType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageType.swift; sourceTree = "<group>"; };
 		0ABA817829CF1B5C002D053D /* AlertViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertViewModel.swift; sourceTree = "<group>"; };
 		0AF3176429A0D667005417A5 /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -140,7 +140,7 @@
 			children = (
 				0A03CD6129B989C000B9CC8E /* Configuration */,
 				0ABA25BA29DF0DAC00BEC0DB /* SortedMessage.swift */,
-				0ABA25BC29DF0EBD00BEC0DB /* UserID.swift */,
+				0ABA25BC29DF0EBD00BEC0DB /* UserDataStorage.swift */,
 				0ABA25BE29DF109F00BEC0DB /* MessageType.swift */,
 			);
 			path = Model;
@@ -447,7 +447,7 @@
 				0A03CD5F29B988EE00B9CC8E /* Date + Extensions.swift in Sources */,
 				0ABA25BF29DF109F00BEC0DB /* MessageType.swift in Sources */,
 				0AB6B5C629C1EC6A00361A2C /* ThemesButton.swift in Sources */,
-				0ABA25BD29DF0EBD00BEC0DB /* UserID.swift in Sources */,
+				0ABA25BD29DF0EBD00BEC0DB /* UserDataStorage.swift in Sources */,
 				0A3D726229C9CB9A002774AE /* ConcurrencyService.swift in Sources */,
 				0A714C0329DB4B7A007D76C5 /* TabBarController.swift in Sources */,
 				0A03CD7029B99BBE00B9CC8E /* ChannelViewController.swift in Sources */,

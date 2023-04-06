@@ -57,7 +57,7 @@ final class ChannelViewController: UIViewController {
         self?.navigationController?.popViewController(animated: true)
         return
     }
-    
+    private var lastName: String?
     private let chatService = ChatService(host: "167.235.86.234", port: 8080)
     private let channel: Channel
     private var sortedMessages: [SortedMessage] = [] {
@@ -214,14 +214,23 @@ final class ChannelViewController: UIViewController {
     @objc
     private func sendMessageButtonTapped() {
         let userID: String
-        if let id = UserID.value {
+        if let id = UserDataStorage.userID {
             userID = id
         } else {
             userID = "vikhlyaev"
-            UserID.value = userID
+            UserDataStorage.userID = userID
         }
+        
+        let userName: String
+        if let name = UserDataStorage.userName {
+            userName = name
+        } else {
+            userName = "Anton Vikhlyaev"
+            UserDataStorage.userName = userName
+        }
+        
         guard let text = textView.text else { return }
-        chatService.sendMessage(text: text, channelId: channel.id, userId: userID, userName: "Vikhlyaev")
+        chatService.sendMessage(text: text, channelId: channel.id, userId: userID, userName: userName)
             .subscribe(on: DispatchQueue.main)
             .receive(on: DispatchQueue.global(qos: .utility))
             .sink { _ in

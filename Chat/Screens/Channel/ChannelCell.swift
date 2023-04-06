@@ -120,7 +120,11 @@ final class ChannelCell: UITableViewCell {
 
 extension ChannelCell: ConfigurableViewProtocol {
     func configure(with model: MessageCellModel) {
-        nameLabel.text = model.name == UserID.value ? nil : model.name
+        if model.name == UserDataStorage.userName {
+            nameLabel.text = nil
+        } else {
+            nameLabel.text = model.name
+        }
         messageLabel.text = model.text
         timeLabel.text = model.date.onlyHoursAndMinutes()
         setBubbleImage(type: model.type)
@@ -141,7 +145,7 @@ extension ChannelCell {
         timeLabel.setContentCompressionResistancePriority(UILayoutPriority(1000), for: .horizontal)
 
         NSLayoutConstraint.activate([
-            nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4),
             nameLabel.leadingAnchor.constraint(equalTo: messageView.leadingAnchor, constant: 12),
             nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
             
