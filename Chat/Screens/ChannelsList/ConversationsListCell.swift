@@ -101,7 +101,11 @@ final class ConversationsListCell: UITableViewCell {
 extension ConversationsListCell: ConfigurableViewProtocol {
     func configure(with model: ChannelsListCellModel) {
         nameLabel.text = model.name
-        photoImageView.load(url: model.logoURL)
+        if let url = model.logoURL {
+            photoImageView.load(url: model.logoURL)
+        } else {
+            photoImageView.image = UIImage(named: "PlaceholderChannel")
+        }
         dateAndTimeLabel.text = model.lastActivity?.toString()
 
         if let message = model.lastMessage {
