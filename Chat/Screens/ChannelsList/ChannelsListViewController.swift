@@ -132,7 +132,7 @@ final class ChannelsListViewController: UIViewController {
             textField.textPublisher()
                 .map { $0 ?? "" }
                 .sink { channelName in
-                    let symbols = channelName.filter { $0.isNumber || $0.isLetter }.count
+                    let symbols = channelName.filter { $0.isNumber || $0.isLetter || $0.isSymbol || $0.isPunctuation }.count
                     if symbols != 0 {
                         createAction.isEnabled = true
                     } else {
