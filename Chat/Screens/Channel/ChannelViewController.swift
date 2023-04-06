@@ -179,7 +179,8 @@ final class ChannelViewController: UIViewController {
     }
     
     private func convert(message: Message) -> MessageCellModel {
-        return MessageCellModel(text: message.text,
+        return MessageCellModel(name: message.userName,
+                                text: message.text,
                                 date: message.date,
                                 type: message.type)
     }
