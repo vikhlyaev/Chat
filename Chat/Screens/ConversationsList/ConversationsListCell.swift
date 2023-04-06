@@ -117,6 +117,10 @@ extension ConversationsListCell: ConfigurableViewProtocol {
 
 extension ConversationsListCell {
     private func setConstraints() {
+        
+        nameLabel.setContentCompressionResistancePriority(UILayoutPriority(999), for: .horizontal)
+        dateAndTimeLabel.setContentCompressionResistancePriority(UILayoutPriority(1000), for: .horizontal)
+        
         NSLayoutConstraint.activate([
             photoView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             photoView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
