@@ -4,6 +4,8 @@ import TFSChatTransport
 
 final class ConversationsListViewController: UIViewController {
     
+    private lazy var refreshControl = UIRefreshControl()
+    
     private lazy var conversationsTableView: UITableView = {
         let tableView = UITableView(frame: .zero)
         if #available(iOS 15.0, *) {
@@ -16,14 +18,25 @@ final class ConversationsListViewController: UIViewController {
         return tableView
     }()
     
-    private var channels: [Channel]?
+    private let chatService = ChatService(host: "167.235.86.234", port: 8080)
+    private var channels: [Channel]? {
+        didSet {
+            DispatchQueue.main.async { [weak self] in
+                self?.conversationsTableView.reloadData()
+            }
+        }
+    }
+    
+    private var cancellables = Set<AnyCancellable>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        loadChannels()
         setupNavBar()
         setupView()
         setConstraints()
         setDelegates()
+        setupRefreshControl()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -48,6 +61,12 @@ final class ConversationsListViewController: UIViewController {
         title = "Channels"
     }
     
+    private func setupRefreshControl() {
+        refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
+        refreshControl.addTarget(self, action: #selector(handleRefreshControl), for: .valueChanged)
+        conversationsTableView.refreshControl = refreshControl
+    }
+    
     private func setDelegates() {
         conversationsTableView.delegate = self
         conversationsTableView.dataSource = self
@@ -60,8 +79,64 @@ final class ConversationsListViewController: UIViewController {
                                    lastActivity: channel.lastActivity)
     }
     
-    @objc private func addChannelTapped() {
-        print(#function)
+    private func loadChannels() {
+        chatService.loadChannels()
+            .subscribe(on: DispatchQueue.main)
+            .receive(on: DispatchQueue.global(qos: .utility))
+            .sink { _ in
+                print("channels loaded")
+            } receiveValue: { [weak self] channels in
+                self?.channels = channels
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func createChannel(name: String, logoUrl: String? = nil) {
+        chatService.createChannel(name: name, logoUrl: logoUrl)
+            .subscribe(on: DispatchQueue.main)
+            .receive(on: DispatchQueue.global(qos: .utility))
+            .sink { _ in
+                print("channels loaded")
+            } receiveValue: { newChannel in
+                print(newChannel.name)
+            }
+            .store(in: &cancellables)
+    }
+    
+    @objc
+    private func addChannelTapped() {
+        let alert = UIAlertController(title: "New channel", message: nil, preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        let createAction = UIAlertAction(title: "Create", style: .default) { [weak self] _ in
+            guard let channelName = alert.textFields?.first?.text else { return }
+            self?.createChannel(name: channelName)
+        }
+        createAction.isEnabled = false
+        alert.addTextField { [weak self] textField in
+            guard let self = self else { return }
+            textField.placeholder = "Channel Name"
+            textField.textPublisher()
+                .map { $0 ?? "" }
+                .sink { channelName in
+                    let symbols = channelName.filter { $0.isNumber || $0.isLetter }.count
+                    if symbols != 0 {
+                        createAction.isEnabled = true
+                    } else {
+                        createAction.isEnabled = false
+                        textField.placeholder = "Enter the Channel Name"
+                    }
+                }
+                .store(in: &self.cancellables)
+        }
+        alert.addAction(cancelAction)
+        alert.addAction(createAction)
+        present(alert, animated: true)
+    }
+    
+    @objc
+    private func handleRefreshControl() {
+        refreshControl.endRefreshing()
+        loadChannels()
     }
 }
 
