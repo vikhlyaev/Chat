@@ -233,8 +233,22 @@ final class ChannelViewController: UIViewController {
         chatService.sendMessage(text: text, channelId: channel.id, userId: userID, userName: userName)
             .subscribe(on: DispatchQueue.main)
             .receive(on: DispatchQueue.global(qos: .utility))
-            .sink { _ in
-                print("message sended")
+            .sink { [weak self] completion in
+                switch completion {
+                case .finished:
+                    print("message sended")
+                case .failure:
+                    let alert = UIAlertController(title: "Error", message: "Unable to send message", preferredStyle: .alert)
+                    let okAction = UIAlertAction(title: "OK", style: .default)
+                    let tryAgainAction = UIAlertAction(title: "Try again", style: .default) { [weak self] _ in
+                        self?.sendMessageButtonTapped()
+                    }
+                    alert.addAction(okAction)
+                    alert.addAction(tryAgainAction)
+                    DispatchQueue.main.async { [weak self] in
+                        self?.present(alert, animated: true)
+                    }
+                }
             } receiveValue: { [weak self] message in
                 guard let self = self else { return }
                 if self.sortedMessages.isEmpty {

@@ -110,8 +110,22 @@ final class ChannelsListViewController: UIViewController {
         chatService.createChannel(name: name, logoUrl: logoUrl)
             .subscribe(on: DispatchQueue.main)
             .receive(on: DispatchQueue.global(qos: .utility))
-            .sink { _ in
-                print("channel created")
+            .sink { [weak self] completion in
+                switch completion {
+                case .finished:
+                    print("channel created")
+                case .failure:
+                    let alert = UIAlertController(title: "Error", message: "Could not create a channel", preferredStyle: .alert)
+                    let okAction = UIAlertAction(title: "OK", style: .default)
+                    let tryAgainAction = UIAlertAction(title: "Try again", style: .default) { [weak self] _ in
+                        self?.createChannel(name: name)
+                    }
+                    alert.addAction(okAction)
+                    alert.addAction(tryAgainAction)
+                    DispatchQueue.main.async { [weak self] in
+                        self?.present(alert, animated: true)
+                    }
+                }
             } receiveValue: { [weak self] newChannel in
                 self?.channels?.insert(newChannel, at: 0)
             }
