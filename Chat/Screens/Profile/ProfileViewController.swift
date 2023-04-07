@@ -125,7 +125,6 @@ final class ProfileViewController: UIViewController {
     
     private func setupView() {
         view.backgroundColor = .systemBackground
-        
         view.addSubview(photoImageView)
         view.addSubview(addPhotoButton)
         view.addSubview(nameLabel)
