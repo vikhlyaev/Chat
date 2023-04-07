@@ -4,6 +4,13 @@ import TFSChatTransport
 
 final class ChannelViewController: UIViewController {
     
+    private enum Constants: String {
+        case channelCellSent
+        case channelCellReceived
+        case userId = "vikhlyaev"
+        case userName = "Anton Vikhlyaev"
+    }
+    
     private lazy var channelTableView: UITableView = {
         let tableView = UITableView(frame: .zero)
         if #available(iOS 15.0, *) {
@@ -14,7 +21,8 @@ final class ChannelViewController: UIViewController {
         tableView.separatorStyle = .none
         tableView.keyboardDismissMode = .onDrag
         tableView.transform = CGAffineTransform(rotationAngle: -(CGFloat)(Double.pi))
-        tableView.register(ChannelCell.self, forCellReuseIdentifier: ChannelCell.identifier)
+        tableView.register(ChannelCell.self, forCellReuseIdentifier: Constants.channelCellSent.rawValue)
+        tableView.register(ChannelCell.self, forCellReuseIdentifier: Constants.channelCellReceived.rawValue)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
@@ -57,6 +65,7 @@ final class ChannelViewController: UIViewController {
         self?.navigationController?.popViewController(animated: true)
         return
     }
+    
     private var lastName: String?
     private let chatService = ChatService(host: "167.235.86.234", port: 8080)
     private let channel: Channel
@@ -181,8 +190,7 @@ final class ChannelViewController: UIViewController {
     private func convert(message: Message) -> MessageCellModel {
         return MessageCellModel(name: message.userName,
                                 text: message.text,
-                                date: message.date,
-                                type: message.type)
+                                date: message.date)
     }
     
     @objc
@@ -213,20 +221,24 @@ final class ChannelViewController: UIViewController {
     
     @objc
     private func sendMessageButtonTapped() {
-        let userID: String
-        if let id = UserDataStorage.userID {
-            userID = id
-        } else {
-            userID = "vikhlyaev"
-            UserDataStorage.userID = userID
+        var userID: String {
+            if let id = UserDataStorage.userID {
+                return id
+            } else {
+                let id = Constants.userId.rawValue
+                UserDataStorage.userID = id
+                return id
+            }
         }
         
-        let userName: String
-        if let name = UserDataStorage.userName {
-            userName = name
-        } else {
-            userName = "Anton Vikhlyaev"
-            UserDataStorage.userName = userName
+        var userName: String {
+            if let name = UserDataStorage.userName {
+                return name
+            } else {
+                let name = Constants.userName.rawValue
+                UserDataStorage.userName = name
+                return name
+            }
         }
         
         guard let text = textView.text else { return }
@@ -301,14 +313,21 @@ extension ChannelViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: ChannelCell.identifier,
+        guard let cellSent = tableView.dequeueReusableCell(withIdentifier: Constants.channelCellSent.rawValue,
+                                                       for: indexPath) as? ChannelCell else { return UITableViewCell() }
+        guard let cellReceived = tableView.dequeueReusableCell(withIdentifier: Constants.channelCellReceived.rawValue,
                                                        for: indexPath) as? ChannelCell else { return UITableViewCell() }
         let message = sortedMessages[indexPath.section].messages[indexPath.row]
         let model = convert(message: message)
-        cell.resetCell()
-        cell.configure(with: model)
-        cell.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi))
-        return cell
+        if model.name == UserDataStorage.userName {
+            cellSent.resetCell()
+            cellSent.configure(with: model)
+            return cellSent
+        } else {
+            cellReceived.resetCell()
+            cellReceived.configure(with: model)
+            return cellReceived
+        }
     }
 }
 

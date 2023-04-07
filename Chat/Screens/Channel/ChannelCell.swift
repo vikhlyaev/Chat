@@ -2,18 +2,10 @@ import UIKit
 
 final class ChannelCell: UITableViewCell {
     
-    static let identifier = String(describing: ChannelCell.self)
-    
-    private lazy var messageView: UIView = {
-        let view = UIView()
+    private lazy var bubbleView: BubbleView = {
+        let view = BubbleView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
-    }()
-    
-    private lazy var bubbleImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
     }()
     
     private lazy var messageLabel: UILabel = {
@@ -46,7 +38,6 @@ final class ChannelCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
         setupView()
         setConstraints()
     }
@@ -56,63 +47,17 @@ final class ChannelCell: UITableViewCell {
     }
     
     private func setupView() {
+        transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi))
         contentView.addSubview(nameLabel)
-        contentView.addSubview(messageView)
-        messageView.addSubview(bubbleImageView)
-        messageView.addSubview(messageLabel)
-        messageView.addSubview(timeLabel)
+        contentView.addSubview(bubbleView)
+        bubbleView.addSubview(messageLabel)
+        bubbleView.addSubview(timeLabel)
     }
-    
-    private func setBubbleImage(type: MessageType) {
-        let bubbleImage: UIImage
-        switch type {
-        case .sent:
-            guard let image = UIImage(named: "ChatBubbleSent") else { return }
-            bubbleImage = image
-        case .received:
-            guard let image = UIImage(named: "ChatBubbleReceived") else { return }
-            bubbleImage = image
-        }
-        
-        bubbleImageView.image = bubbleImage.resizableImage(withCapInsets: UIEdgeInsets(top: 17, left: 21,
-                                                                                       bottom: 17, right: 21),
-                                                           resizingMode: .stretch).withRenderingMode(.alwaysTemplate)
-    }
-    
-    private func setBubbleColor(type: MessageType) {
-        switch type {
-        case .sent:
-            bubbleImageView.tintColor = .appBubbleSent
-        case .received:
-            bubbleImageView.tintColor = .appBubbleReceived
-        }
-    }
-    
-    private func setTextColor(type: MessageType) {
-        switch type {
-        case .sent:
-            messageLabel.textColor = .appBubbleTextSent
-            timeLabel.textColor = .appBubbleTextSent
-        case .received:
-            messageLabel.textColor = .appBubbleTextReceived
-            timeLabel.textColor = .appBubbleTextReceived
-        }
-    }
-    
-    private func setBubbleConstraints(type: MessageType) {
-        switch type {
-        case .sent:
-            messageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
-        case .received:
-            messageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20).isActive = true
-        }
-    }
-    
+
     func resetCell() {
         nameLabel.text = nil
         messageLabel.text = nil
         timeLabel.text = nil
-        bubbleImageView.image = nil
     }
 }
 
@@ -121,16 +66,26 @@ final class ChannelCell: UITableViewCell {
 extension ChannelCell: ConfigurableViewProtocol {
     func configure(with model: MessageCellModel) {
         if model.name == UserDataStorage.userName {
-            nameLabel.text = nil
+            bubbleView.backgroundColor = .appBubbleSent
+            bubbleView.arrowDirection = .right
+            messageLabel.textColor = .appBubbleTextSent
+            timeLabel.textColor = .appBubbleTextSent
+            bubbleView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4).isActive = true
+            bubbleView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8).isActive = true
+            bubbleView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8).isActive = false
         } else {
+            bubbleView.backgroundColor = .appBubbleReceived
+            bubbleView.arrowDirection = .left
+            messageLabel.textColor = .appBubbleTextReceived
+            timeLabel.textColor = .appBubbleTextReceived
             nameLabel.text = model.name
+            bubbleView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4).isActive = true
+            bubbleView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8).isActive = false
+            bubbleView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8).isActive = true
         }
+        
         messageLabel.text = model.text
         timeLabel.text = model.date.onlyHoursAndMinutes()
-        setBubbleImage(type: model.type)
-        setBubbleColor(type: model.type)
-        setTextColor(type: model.type)
-        setBubbleConstraints(type: model.type)
     }
 }
 
@@ -138,33 +93,25 @@ extension ChannelCell: ConfigurableViewProtocol {
 
 extension ChannelCell {
     private func setConstraints() {
-        let messageViewWidth = messageView.widthAnchor.constraint(lessThanOrEqualToConstant: frame.width * 0.75)
-        messageViewWidth.priority = UILayoutPriority(999)
-        
+        let bubbleViewWidth = bubbleView.widthAnchor.constraint(lessThanOrEqualToConstant: frame.width * 0.75)
+        bubbleViewWidth.priority = UILayoutPriority(999)
         messageLabel.setContentCompressionResistancePriority(UILayoutPriority(999), for: .horizontal)
         timeLabel.setContentCompressionResistancePriority(UILayoutPriority(1000), for: .horizontal)
-
         NSLayoutConstraint.activate([
             nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4),
-            nameLabel.leadingAnchor.constraint(equalTo: messageView.leadingAnchor, constant: 12),
+            nameLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 12),
             nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
             
-            messageView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4),
-            messageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
-            messageViewWidth,
+            bubbleView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
+            bubbleViewWidth,
             
-            bubbleImageView.topAnchor.constraint(equalTo: messageView.topAnchor),
-            bubbleImageView.leadingAnchor.constraint(equalTo: messageView.leadingAnchor),
-            bubbleImageView.trailingAnchor.constraint(equalTo: messageView.trailingAnchor),
-            bubbleImageView.bottomAnchor.constraint(equalTo: messageView.bottomAnchor),
-            
-            timeLabel.bottomAnchor.constraint(equalTo: messageView.bottomAnchor, constant: -6),
-            timeLabel.trailingAnchor.constraint(equalTo: messageView.trailingAnchor, constant: -12),
-            
-            messageLabel.topAnchor.constraint(equalTo: messageView.topAnchor, constant: 6),
-            messageLabel.leadingAnchor.constraint(equalTo: messageView.leadingAnchor, constant: 12),
+            messageLabel.topAnchor.constraint(equalTo: bubbleView.topAnchor, constant: 7),
+            messageLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 14),
             messageLabel.trailingAnchor.constraint(equalTo: timeLabel.leadingAnchor, constant: -4),
-            messageLabel.bottomAnchor.constraint(equalTo: messageView.bottomAnchor, constant: -6)
+            messageLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -7),
+            
+            timeLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -7),
+            timeLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -12)
         ])
     }
 }
