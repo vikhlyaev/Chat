@@ -4,9 +4,6 @@ final class ThemesCell: UITableViewCell {
     
     static let identifier = String(describing: ThemesCell.self)
     
-    private lazy var dayThemeButton = ThemesButton(theme: .light, completion: dayThemeButtonTapped)
-    private lazy var nightThemeButton = ThemesButton(theme: .dark, completion: nightThemeButtonTapped)
-    
     private lazy var themeButtonsStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [dayThemeButton, nightThemeButton])
         stackView.axis = .horizontal
@@ -16,11 +13,13 @@ final class ThemesCell: UITableViewCell {
         return stackView
     }()
     
+    private lazy var dayThemeButton = ThemesButton(theme: .light, completion: dayThemeButtonTapped)
+    private lazy var nightThemeButton = ThemesButton(theme: .dark, completion: nightThemeButtonTapped)
+    
     weak var delegate: ThemesCellDelegate?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
         setupView()
         setConstraints()
     }
