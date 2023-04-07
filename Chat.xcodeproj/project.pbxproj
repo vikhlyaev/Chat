@@ -36,8 +36,8 @@
 		0ABA25B929DF0D1900BEC0DB /* Message + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABA25B829DF0D1900BEC0DB /* Message + Extensions.swift */; };
 		0ABA25BB29DF0DAC00BEC0DB /* SortedMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABA25BA29DF0DAC00BEC0DB /* SortedMessage.swift */; };
 		0ABA25BD29DF0EBD00BEC0DB /* UserDataStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABA25BC29DF0EBD00BEC0DB /* UserDataStorage.swift */; };
-		0ABA25BF29DF109F00BEC0DB /* MessageType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABA25BE29DF109F00BEC0DB /* MessageType.swift */; };
 		0ABA817929CF1B5C002D053D /* AlertViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABA817829CF1B5C002D053D /* AlertViewModel.swift */; };
+		0AC2F8E829DFC2C100A6F320 /* BubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC2F8E729DFC2C100A6F320 /* BubbleView.swift */; };
 		0AF3176829A0D667005417A5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF3176729A0D667005417A5 /* AppDelegate.swift */; };
 		0AF3176C29A0D667005417A5 /* ChannelsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF3176B29A0D667005417A5 /* ChannelsListViewController.swift */; };
 		0AF3177129A0D66A005417A5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0AF3177029A0D66A005417A5 /* Assets.xcassets */; };
@@ -75,8 +75,8 @@
 		0ABA25B829DF0D1900BEC0DB /* Message + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message + Extensions.swift"; sourceTree = "<group>"; };
 		0ABA25BA29DF0DAC00BEC0DB /* SortedMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortedMessage.swift; sourceTree = "<group>"; };
 		0ABA25BC29DF0EBD00BEC0DB /* UserDataStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDataStorage.swift; sourceTree = "<group>"; };
-		0ABA25BE29DF109F00BEC0DB /* MessageType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageType.swift; sourceTree = "<group>"; };
 		0ABA817829CF1B5C002D053D /* AlertViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertViewModel.swift; sourceTree = "<group>"; };
+		0AC2F8E729DFC2C100A6F320 /* BubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BubbleView.swift; sourceTree = "<group>"; };
 		0AF3176429A0D667005417A5 /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0AF3176729A0D667005417A5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0AF3176B29A0D667005417A5 /* ChannelsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsListViewController.swift; sourceTree = "<group>"; };
@@ -131,6 +131,7 @@
 				0A03CD7129B99C1300B9CC8E /* ChannelCell.swift */,
 				0AB6B5D529C25B4100361A2C /* ChannelHeader.swift */,
 				0AB6B5B929C1E5CD00361A2C /* CustomNavBar.swift */,
+				0AC2F8E729DFC2C100A6F320 /* BubbleView.swift */,
 			);
 			path = Channel;
 			sourceTree = "<group>";
@@ -141,7 +142,6 @@
 				0A03CD6129B989C000B9CC8E /* Configuration */,
 				0ABA25BA29DF0DAC00BEC0DB /* SortedMessage.swift */,
 				0ABA25BC29DF0EBD00BEC0DB /* UserDataStorage.swift */,
-				0ABA25BE29DF109F00BEC0DB /* MessageType.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -445,7 +445,6 @@
 				0AB6B5D629C25B4100361A2C /* ChannelHeader.swift in Sources */,
 				0A3D726929CB3599002774AE /* String + Extensions.swift in Sources */,
 				0A03CD5F29B988EE00B9CC8E /* Date + Extensions.swift in Sources */,
-				0ABA25BF29DF109F00BEC0DB /* MessageType.swift in Sources */,
 				0AB6B5C629C1EC6A00361A2C /* ThemesButton.swift in Sources */,
 				0ABA25BD29DF0EBD00BEC0DB /* UserDataStorage.swift in Sources */,
 				0A3D726229C9CB9A002774AE /* ConcurrencyService.swift in Sources */,
@@ -455,6 +454,7 @@
 				0AB6B5C429C1EC3E00361A2C /* ThemesCellDelegate.swift in Sources */,
 				0A03CD6529B98B4400B9CC8E /* ConfigurableViewProtocol.swift in Sources */,
 				0AB6B5BA29C1E5CD00361A2C /* CustomNavBar.swift in Sources */,
+				0AC2F8E829DFC2C100A6F320 /* BubbleView.swift in Sources */,
 				0A03CD5B29B984A500B9CC8E /* UIColor + Extensions.swift in Sources */,
 				0A03CD6D29B9910200B9CC8E /* ChannelsListCellModel.swift in Sources */,
 				0AB6B5BF29C1EBEB00361A2C /* SettingsViewController.swift in Sources */,
