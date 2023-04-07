@@ -83,7 +83,6 @@ extension ChannelCell: ConfigurableViewProtocol {
             bubbleView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8).isActive = false
             bubbleView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8).isActive = true
         }
-        
         messageLabel.text = model.text
         timeLabel.text = model.date.onlyHoursAndMinutes()
     }
