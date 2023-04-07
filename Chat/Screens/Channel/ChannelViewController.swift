@@ -188,9 +188,9 @@ final class ChannelViewController: UIViewController {
     }
     
     private func convert(message: Message) -> MessageCellModel {
-        return MessageCellModel(name: message.userName,
-                                text: message.text,
-                                date: message.date)
+        MessageCellModel(name: message.userName,
+                         text: message.text,
+                         date: message.date)
     }
     
     @objc
@@ -314,9 +314,9 @@ extension ChannelViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cellSent = tableView.dequeueReusableCell(withIdentifier: Constants.channelCellSent.rawValue,
-                                                       for: indexPath) as? ChannelCell else { return UITableViewCell() }
+                                                           for: indexPath) as? ChannelCell else { return UITableViewCell() }
         guard let cellReceived = tableView.dequeueReusableCell(withIdentifier: Constants.channelCellReceived.rawValue,
-                                                       for: indexPath) as? ChannelCell else { return UITableViewCell() }
+                                                               for: indexPath) as? ChannelCell else { return UITableViewCell() }
         let message = sortedMessages[indexPath.section].messages[indexPath.row]
         let model = convert(message: message)
         if model.name == UserDataStorage.userName {
