@@ -73,7 +73,6 @@ final class ChannelsListViewController: UIViewController {
     }
     
     private func convert(channel: Channel) -> ChannelsListCellModel {
-        
         ChannelsListCellModel(name: channel.name,
                               logoURL: channel.logoURL,
                               lastMessage: channel.lastMessage,
@@ -174,7 +173,6 @@ final class ChannelsListViewController: UIViewController {
 extension ChannelsListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        
         guard let channel = channels?[indexPath.row] else { return }
         let channelViewController = ChannelViewController(channel: channel)
         navigationController?.pushViewController(channelViewController, animated: true)
@@ -205,7 +203,6 @@ extension ChannelsListViewController: UITableViewDataSource {
         if indexPath.row == indexLastCellInSection {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
         }
-        
         let model = convert(channel: channels[indexPath.row])
         cell.resetCell()
         cell.configure(with: model)
