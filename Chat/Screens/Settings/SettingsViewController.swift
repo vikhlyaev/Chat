@@ -4,7 +4,6 @@ final class SettingsViewController: UIViewController {
     
     private enum SettingsSection: CaseIterable {
         case themes
-        
         var count: Int {
             switch self {
             case .themes:
@@ -35,7 +34,6 @@ final class SettingsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupView()
         setConstraints()
         setDelegates()
