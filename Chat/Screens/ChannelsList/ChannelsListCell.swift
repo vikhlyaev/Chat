@@ -101,13 +101,8 @@ final class ChannelsListCell: UITableViewCell {
 extension ChannelsListCell: ConfigurableViewProtocol {
     func configure(with model: ChannelsListCellModel) {
         nameLabel.text = model.name
-        if let url = model.logoURL {
-            photoImageView.load(url: url)
-        } else {
-            photoImageView.image = UIImage(named: "PlaceholderChannel")
-        }
         dateAndTimeLabel.text = model.lastActivity?.toString()
-
+        photoImageView.loadImage(url: model.logoURL)
         if let message = model.lastMessage {
             lastMessageLabel.text = message
         } else {
@@ -148,7 +143,6 @@ extension ChannelsListCell {
             
             nameLabel.topAnchor.constraint(equalTo: wrapperView.topAnchor),
             nameLabel.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor),
-//            nameLabel.trailingAnchor.constraint(equalTo: dateAndTimeLabel.leadingAnchor, constant: -4),
             
             lastMessageLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 2),
             lastMessageLabel.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor),

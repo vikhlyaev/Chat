@@ -45,19 +45,14 @@ final class CustomNavBar: UIView {
     
     private let completion: () -> Void
     
-    init(name: String, image: String?, completion: @escaping () -> Void) {
+    init(name: String, imageURL: String?, completion: @escaping () -> Void) {
         self.completion = completion
         super.init(frame: .zero)
-        
-        nameLabel.text = name
-        if let image = image {
-            photoImageView.load(url: image)
-        } else {
-            photoImageView.image = UIImage(named: "PlaceholderChannel")
-        }
-        
         setupView()
         setConstraints()
+        
+        nameLabel.text = name
+        photoImageView.loadImage(url: imageURL)
     }
     
     required init?(coder: NSCoder) {
