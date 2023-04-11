@@ -1,129 +1,125 @@
 import UIKit
 import Dispatch
+import Combine
 
-protocol ConcurrencyServiceProtocol {
-    func loadProfile(completion: @escaping (Result<ProfileViewModel, DataManagerError>) -> Void)
-    func saveProfile(profile: ProfileViewModel, completion: @escaping (DataManagerError?) -> Void)
+protocol ConcurrencyServiceProtocol: AnyObject {
+    var profileSubject: PassthroughSubject<ProfileViewModel, Error> { get set }
+    var photoSubject: CurrentValueSubject<UIImage?, Error> { get set }
+    func profilePublisher() -> AnyPublisher<ProfileViewModel, Error>
 }
 
 final class ConcurrencyService {
-    private let queue = DispatchQueue(label: "ConcurrencyService.vikhlyaev", qos: .userInitiated)
-    private lazy var dataManager: DataManagerProtocol = DataManager()
+    private let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+    private var cancellables = Set<AnyCancellable>()
     
-    private func load(type: DataType, completion: @escaping (Result<Data, DataManagerError>) -> Void) {
-        queue.async { [weak self] in
-            self?.dataManager.read(type) { result in
-                completion(result)
+    var profileSubject = PassthroughSubject<ProfileViewModel, Error>()
+    var photoSubject = CurrentValueSubject<UIImage?, Error>(UIImage(named: "PlaceholderAvatar"))
+    
+    init() {
+        profilePublisher()
+            .sink { completion in
+                print(completion)
+            } receiveValue: { profile in
+                self.profileSubject.send(profile)
+                self.photoSubject.send(profile.photo)
             }
-        }
-    }
-    
-    private func save(_ data: Data, as type: DataType, completion: @escaping (DataManagerError?) -> Void) {
-        queue.async { [weak self] in
-            self?.dataManager.write(data, as: type, completion: { error in
-                completion(error)
+            .store(in: &cancellables)
+        
+        profileSubject
+            .encode(encoder: PropertyListEncoder())
+            .subscribe(on: DispatchQueue.main)
+            .receive(on: DispatchQueue.global(qos: .utility))
+            .sink { completion in
+                print("profile saved")
+            } receiveValue: { [weak self] profileData in
+                guard let url = self?.documentDirectory?.appendingPathComponent(DataType.plistData.fileName) else { return }
+                try? profileData.write(to: url)
+            }
+            .store(in: &cancellables)
+        
+        photoSubject
+            .map({ $0?.pngData() ?? Data() })
+            .subscribe(on: DispatchQueue.main)
+            .receive(on: DispatchQueue.global(qos: .utility))
+            .sink(receiveCompletion: { completion in
+                print("photo saved")
+            }, receiveValue: { [weak self] photo in
+                guard let url = self?.documentDirectory?.appendingPathComponent(DataType.photo.fileName) else { return }
+                try? photo.write(to: url)
             })
-        }
+            .store(in: &cancellables)
     }
+
 }
 
 // MARK: - ConcurrencyServiceProtocol
 
 extension ConcurrencyService: ConcurrencyServiceProtocol {
-    func loadProfile(completion: @escaping (Result<ProfileViewModel, DataManagerError>) -> Void) {
-        var name: String = "No name"
-        var information: String = "No bio specified"
-        var photo: UIImage?
-        
-        let loadNameItem = DispatchWorkItem { [weak self] in
-            self?.load(type: .name) { result in
-                switch result {
-                case .success(let nameData):
-                    if let nameString = String(data: nameData, encoding: .utf8) {
-                        name = nameString
-                    } else {
-                        DispatchQueue.main.async { completion(.failure(.badData)) }
-                    }
-                case .failure(let error):
-                    DispatchQueue.main.async { completion(.failure(error)) }
+    private func readPublisher(type: DataType) -> AnyPublisher<Data, Error> {
+        Deferred {
+            Future { promise in
+                guard let url = self.documentDirectory?.appendingPathComponent(type.fileName) else {
+                    promise(.failure(ConcurrencyServiceError.badUrl))
+                    return
+                }
+                do {
+                    let data = try Data(contentsOf: url)
+                    promise(.success(data))
+                } catch {
+                    promise(.failure(ConcurrencyServiceError.dataReadError))
                 }
             }
-        }
-        
-        let loadInfoItem = DispatchWorkItem { [weak self] in
-            self?.load(type: .information) { result in
-                switch result {
-                case .success(let informationData):
-                    if let informationString = String(data: informationData, encoding: .utf8) {
-                        information = informationString
-                    } else {
-                        DispatchQueue.main.async { completion(.failure(.badData)) }
-                    }
-                case .failure(let error):
-                    DispatchQueue.main.async {  completion(.failure(error)) }
-                }
-            }
-        }
-        
-        let loadPhotoItem = DispatchWorkItem { [weak self] in
-            self?.load(type: .photo) { result in
-                switch result {
-                case .success(let photoData):
-                    if let photoImage = UIImage(data: photoData) {
-                        photo = photoImage
-                    } else {
-                        DispatchQueue.main.async { completion(.failure(.badData)) }
-                    }
-                case .failure(let error):
-                    DispatchQueue.main.async { completion(.failure(error)) }
-                }
-            }
-        }
-        
-        let group = DispatchGroup()
-        queue.async(group: group, execute: loadNameItem)
-        queue.async(group: group, execute: loadInfoItem)
-        queue.async(group: group, execute: loadPhotoItem)
-        
-        group.notify(queue: .main) {
-            completion(.success(ProfileViewModel(name: name,
-                                                 information: information,
-                                                 photo: photo)))
-        }
+        }.eraseToAnyPublisher()
     }
     
-    func saveProfile(profile: ProfileViewModel, completion: @escaping (DataManagerError?) -> Void) {
-        let saveName = DispatchWorkItem { [weak self] in
-            if let nameData = profile.name?.toData() {
-                self?.save(nameData, as: .name) { error in
-                    DispatchQueue.main.async { completion(error) }
-                }
+    func profilePublisher() -> AnyPublisher<ProfileViewModel, Error> {
+        Deferred {
+            Future { promise in
+                var resultProfile = ProfileViewModel()
+                
+                let loadProfileData = self.readPublisher(type: .plistData)
+                    .decode(type: ProfileViewModel.self, decoder: PropertyListDecoder())
+                    
+                let loadProfilePhoto = self.readPublisher(type: .photo)
+                    .map({ UIImage(data: $0) })
+                   
+                _ = Publishers.CombineLatest(loadProfileData, loadProfilePhoto)
+                        .sink(receiveCompletion: { completion in
+                            switch completion {
+                            case .finished:
+                                print("profile loaded")
+                            case .failure(let error):
+                                promise(.failure(error))
+                            }
+                        }, receiveValue: { [weak self] profile, photo in
+                            resultProfile = profile
+                            resultProfile.photo = photo
+                            self?.photoSubject.send(photo)
+                        })
+                
+                promise(.success(resultProfile))
             }
-        }
-        
-        let saveInfo = DispatchWorkItem { [weak self] in
-            if let infoData = profile.information?.toData() {
-                self?.save(infoData, as: .information) { error in
-                    DispatchQueue.main.async { completion(error) }
-                }
-            }
-        }
-        
-        let savePhoto = DispatchWorkItem { [weak self] in
-            if let photoData = profile.photo?.pngData() {
-                self?.save(photoData, as: .photo) { error in
-                    DispatchQueue.main.async { completion(error) }
-                }
-            }
-        }
-        
-        let group = DispatchGroup()
-        queue.async(group: group, execute: saveName)
-        queue.async(group: group, execute: saveInfo)
-        queue.async(group: group, execute: savePhoto)
-        
-        group.notify(queue: .main) {
-            completion(nil)
+        }.eraseToAnyPublisher()
+    }
+}
+
+enum ConcurrencyServiceError: Error {
+    case decodingError
+    case encodingError
+    case badUrl
+    case dataReadError
+}
+
+enum DataType {
+    case plistData
+    case photo
+    
+    var fileName: String {
+        switch self {
+        case .plistData:
+            return "data.plist"
+        case .photo:
+            return "photo.png"
         }
     }
 }
