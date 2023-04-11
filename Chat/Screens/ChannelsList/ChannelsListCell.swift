@@ -121,10 +121,8 @@ extension ChannelsListCell: ConfigurableViewProtocol {
 
 extension ChannelsListCell {
     private func setConstraints() {
-        
-        nameLabel.setContentCompressionResistancePriority(UILayoutPriority(999), for: .horizontal)
-        dateAndTimeLabel.setContentCompressionResistancePriority(UILayoutPriority(1000), for: .horizontal)
-        
+        nameLabel.setContentCompressionResistancePriority(UILayoutPriority(749), for: .horizontal)
+        nameLabel.setContentHuggingPriority(UILayoutPriority(249), for: .horizontal)
         NSLayoutConstraint.activate([
             photoView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             photoView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
@@ -140,16 +138,17 @@ extension ChannelsListCell {
             wrapperView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             wrapperView.centerYAnchor.constraint(equalTo: photoImageView.centerYAnchor),
             
-            nameLabel.topAnchor.constraint(equalTo: wrapperView.topAnchor),
-            nameLabel.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor),
-            nameLabel.trailingAnchor.constraint(equalTo: dateAndTimeLabel.leadingAnchor, constant: -4),
-            
             disclosureImageView.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor),
             disclosureImageView.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor),
             disclosureImageView.widthAnchor.constraint(equalToConstant: 6.42),
             
             dateAndTimeLabel.trailingAnchor.constraint(equalTo: disclosureImageView.leadingAnchor, constant: -14),
+            dateAndTimeLabel.leadingAnchor.constraint(equalTo: nameLabel.trailingAnchor, constant: -4),
             dateAndTimeLabel.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor),
+            
+            nameLabel.topAnchor.constraint(equalTo: wrapperView.topAnchor),
+            nameLabel.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor),
+//            nameLabel.trailingAnchor.constraint(equalTo: dateAndTimeLabel.leadingAnchor, constant: -4),
             
             lastMessageLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 2),
             lastMessageLabel.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor),
