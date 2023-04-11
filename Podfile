@@ -4,4 +4,5 @@ target 'Chat' do
   use_frameworks!
   pod 'SwiftLint'
   pod 'TFSChatTransport'
+  pod 'KeychainAccess'
 end
