@@ -188,7 +188,8 @@ final class ChannelViewController: UIViewController {
     }
     
     private func convert(message: Message) -> MessageCellModel {
-        MessageCellModel(name: message.userName,
+        MessageCellModel(id: message.userID,
+                         name: message.userName,
                          text: message.text,
                          date: message.date)
     }
@@ -231,15 +232,7 @@ final class ChannelViewController: UIViewController {
             }
         }
         
-        var userName: String {
-            if let name = UserDataStorage.userName {
-                return name
-            } else {
-                let name = Constants.userName.rawValue
-                UserDataStorage.userName = name
-                return name
-            }
-        }
+        let userName = Constants.userName.rawValue
         
         guard let text = textView.text else { return }
         chatService.sendMessage(text: text, channelId: channel.id, userId: userID, userName: userName)
@@ -319,7 +312,7 @@ extension ChannelViewController: UITableViewDataSource {
                                                                for: indexPath) as? ChannelCell else { return UITableViewCell() }
         let message = sortedMessages[indexPath.section].messages[indexPath.row]
         let model = convert(message: message)
-        if model.name == UserDataStorage.userName {
+        if model.id == UserDataStorage.userID {
             cellSent.resetCell()
             cellSent.configure(with: model)
             return cellSent

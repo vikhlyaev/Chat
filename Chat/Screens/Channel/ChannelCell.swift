@@ -65,7 +65,7 @@ final class ChannelCell: UITableViewCell {
 
 extension ChannelCell: ConfigurableViewProtocol {
     func configure(with model: MessageCellModel) {
-        if model.name == UserDataStorage.userName {
+        if model.id == UserDataStorage.userID {
             bubbleView.backgroundColor = .appBubbleSent
             bubbleView.arrowDirection = .right
             messageLabel.textColor = .appBubbleTextSent
