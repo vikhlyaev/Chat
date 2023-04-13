@@ -4,8 +4,9 @@ import TFSChatTransport
 
 final class ChannelsListViewController: UIViewController {
     
-    private lazy var refreshControl = UIRefreshControl()
+    // MARK: - UI
     
+    private lazy var refreshControl = UIRefreshControl()
     private lazy var channelsTableView: UITableView = {
         let tableView = UITableView(frame: .zero)
         if #available(iOS 15.0, *) {
@@ -18,8 +19,13 @@ final class ChannelsListViewController: UIViewController {
         return tableView
     }()
     
-    private let chatService = ChatService(host: "167.235.86.234", port: 8080)
-    private var channels: [Channel]? {
+    // MARK: - Services
+    
+    private let chatService = ChatService()
+    
+    // MARK: - DataSource
+    
+    private var channels: [ChannelProtocol]? {
         didSet {
             DispatchQueue.main.async { [weak self] in
                 self?.channelsTableView.reloadData()
@@ -27,7 +33,11 @@ final class ChannelsListViewController: UIViewController {
         }
     }
     
+    // MARK: - Combine
+    
     private var cancellables = Set<AnyCancellable>()
+    
+    // MARK: - Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,6 +53,8 @@ final class ChannelsListViewController: UIViewController {
         navigationController?.isNavigationBarHidden = false
         loadChannels()
     }
+    
+    // MARK: - Setup UI
     
     private func setupView() {
         view.backgroundColor = .systemBackground
@@ -72,12 +84,13 @@ final class ChannelsListViewController: UIViewController {
         channelsTableView.dataSource = self
     }
     
-    private func convert(channel: Channel) -> ChannelsListCellModel {
-        ChannelsListCellModel(name: channel.name,
-                              logoURL: channel.logoURL,
-                              lastMessage: channel.lastMessage,
-                              lastActivity: channel.lastActivity)
+    @objc
+    private func handleRefreshControl() {
+        refreshControl.endRefreshing()
+        loadChannels()
     }
+    
+    // MARK: - Channels
     
     private func loadChannels() {
         chatService.loadChannels()
@@ -131,6 +144,13 @@ final class ChannelsListViewController: UIViewController {
             .store(in: &cancellables)
     }
     
+    private func convert(channel: ChannelProtocol) -> ChannelsListCellModel {
+        ChannelsListCellModel(name: channel.name,
+                              logoURL: channel.logoURL,
+                              lastMessage: channel.lastMessage,
+                              lastActivity: channel.lastActivity)
+    }
+    
     @objc
     private func addChannelTapped() {
         let alert = UIAlertController(title: "New channel", message: nil, preferredStyle: .alert)
@@ -160,12 +180,7 @@ final class ChannelsListViewController: UIViewController {
         alert.addAction(createAction)
         present(alert, animated: true)
     }
-    
-    @objc
-    private func handleRefreshControl() {
-        refreshControl.endRefreshing()
-        loadChannels()
-    }
+
 }
 
 // MARK: - UITableViewDelegate
