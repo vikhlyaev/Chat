@@ -99,7 +99,7 @@ final class ChannelsListCell: UITableViewCell {
 // MARK: - ConfigurableViewProtocol
 
 extension ChannelsListCell: ConfigurableViewProtocol {
-    func configure(with model: ChannelsListCellModel) {
+    func configure(with model: ChannelModel) {
         nameLabel.text = model.name
         dateAndTimeLabel.text = model.lastActivity?.toString()
         photoImageView.loadImage(url: model.logoURL)

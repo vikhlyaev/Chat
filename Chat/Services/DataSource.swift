@@ -3,7 +3,7 @@ import TFSChatTransport
 
 protocol DataSourceProtocol {
     func getChannels(completion: () -> Void) -> [ChannelModel]
-    func saveChannelModel(with channelModel: ChannelProtocol)
+    func saveChannelModel(with channelModel: ChannelModel)
 }
 
 final class DataSource {
@@ -41,7 +41,7 @@ extension DataSource: DataSourceProtocol {
         
     }
     
-    func saveChannelModel(with channelModel: ChannelProtocol) {
+    func saveChannelModel(with channelModel: ChannelModel) {
         coreDataService.save { context in
             let channelManagedObject = ChannelManagedObject(context: context)
             channelManagedObject.id = channelModel.id

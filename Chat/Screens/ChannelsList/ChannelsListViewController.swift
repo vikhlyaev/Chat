@@ -25,7 +25,7 @@ final class ChannelsListViewController: UIViewController {
     
     // MARK: - DataSource
     
-    private var channels: [ChannelProtocol]? {
+    private var channels: [ChannelModel]? {
         didSet {
             DispatchQueue.main.async { [weak self] in
                 self?.channelsTableView.reloadData()
@@ -113,13 +113,20 @@ final class ChannelsListViewController: UIViewController {
                     }
                 }
             } receiveValue: { [weak self] channels in
-                self?.channels = channels.sorted { ($0.lastActivity ?? Date()) > ($1.lastActivity ?? Date()) }
+                self?.channels = self?.convert(channels: channels).sorted {
+                    // TODO: Changes sort algo
+                    ($0.lastActivity ?? Date()) > ($1.lastActivity ?? Date())
+                }
             }
             .store(in: &cancellables)
     }
     
     private func createChannel(name: String, logoUrl: String? = nil) {
         chatService.createChannel(name: name, logoUrl: logoUrl)
+            .map { [weak self] in
+                guard let self else { return }
+                self.convert(channel: $0)
+            }
             .subscribe(on: DispatchQueue.main)
             .receive(on: DispatchQueue.global(qos: .utility))
             .sink { [weak self] completion in
@@ -144,11 +151,22 @@ final class ChannelsListViewController: UIViewController {
             .store(in: &cancellables)
     }
     
-    private func convert(channel: ChannelProtocol) -> ChannelsListCellModel {
-        ChannelsListCellModel(name: channel.name,
-                              logoURL: channel.logoURL,
-                              lastMessage: channel.lastMessage,
-                              lastActivity: channel.lastActivity)
+    private func convert(channel: Channel) -> ChannelModel {
+        ChannelModel(id: channel.id,
+                     name: channel.name,
+                     logoURL: channel.logoURL,
+                     lastMessage: channel.lastMessage,
+                     lastActivity: channel.lastActivity)
+    }
+    
+    private func convert(channels: [Channel]) -> [ChannelModel] {
+        channels.map {
+            ChannelModel(id: $0.id,
+                         name: $0.name,
+                         logoURL: $0.logoURL,
+                         lastMessage: $0.lastMessage,
+                         lastActivity: $0.lastActivity)
+        }
     }
     
     @objc
@@ -180,7 +198,7 @@ final class ChannelsListViewController: UIViewController {
         alert.addAction(createAction)
         present(alert, animated: true)
     }
-
+    
 }
 
 // MARK: - UITableViewDelegate
@@ -218,9 +236,8 @@ extension ChannelsListViewController: UITableViewDataSource {
         if indexPath.row == indexLastCellInSection {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
         }
-        let model = convert(channel: channels[indexPath.row])
         cell.resetCell()
-        cell.configure(with: model)
+        cell.configure(with: channels[indexPath.row])
         return cell
     }
 }
