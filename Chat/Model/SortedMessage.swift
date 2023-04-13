@@ -1,11 +1,10 @@
 import Foundation
-import TFSChatTransport
 
 struct SortedMessage {
     let date: Date
-    var messages: [Message]
+    var messages: [MessageModel]
     
-    mutating func addMessage(_ message: Message) {
+    mutating func addMessage(_ message: MessageModel) {
         messages.insert(message, at: 0)
     }
 }
