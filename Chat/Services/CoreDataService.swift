@@ -4,6 +4,7 @@ import OSLog
 
 protocol CoreDataServiceProtocol: AnyObject {
     func fetchChannels() throws -> [ChannelManagedObject]
+    func fetchResultController(entityName: String, sortName: String) -> NSFetchedResultsController<NSFetchRequestResult>
     func save(block: (NSManagedObjectContext) throws -> Void)
 }
 
@@ -34,6 +35,18 @@ final class CoreDataService {
 // MARK: - CoreDataServiceProtocol
 
 extension CoreDataService: CoreDataServiceProtocol {
+    
+    func fetchResultController(entityName: String, sortName: String) -> NSFetchedResultsController<NSFetchRequestResult> {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+        let sortDescriptor = NSSortDescriptor(key: sortName, ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        let fetchResultController = NSFetchedResultsController(fetchRequest: fetchRequest,
+                                                               managedObjectContext: viewContext,
+                                                               sectionNameKeyPath: nil,
+                                                               cacheName: nil)
+        return fetchResultController
+    }
+    
     func fetchChannels() throws -> [ChannelManagedObject] {
         defer { logger.info("\(String(describing: CoreDataService.self)): Successfully received") }
         let fetchRequest = ChannelManagedObject.fetchRequest()
