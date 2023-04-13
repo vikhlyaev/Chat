@@ -68,7 +68,7 @@ final class ChannelViewController: UIViewController {
     
     private var lastName: String?
     private let chatService = ChatService(host: "167.235.86.234", port: 8080)
-    private let channel: Channel
+    private let channel: ChannelProtocol
     private var sortedMessages: [SortedMessage] = [] {
         didSet {
             DispatchQueue.main.async { [weak self] in
@@ -79,7 +79,7 @@ final class ChannelViewController: UIViewController {
     
     private var cancellables = Set<AnyCancellable>()
     
-    init(channel: Channel) {
+    init(channel: ChannelProtocol) {
         self.channel = channel
         super.init(nibName: nil, bundle: nil)
         loadMessages(channelId: channel.id)
