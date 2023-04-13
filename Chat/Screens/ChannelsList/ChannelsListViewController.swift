@@ -4,11 +4,6 @@ import TFSChatTransport
 
 final class ChannelsListViewController: UIViewController {
     
-    // MARK: - Typealiases
-    
-    typealias DataSource = UITableViewDiffableDataSource<Int, ChannelModel>
-    typealias Snapshot = NSDiffableDataSourceSnapshot<Int, ChannelModel>
-    
     // MARK: - UI
     
     private lazy var refreshControl = UIRefreshControl()
@@ -30,6 +25,8 @@ final class ChannelsListViewController: UIViewController {
     
     // MARK: - DataSource
     
+    private let dataSource: DataSourceProtocol = DataSource()
+    
     private var channels: [ChannelModel]? {
         didSet {
             DispatchQueue.main.async { [weak self] in
@@ -37,8 +34,6 @@ final class ChannelsListViewController: UIViewController {
             }
         }
     }
-    
-//    private lazy var dataSource = createDataSource()
     
     // MARK: - Combine
     
@@ -53,12 +48,18 @@ final class ChannelsListViewController: UIViewController {
         setConstraints()
         setDelegates()
         setupRefreshControl()
+        getChannels()
+    }
+    
+    private func getChannels() {
+        channels = dataSource.getChannels { [weak self] in
+            self?.loadChannels()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.isNavigationBarHidden = false
-        loadChannels()
     }
     
     // MARK: - Setup UI
@@ -84,27 +85,6 @@ final class ChannelsListViewController: UIViewController {
         channelsTableView.delegate = self
         channelsTableView.dataSource = self
     }
-    
-//    private func createDataSource() -> DataSource {
-//        DataSource(tableView: channelsTableView) { tableView, indexPath, itemIdentifier in
-//            guard
-//                let self = self,
-//                let channels = self.channels,
-//                let cell = tableView.dequeueReusableCell(withIdentifier: ChannelsListCell.identifier,
-//                                                         for: indexPath) as? ChannelsListCell
-//            else {
-//                return UITableViewCell()
-//            }
-//
-//            if indexPath.row == (channels.isEmpty ? 0 : channels.count - 1) {
-//                cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
-//            }
-//
-//            cell.resetCell()
-//            cell.configure(with: itemIdentifier)
-//            return cell
-//        }
-//    }
     
     private func setupRefreshControl() {
         refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
@@ -172,7 +152,28 @@ final class ChannelsListViewController: UIViewController {
                 guard let self else { return }
                 let model = self.convert(channel: newChannel)
                 self.channels?.insert(model, at: 0)
+                self.dataSource.saveChannelModel(with: model)
             }
+            .store(in: &cancellables)
+    }
+    
+    private func deleteChannel(_ channel: ChannelModel) {
+        chatService.deleteChannel(id: channel.id)
+            .sink { [weak self] completion in
+                switch completion {
+                case .finished:
+                    print("channel deleted")
+                    self?.dataSource.deleteChannelModel(with: channel)
+                    //                    self?.channels?.remove(at: <#T##Int#>)
+                case .failure:
+                    let alert = UIAlertController(title: "Error", message: "Unable to delete channel", preferredStyle: .alert)
+                    let okAction = UIAlertAction(title: "OK", style: .default)
+                    alert.addAction(okAction)
+                    DispatchQueue.main.async { [weak self] in
+                        self?.present(alert, animated: true)
+                    }
+                }
+            } receiveValue: {}
             .store(in: &cancellables)
     }
     
@@ -231,6 +232,13 @@ extension ChannelsListViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         76
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            guard let channel = channels?[indexPath.row] else { return }
+            deleteChannel(channel)
+        }
     }
 }
 
