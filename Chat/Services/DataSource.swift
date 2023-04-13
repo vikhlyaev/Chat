@@ -2,7 +2,7 @@ import Foundation
 import TFSChatTransport
 
 protocol DataSourceProtocol {
-    func getChannels(completion: () -> Void) -> [ChannelModel]
+    func getChannels() -> [ChannelModel]
     func saveChannelModel(with channelModel: ChannelModel)
 }
 
@@ -13,7 +13,10 @@ final class DataSource {
 // MARK: - DataSourceProtocol
 
 extension DataSource: DataSourceProtocol {
-    func getChannels(completion: () -> Void) -> [ChannelModel] {
+    
+    // MARK: - CoreData Service methods
+    
+    func getChannels() -> [ChannelModel] {
         do {
             let channelManagedObjects = try coreDataService.fetchChannels()
             let channels: [ChannelModel] = channelManagedObjects.compactMap { channelManagerObject in
@@ -32,7 +35,6 @@ extension DataSource: DataSourceProtocol {
                                     lastMessage: lastMessage,
                                     lastActivity: lastActivity)
             }
-            completion()
             return channels
         } catch {
             print(error)

@@ -4,6 +4,11 @@ import TFSChatTransport
 
 final class ChannelsListViewController: UIViewController {
     
+    // MARK: - Typealiases
+    
+    typealias DataSource = UITableViewDiffableDataSource<Int, ChannelModel>
+    typealias Snapshot = NSDiffableDataSourceSnapshot<Int, ChannelModel>
+    
     // MARK: - UI
     
     private lazy var refreshControl = UIRefreshControl()
@@ -32,6 +37,8 @@ final class ChannelsListViewController: UIViewController {
             }
         }
     }
+    
+//    private lazy var dataSource = createDataSource()
     
     // MARK: - Combine
     
@@ -73,15 +80,36 @@ final class ChannelsListViewController: UIViewController {
         title = "Channels"
     }
     
+    private func setDelegates() {
+        channelsTableView.delegate = self
+        channelsTableView.dataSource = self
+    }
+    
+//    private func createDataSource() -> DataSource {
+//        DataSource(tableView: channelsTableView) { tableView, indexPath, itemIdentifier in
+//            guard
+//                let self = self,
+//                let channels = self.channels,
+//                let cell = tableView.dequeueReusableCell(withIdentifier: ChannelsListCell.identifier,
+//                                                         for: indexPath) as? ChannelsListCell
+//            else {
+//                return UITableViewCell()
+//            }
+//
+//            if indexPath.row == (channels.isEmpty ? 0 : channels.count - 1) {
+//                cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+//            }
+//
+//            cell.resetCell()
+//            cell.configure(with: itemIdentifier)
+//            return cell
+//        }
+//    }
+    
     private func setupRefreshControl() {
         refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
         refreshControl.addTarget(self, action: #selector(handleRefreshControl), for: .valueChanged)
         channelsTableView.refreshControl = refreshControl
-    }
-    
-    private func setDelegates() {
-        channelsTableView.delegate = self
-        channelsTableView.dataSource = self
     }
     
     @objc
@@ -114,7 +142,6 @@ final class ChannelsListViewController: UIViewController {
                 }
             } receiveValue: { [weak self] channels in
                 self?.channels = self?.convert(channels: channels).sorted {
-                    // TODO: Changes sort algo
                     ($0.lastActivity ?? Date()) > ($1.lastActivity ?? Date())
                 }
             }
@@ -123,10 +150,6 @@ final class ChannelsListViewController: UIViewController {
     
     private func createChannel(name: String, logoUrl: String? = nil) {
         chatService.createChannel(name: name, logoUrl: logoUrl)
-            .map { [weak self] in
-                guard let self else { return }
-                self.convert(channel: $0)
-            }
             .subscribe(on: DispatchQueue.main)
             .receive(on: DispatchQueue.global(qos: .utility))
             .sink { [weak self] completion in
@@ -146,27 +169,11 @@ final class ChannelsListViewController: UIViewController {
                     }
                 }
             } receiveValue: { [weak self] newChannel in
-                self?.channels?.insert(newChannel, at: 0)
+                guard let self else { return }
+                let model = self.convert(channel: newChannel)
+                self.channels?.insert(model, at: 0)
             }
             .store(in: &cancellables)
-    }
-    
-    private func convert(channel: Channel) -> ChannelModel {
-        ChannelModel(id: channel.id,
-                     name: channel.name,
-                     logoURL: channel.logoURL,
-                     lastMessage: channel.lastMessage,
-                     lastActivity: channel.lastActivity)
-    }
-    
-    private func convert(channels: [Channel]) -> [ChannelModel] {
-        channels.map {
-            ChannelModel(id: $0.id,
-                         name: $0.name,
-                         logoURL: $0.logoURL,
-                         lastMessage: $0.lastMessage,
-                         lastActivity: $0.lastActivity)
-        }
     }
     
     @objc
@@ -199,6 +206,17 @@ final class ChannelsListViewController: UIViewController {
         present(alert, animated: true)
     }
     
+    private func convert(channel: Channel) -> ChannelModel {
+        ChannelModel(id: channel.id,
+                     name: channel.name,
+                     logoURL: channel.logoURL,
+                     lastMessage: channel.lastMessage,
+                     lastActivity: channel.lastActivity)
+    }
+    
+    private func convert(channels: [Channel]) -> [ChannelModel] {
+        channels.map { convert(channel: $0) }
+    }
 }
 
 // MARK: - UITableViewDelegate
