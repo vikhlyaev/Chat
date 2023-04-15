@@ -1,6 +1,7 @@
 import UIKit
 import Combine
 import TFSChatTransport
+import CoreData
 
 final class ChannelsListViewController: UIViewController {
     
@@ -25,15 +26,7 @@ final class ChannelsListViewController: UIViewController {
     
     // MARK: - DataSource
     
-    private let dataSource: DataSourceProtocol = DataSource()
-    
-    private var channels: [ChannelModel]? {
-        didSet {
-            DispatchQueue.main.async { [weak self] in
-                self?.channelsTableView.reloadData()
-            }
-        }
-    }
+    private var dataSource: DataSourceProtocol?
     
     // MARK: - Combine
     
@@ -43,18 +36,12 @@ final class ChannelsListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupDataSource()
         setupNavBar()
         setupView()
         setConstraints()
         setDelegates()
         setupRefreshControl()
-        getChannels()
-    }
-    
-    private func getChannels() {
-        channels = dataSource.getChannels { [weak self] in
-            self?.loadChannels()
-        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -81,6 +68,12 @@ final class ChannelsListViewController: UIViewController {
         title = "Channels"
     }
     
+    private func setupDataSource() {
+        dataSource = DataSource(viewController: self,
+                                entityName: Constants.CoreData.channelEntityName,
+                                sortName: Constants.CoreData.channelSortName)
+    }
+    
     private func setDelegates() {
         channelsTableView.delegate = self
         channelsTableView.dataSource = self
@@ -95,86 +88,6 @@ final class ChannelsListViewController: UIViewController {
     @objc
     private func handleRefreshControl() {
         refreshControl.endRefreshing()
-        loadChannels()
-    }
-    
-    // MARK: - Channels
-    
-    private func loadChannels() {
-        chatService.loadChannels()
-            .subscribe(on: DispatchQueue.main)
-            .receive(on: DispatchQueue.global(qos: .utility))
-            .sink { [weak self] completion in
-                switch completion {
-                case .finished:
-                    print("channels loaded")
-                case .failure:
-                    let alert = UIAlertController(title: "Error", message: "Could not load channels", preferredStyle: .alert)
-                    let okAction = UIAlertAction(title: "OK", style: .default)
-                    let tryAgainAction = UIAlertAction(title: "Try again", style: .default) { [weak self] _ in
-                        self?.loadChannels()
-                    }
-                    alert.addAction(okAction)
-                    alert.addAction(tryAgainAction)
-                    DispatchQueue.main.async { [weak self] in
-                        self?.present(alert, animated: true)
-                    }
-                }
-            } receiveValue: { [weak self] channels in
-                self?.channels = self?.convert(channels: channels).sorted {
-                    ($0.lastActivity ?? Date()) > ($1.lastActivity ?? Date())
-                }
-            }
-            .store(in: &cancellables)
-    }
-    
-    private func createChannel(name: String, logoUrl: String? = nil) {
-        chatService.createChannel(name: name, logoUrl: logoUrl)
-            .subscribe(on: DispatchQueue.main)
-            .receive(on: DispatchQueue.global(qos: .utility))
-            .sink { [weak self] completion in
-                switch completion {
-                case .finished:
-                    print("channel created")
-                case .failure:
-                    let alert = UIAlertController(title: "Error", message: "Could not create a channel", preferredStyle: .alert)
-                    let okAction = UIAlertAction(title: "OK", style: .default)
-                    let tryAgainAction = UIAlertAction(title: "Try again", style: .default) { [weak self] _ in
-                        self?.createChannel(name: name)
-                    }
-                    alert.addAction(okAction)
-                    alert.addAction(tryAgainAction)
-                    DispatchQueue.main.async { [weak self] in
-                        self?.present(alert, animated: true)
-                    }
-                }
-            } receiveValue: { [weak self] newChannel in
-                guard let self else { return }
-                let model = self.convert(channel: newChannel)
-                self.channels?.insert(model, at: 0)
-                self.dataSource.saveChannelModel(with: model)
-            }
-            .store(in: &cancellables)
-    }
-    
-    private func deleteChannel(_ channel: ChannelModel) {
-        chatService.deleteChannel(id: channel.id)
-            .sink { [weak self] completion in
-                switch completion {
-                case .finished:
-                    print("channel deleted")
-                    self?.dataSource.deleteChannelModel(with: channel)
-                    //                    self?.channels?.remove(at: <#T##Int#>)
-                case .failure:
-                    let alert = UIAlertController(title: "Error", message: "Unable to delete channel", preferredStyle: .alert)
-                    let okAction = UIAlertAction(title: "OK", style: .default)
-                    alert.addAction(okAction)
-                    DispatchQueue.main.async { [weak self] in
-                        self?.present(alert, animated: true)
-                    }
-                }
-            } receiveValue: {}
-            .store(in: &cancellables)
     }
     
     @objc
@@ -183,7 +96,7 @@ final class ChannelsListViewController: UIViewController {
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         let createAction = UIAlertAction(title: "Create", style: .default) { [weak self] _ in
             guard let channelName = alert.textFields?.first?.text else { return }
-            self?.createChannel(name: channelName)
+            self?.dataSource?.createChannel(name: channelName, logoUrl: nil)
         }
         createAction.isEnabled = false
         alert.addTextField { [weak self] textField in
@@ -206,18 +119,6 @@ final class ChannelsListViewController: UIViewController {
         alert.addAction(createAction)
         present(alert, animated: true)
     }
-    
-    private func convert(channel: Channel) -> ChannelModel {
-        ChannelModel(id: channel.id,
-                     name: channel.name,
-                     logoURL: channel.logoURL,
-                     lastMessage: channel.lastMessage,
-                     lastActivity: channel.lastActivity)
-    }
-    
-    private func convert(channels: [Channel]) -> [ChannelModel] {
-        channels.map { convert(channel: $0) }
-    }
 }
 
 // MARK: - UITableViewDelegate
@@ -225,8 +126,8 @@ final class ChannelsListViewController: UIViewController {
 extension ChannelsListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard let channel = channels?[indexPath.row] else { return }
-        let channelViewController = ChannelViewController(channel: channel)
+        guard let model = dataSource?.getChannel(with: indexPath) else { return }
+        let channelViewController = ChannelViewController(channel: model)
         navigationController?.pushViewController(channelViewController, animated: true)
     }
     
@@ -236,8 +137,8 @@ extension ChannelsListViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            guard let channel = channels?[indexPath.row] else { return }
-            deleteChannel(channel)
+            guard let model = dataSource?.getChannel(with: indexPath) else { return }
+            dataSource?.deleteChannel(with: model)
         }
     }
 }
@@ -246,24 +147,22 @@ extension ChannelsListViewController: UITableViewDelegate {
 
 extension ChannelsListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        channels?.count ?? 0
+        dataSource?.getNumberOfRows(section: section) ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard
+            let model = dataSource?.getChannel(with: indexPath),
             let cell = tableView.dequeueReusableCell(withIdentifier: ChannelsListCell.identifier,
-                                                     for: indexPath) as? ChannelsListCell,
-            let channels = channels
+                                                     for: indexPath) as? ChannelsListCell
         else {
             return UITableViewCell()
         }
-        
-        let indexLastCellInSection = channels.isEmpty ? 0 : channels.count - 1
-        if indexPath.row == indexLastCellInSection {
+        if indexPath.row == dataSource?.indexLastCellInSection(section: indexPath.section) {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
         }
         cell.resetCell()
-        cell.configure(with: channels[indexPath.row])
+        cell.configure(with: model)
         return cell
     }
 }
