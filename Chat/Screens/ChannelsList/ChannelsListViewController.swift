@@ -20,10 +20,6 @@ final class ChannelsListViewController: UIViewController {
         return tableView
     }()
     
-    // MARK: - Services
-    
-    private let chatService = ChatService()
-    
     // MARK: - DataSource
     
     private lazy var dataSource: DataSourceProtocol = DataSource(entityName: "ChannelManagedObject",
