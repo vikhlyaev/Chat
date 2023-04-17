@@ -22,9 +22,7 @@ final class ChannelsListViewController: UIViewController {
     
     // MARK: - DataSource
     
-    private lazy var dataSource: DataSourceProtocol = DataSource(entityName: "ChannelManagedObject",
-                                                                 sortName: "lastActivity",
-                                                                 delegate: self)
+    private lazy var dataSource = DataSource()
     
     // MARK: - DiffableDataSource
     
@@ -38,7 +36,10 @@ final class ChannelsListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupDiffableDataSource()
+        setupInitialSnapshot()
+        getChannels()
         setupNavBar()
         setupView()
         setConstraints()
@@ -52,6 +53,12 @@ final class ChannelsListViewController: UIViewController {
     }
     
     // MARK: - Setup UI
+    
+    private func setupInitialSnapshot() {
+        var snapshot = NSDiffableDataSourceSnapshot<Int, ChannelModel>()
+        snapshot.appendSections([0])
+        channelsListDataSource?.apply(snapshot, animatingDifferences: false)
+    }
     
     private func setupDiffableDataSource() {
         channelsListDataSource = ChannelsListDataSource(tableView: channelsTableView)
@@ -89,6 +96,25 @@ final class ChannelsListViewController: UIViewController {
     @objc
     private func handleRefreshControl() {
         refreshControl.endRefreshing()
+        getChannels()
+    }
+    
+    // MARK: - Data Source Publisher
+    
+    private func getChannels() {
+        dataSource.channelsPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] newChannelModels in
+                guard var snapshot = self?.channelsListDataSource?.snapshot() else { return }
+                newChannelModels.forEach { newChannel in
+                    if snapshot.itemIdentifiers.contains(newChannel) {
+                        return
+                    }
+                    snapshot.appendItems([newChannel])
+                }
+                self?.channelsListDataSource?.apply(snapshot, animatingDifferences: false)
+            }
+            .store(in: &cancellables)
     }
     
     // MARK: - Add Channel
@@ -102,7 +128,7 @@ final class ChannelsListViewController: UIViewController {
                 let self = self,
                 let channelName = alert.textFields?.first?.text
             else { return }
-            self.dataSource.createChannel(with: channelName, and: nil)
+            self.dataSource.createChannelInNetwork(name: channelName, logoUrl: nil)
         }
         createAction.isEnabled = false
         alert.addTextField { [weak self] textField in
@@ -130,43 +156,8 @@ final class ChannelsListViewController: UIViewController {
 // MARK: - DataSourceDelegate
 
 extension ChannelsListViewController: DataSourceDelegate {
-    func didUpdateChannels(with channels: [ChannelModel]) {
-        guard let channelsListDataSource else { return }
-        var snapshot = channelsListDataSource.snapshot()
-        snapshot.appendItems(channels)
-        channelsListDataSource.apply(snapshot, animatingDifferences: false)
-    }
-    
-    func didUpdateMessages(with messages: [MessageModel]) {}
-    
     func didShowAlert(alert: UIAlertController) {
         present(alert, animated: true)
-    }
-}
-
-// MARK: - NSFetchedResultsControllerDelegate
-
-extension ChannelsListViewController: NSFetchedResultsControllerDelegate {
-    
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
-        guard let channelsListDataSource else { return }
-        let snapshot = snapshot as NSDiffableDataSourceSnapshot<String, NSManagedObjectID>
-        var mySnapshot = NSDiffableDataSourceSnapshot<String, ChannelModel>()
-        mySnapshot.appendSections(snapshot.sectionIdentifiers)
-        mySnapshot.sectionIdentifiers.forEach { section in
-            let itemIdentifiers = snapshot.itemIdentifiers(inSection: section)
-                .compactMap {
-                    controller.managedObjectContext.object(with: $0) as? ChannelManagedObject
-                }
-                .map { ChannelModel(id: $0.id ?? "",
-                                    name: $0.name ?? "",
-                                    logoURL: $0.logoURL,
-                                    lastMessage: $0.lastMessage,
-                                    lastActivity: $0.lastActivity)
-                }
-            mySnapshot.appendItems(itemIdentifiers, toSection: section)
-        }
-        channelsListDataSource.apply(mySnapshot, animatingDifferences: false)
     }
 }
 
@@ -195,7 +186,8 @@ extension ChannelsListViewController: UITableViewDelegate {
             let model = snapshot.itemIdentifiers[indexPath.row]
             snapshot.deleteItems([model])
             self.channelsListDataSource?.apply(snapshot)
-            self.dataSource.deleteChannel(with: model)
+            self.dataSource.deleteChannelFromNetwork(with: model)
+            self.dataSource.deleteChannelFromStorage(with: model)
         }
         return UISwipeActionsConfiguration(actions: [deleteAction])
     }
