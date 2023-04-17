@@ -1,6 +1,6 @@
 import UIKit
 
-final class ChannelsListDataSource: UITableViewDiffableDataSource<String, ChannelModel> {
+final class ChannelsListDataSource: UITableViewDiffableDataSource<Int, ChannelModel> {
     init(tableView: UITableView) {
         super.init(tableView: tableView) { tableView, indexPath, itemIdentifier in
             guard let cell = tableView
@@ -16,10 +16,6 @@ final class ChannelsListDataSource: UITableViewDiffableDataSource<String, Channe
             cell.configure(with: itemIdentifier)
             return cell
         }
-        
-        var snapshot = NSDiffableDataSourceSnapshot<String, ChannelModel>()
-        snapshot.appendSections([""])
-        self.apply(snapshot, animatingDifferences: false)
     }
     
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
