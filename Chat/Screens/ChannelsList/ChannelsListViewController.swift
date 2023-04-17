@@ -26,7 +26,13 @@ final class ChannelsListViewController: UIViewController {
     
     // MARK: - DataSource
     
-    private var dataSource: DataSourceProtocol?
+    private lazy var dataSource: DataSourceProtocol = DataSource(entityName: "ChannelManagedObject",
+                                                                 sortName: "lastActivity",
+                                                                 delegate: self)
+    
+    // MARK: - DiffableDataSource
+    
+    private var channelsListDataSource: ChannelsListDataSource?
     
     // MARK: - Combine
     
@@ -36,7 +42,7 @@ final class ChannelsListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupDataSource()
+        setupDiffableDataSource()
         setupNavBar()
         setupView()
         setConstraints()
@@ -51,9 +57,8 @@ final class ChannelsListViewController: UIViewController {
     
     // MARK: - Setup UI
     
-    private func setupView() {
-        view.backgroundColor = .systemBackground
-        view.addSubview(channelsTableView)
+    private func setupDiffableDataSource() {
+        channelsListDataSource = ChannelsListDataSource(tableView: channelsTableView)
     }
     
     private func setupNavBar() {
@@ -68,15 +73,15 @@ final class ChannelsListViewController: UIViewController {
         title = "Channels"
     }
     
-    private func setupDataSource() {
-        dataSource = DataSource(viewController: self,
-                                entityName: Constants.CoreData.channelEntityName,
-                                sortName: Constants.CoreData.channelSortName)
+    private func setupView() {
+        view.backgroundColor = .systemBackground
+        view.addSubview(channelsTableView)
     }
     
     private func setDelegates() {
         channelsTableView.delegate = self
-        channelsTableView.dataSource = self
+        channelsTableView.dataSource = channelsListDataSource
+        dataSource.delegate = self
     }
     
     private func setupRefreshControl() {
@@ -90,13 +95,18 @@ final class ChannelsListViewController: UIViewController {
         refreshControl.endRefreshing()
     }
     
+    // MARK: - Add Channel
+    
     @objc
     private func addChannelTapped() {
         let alert = UIAlertController(title: "New channel", message: nil, preferredStyle: .alert)
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         let createAction = UIAlertAction(title: "Create", style: .default) { [weak self] _ in
-            guard let channelName = alert.textFields?.first?.text else { return }
-            self?.dataSource?.createChannel(name: channelName, logoUrl: nil)
+            guard
+                let self = self,
+                let channelName = alert.textFields?.first?.text
+            else { return }
+            self.dataSource.createChannel(with: channelName, and: nil)
         }
         createAction.isEnabled = false
         alert.addTextField { [weak self] textField in
@@ -121,12 +131,56 @@ final class ChannelsListViewController: UIViewController {
     }
 }
 
+// MARK: - DataSourceDelegate
+
+extension ChannelsListViewController: DataSourceDelegate {
+    func didUpdateChannels(with channels: [ChannelModel]) {
+        guard let channelsListDataSource else { return }
+        var snapshot = channelsListDataSource.snapshot()
+        snapshot.appendItems(channels)
+        channelsListDataSource.apply(snapshot, animatingDifferences: false)
+    }
+    
+    func didUpdateMessages(with messages: [MessageModel]) {}
+    
+    func didShowAlert(alert: UIAlertController) {
+        present(alert, animated: true)
+    }
+}
+
+// MARK: - NSFetchedResultsControllerDelegate
+
+extension ChannelsListViewController: NSFetchedResultsControllerDelegate {
+    
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
+        guard let channelsListDataSource else { return }
+        let snapshot = snapshot as NSDiffableDataSourceSnapshot<String, NSManagedObjectID>
+        var mySnapshot = NSDiffableDataSourceSnapshot<String, ChannelModel>()
+        mySnapshot.appendSections(snapshot.sectionIdentifiers)
+        mySnapshot.sectionIdentifiers.forEach { section in
+            let itemIdentifiers = snapshot.itemIdentifiers(inSection: section)
+                .compactMap {
+                    controller.managedObjectContext.object(with: $0) as? ChannelManagedObject
+                }
+                .map { ChannelModel(id: $0.id ?? "",
+                                    name: $0.name ?? "",
+                                    logoURL: $0.logoURL,
+                                    lastMessage: $0.lastMessage,
+                                    lastActivity: $0.lastActivity)
+                }
+            mySnapshot.appendItems(itemIdentifiers, toSection: section)
+        }
+        channelsListDataSource.apply(mySnapshot, animatingDifferences: false)
+    }
+}
+
 // MARK: - UITableViewDelegate
 
 extension ChannelsListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard let model = dataSource?.getChannel(with: indexPath) else { return }
+        let snapshot = channelsListDataSource?.snapshot()
+        guard let model = snapshot?.itemIdentifiers[indexPath.row] else { return }
         let channelViewController = ChannelViewController(channel: model)
         navigationController?.pushViewController(channelViewController, animated: true)
     }
@@ -135,35 +189,19 @@ extension ChannelsListViewController: UITableViewDelegate {
         76
     }
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            guard let model = dataSource?.getChannel(with: indexPath) else { return }
-            dataSource?.deleteChannel(with: model)
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _, _, completion in
+            completion(true)
+            guard
+                let self = self,
+                var snapshot = self.channelsListDataSource?.snapshot()
+            else { return }
+            let model = snapshot.itemIdentifiers[indexPath.row]
+            snapshot.deleteItems([model])
+            self.channelsListDataSource?.apply(snapshot)
+            self.dataSource.deleteChannel(with: model)
         }
-    }
-}
-
-// MARK: - UITableViewDataSource
-
-extension ChannelsListViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        dataSource?.getNumberOfRows(section: section) ?? 0
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard
-            let model = dataSource?.getChannel(with: indexPath),
-            let cell = tableView.dequeueReusableCell(withIdentifier: ChannelsListCell.identifier,
-                                                     for: indexPath) as? ChannelsListCell
-        else {
-            return UITableViewCell()
-        }
-        if indexPath.row == dataSource?.indexLastCellInSection(section: indexPath.section) {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
-        }
-        cell.resetCell()
-        cell.configure(with: model)
-        return cell
+        return UISwipeActionsConfiguration(actions: [deleteAction])
     }
 }
 
