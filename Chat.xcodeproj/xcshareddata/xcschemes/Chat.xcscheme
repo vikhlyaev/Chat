@@ -52,12 +52,7 @@
       </BuildableProductRunnable>
       <EnvironmentVariables>
          <EnvironmentVariable
-            key = "LOGGING"
-            value = ""
-            isEnabled = "NO">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "COREDATA_LOGGING"
+            key = "DATASOURCE_LOG"
             value = ""
             isEnabled = "YES">
          </EnvironmentVariable>
