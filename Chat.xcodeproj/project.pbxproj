@@ -39,6 +39,7 @@
 		0ADAD7F629E7F0C00093D25E /* ChannelModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADAD7F529E7F0C00093D25E /* ChannelModel.swift */; };
 		0ADAD7F829E7F36B0093D25E /* MessageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADAD7F729E7F36B0093D25E /* MessageModel.swift */; };
 		0ADB6DEF29EAEFE700EBE31F /* ChannelsListDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADB6DEE29EAEFE700EBE31F /* ChannelsListDataSource.swift */; };
+		0ADB6DF729ED613000EBE31F /* CoreDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADB6DF629ED613000EBE31F /* CoreDataService.swift */; };
 		0AF3176829A0D667005417A5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF3176729A0D667005417A5 /* AppDelegate.swift */; };
 		0AF3176C29A0D667005417A5 /* ChannelsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF3176B29A0D667005417A5 /* ChannelsListViewController.swift */; };
 		0AF3177129A0D66A005417A5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0AF3177029A0D66A005417A5 /* Assets.xcassets */; };
@@ -79,6 +80,7 @@
 		0ADAD7F529E7F0C00093D25E /* ChannelModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelModel.swift; sourceTree = "<group>"; };
 		0ADAD7F729E7F36B0093D25E /* MessageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageModel.swift; sourceTree = "<group>"; };
 		0ADB6DEE29EAEFE700EBE31F /* ChannelsListDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsListDataSource.swift; sourceTree = "<group>"; };
+		0ADB6DF629ED613000EBE31F /* CoreDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataService.swift; sourceTree = "<group>"; };
 		0AF3176429A0D667005417A5 /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0AF3176729A0D667005417A5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0AF3176B29A0D667005417A5 /* ChannelsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsListViewController.swift; sourceTree = "<group>"; };
@@ -185,6 +187,7 @@
 				0A3D726129C9CB9A002774AE /* ConcurrencyService.swift */,
 				0AB6B5C929C1ED8700361A2C /* ThemesManager.swift */,
 				0A80C74329E7DE1700C96E8C /* DataSource.swift */,
+				0ADB6DF629ED613000EBE31F /* CoreDataService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -437,6 +440,7 @@
 				0ABA25BB29DF0DAC00BEC0DB /* SortedMessage.swift in Sources */,
 				0AF3176829A0D667005417A5 /* AppDelegate.swift in Sources */,
 				0ADAD7F629E7F0C00093D25E /* ChannelModel.swift in Sources */,
+				0ADB6DF729ED613000EBE31F /* CoreDataService.swift in Sources */,
 				0AB6B5CE29C20E1B00361A2C /* ChannelsListHeader.swift in Sources */,
 				0A714C0B29DC5F89007D76C5 /* UIImageView + Extensions.swift in Sources */,
 				0A03CD6329B98A2300B9CC8E /* ProfileViewModel.swift in Sources */,
