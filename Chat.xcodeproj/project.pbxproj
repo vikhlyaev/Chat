@@ -17,7 +17,6 @@
 		0A03CD7629B9DA0C00B9CC8E /* Array + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A03CD7529B9DA0C00B9CC8E /* Array + Extensions.swift */; };
 		0A3D726229C9CB9A002774AE /* ConcurrencyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3D726129C9CB9A002774AE /* ConcurrencyService.swift */; };
 		0A3D726929CB3599002774AE /* String + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3D726829CB3599002774AE /* String + Extensions.swift */; };
-		0A41D39829E6D5E800FE0A0F /* CoreDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A41D39729E6D5E800FE0A0F /* CoreDataService.swift */; };
 		0A41D39B29E6D75500FE0A0F /* Chat.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0A41D39929E6D75500FE0A0F /* Chat.xcdatamodeld */; };
 		0A41D71B29C97FE600F7987D /* ProfileEditCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A41D71A29C97FE600F7987D /* ProfileEditCell.swift */; };
 		0A4D605529DB3EAA00585535 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF3178F29A3C1BB005417A5 /* ProfileViewController.swift */; };
@@ -39,6 +38,7 @@
 		0AC2F8E829DFC2C100A6F320 /* BubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC2F8E729DFC2C100A6F320 /* BubbleView.swift */; };
 		0ADAD7F629E7F0C00093D25E /* ChannelModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADAD7F529E7F0C00093D25E /* ChannelModel.swift */; };
 		0ADAD7F829E7F36B0093D25E /* MessageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADAD7F729E7F36B0093D25E /* MessageModel.swift */; };
+		0ADB6DEF29EAEFE700EBE31F /* ChannelsListDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADB6DEE29EAEFE700EBE31F /* ChannelsListDataSource.swift */; };
 		0AF3176829A0D667005417A5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF3176729A0D667005417A5 /* AppDelegate.swift */; };
 		0AF3176C29A0D667005417A5 /* ChannelsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF3176B29A0D667005417A5 /* ChannelsListViewController.swift */; };
 		0AF3177129A0D66A005417A5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0AF3177029A0D66A005417A5 /* Assets.xcassets */; };
@@ -58,7 +58,6 @@
 		0A03CD7529B9DA0C00B9CC8E /* Array + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array + Extensions.swift"; sourceTree = "<group>"; };
 		0A3D726129C9CB9A002774AE /* ConcurrencyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConcurrencyService.swift; sourceTree = "<group>"; };
 		0A3D726829CB3599002774AE /* String + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String + Extensions.swift"; sourceTree = "<group>"; };
-		0A41D39729E6D5E800FE0A0F /* CoreDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataService.swift; sourceTree = "<group>"; };
 		0A41D39A29E6D75500FE0A0F /* Chat.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Chat.xcdatamodel; sourceTree = "<group>"; };
 		0A41D71A29C97FE600F7987D /* ProfileEditCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditCell.swift; sourceTree = "<group>"; };
 		0A714C0229DB4B7A007D76C5 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
@@ -79,6 +78,7 @@
 		0AC2F8E729DFC2C100A6F320 /* BubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BubbleView.swift; sourceTree = "<group>"; };
 		0ADAD7F529E7F0C00093D25E /* ChannelModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelModel.swift; sourceTree = "<group>"; };
 		0ADAD7F729E7F36B0093D25E /* MessageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageModel.swift; sourceTree = "<group>"; };
+		0ADB6DEE29EAEFE700EBE31F /* ChannelsListDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsListDataSource.swift; sourceTree = "<group>"; };
 		0AF3176429A0D667005417A5 /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0AF3176729A0D667005417A5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0AF3176B29A0D667005417A5 /* ChannelsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsListViewController.swift; sourceTree = "<group>"; };
@@ -154,6 +154,7 @@
 				0AF3176B29A0D667005417A5 /* ChannelsListViewController.swift */,
 				0A03CD6A29B9907400B9CC8E /* ChannelsListCell.swift */,
 				0AB6B5CD29C20E1B00361A2C /* ChannelsListHeader.swift */,
+				0ADB6DEE29EAEFE700EBE31F /* ChannelsListDataSource.swift */,
 			);
 			path = ChannelsList;
 			sourceTree = "<group>";
@@ -183,7 +184,6 @@
 			children = (
 				0A3D726129C9CB9A002774AE /* ConcurrencyService.swift */,
 				0AB6B5C929C1ED8700361A2C /* ThemesManager.swift */,
-				0A41D39729E6D5E800FE0A0F /* CoreDataService.swift */,
 				0A80C74329E7DE1700C96E8C /* DataSource.swift */,
 			);
 			path = Services;
@@ -447,9 +447,9 @@
 				0A3D726929CB3599002774AE /* String + Extensions.swift in Sources */,
 				0A03CD5F29B988EE00B9CC8E /* Date + Extensions.swift in Sources */,
 				0A80C74429E7DE1700C96E8C /* DataSource.swift in Sources */,
+				0ADB6DEF29EAEFE700EBE31F /* ChannelsListDataSource.swift in Sources */,
 				0AB6B5C629C1EC6A00361A2C /* ThemesButton.swift in Sources */,
 				0ABA25BD29DF0EBD00BEC0DB /* UserDataStorage.swift in Sources */,
-				0A41D39829E6D5E800FE0A0F /* CoreDataService.swift in Sources */,
 				0A3D726229C9CB9A002774AE /* ConcurrencyService.swift in Sources */,
 				0A714C0329DB4B7A007D76C5 /* TabBarController.swift in Sources */,
 				0A03CD7029B99BBE00B9CC8E /* ChannelViewController.swift in Sources */,
