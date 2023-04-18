@@ -4,7 +4,6 @@ final class SettingsViewController: UIViewController {
     
     private enum SettingsSection: CaseIterable {
         case themes
-        
         var count: Int {
             switch self {
             case .themes:
@@ -16,8 +15,9 @@ final class SettingsViewController: UIViewController {
     private lazy var settingsTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.allowsSelection = false
-        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.bounces = false
         tableView.register(ThemesCell.self, forCellReuseIdentifier: ThemesCell.identifier)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
     
@@ -34,7 +34,6 @@ final class SettingsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupView()
         setConstraints()
         setDelegates()
@@ -99,7 +98,7 @@ extension SettingsViewController {
             settingsTableView.topAnchor.constraint(equalTo: view.topAnchor),
             settingsTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             settingsTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            settingsTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            settingsTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
 }

@@ -1,6 +1,6 @@
 import UIKit
 
-final class ConversationsListHeader: UIView {
+final class ChannelsListHeader: UIView {
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
@@ -13,7 +13,9 @@ final class ConversationsListHeader: UIView {
     init(title: String) {
         super.init(frame: .zero)
         titleLabel.text = title
+        
         setupView()
+        setConstraints()
     }
     
     required init?(coder: NSCoder) {
@@ -23,7 +25,13 @@ final class ConversationsListHeader: UIView {
     private func setupView() {
         backgroundColor = .systemBackground
         addSubview(titleLabel)
-        
+    }
+}
+
+// MARK: - Setting Constraints
+
+extension ChannelsListHeader {
+    private func setConstraints() {
         NSLayoutConstraint.activate([
             titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),

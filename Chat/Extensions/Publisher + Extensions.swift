@@ -6,7 +6,7 @@ extension Publisher where Failure == Never {
         onWeak object: Root
     ) -> AnyCancellable {
         sink { [weak object] value in
-            object?[keyPath: keyPath] = value//KVO
+            object?[keyPath: keyPath] = value
         }
     }
 }

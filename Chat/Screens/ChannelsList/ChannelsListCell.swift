@@ -1,8 +1,8 @@
 import UIKit
 
-final class ConversationsListCell: UITableViewCell {
+final class ChannelsListCell: UITableViewCell {
     
-    static let identifier = String(describing: ConversationsListCell.self)
+    static let identifier = String(describing: ChannelsListCell.self)
     
     private lazy var photoView: UIView = {
         let view = UIView()
@@ -19,16 +19,6 @@ final class ConversationsListCell: UITableViewCell {
         return imageView
     }()
     
-    private lazy var onlineView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .appGreen
-        view.layer.borderWidth = 2
-        view.layer.borderColor = UIColor.white.cgColor
-        view.layer.cornerRadius = 8
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
     private lazy var wrapperView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -36,7 +26,7 @@ final class ConversationsListCell: UITableViewCell {
     }()
     
     private lazy var nameLabel: UILabel = {
-        let label =  UILabel()
+        let label = UILabel()
         label.font = .systemFont(ofSize: 17, weight: .bold)
         label.numberOfLines = 1
         label.adjustsFontSizeToFitWidth = false
@@ -46,7 +36,7 @@ final class ConversationsListCell: UITableViewCell {
     }()
     
     private lazy var lastMessageLabel: UILabel = {
-        let label =  UILabel()
+        let label = UILabel()
         label.font = .systemFont(ofSize: 15)
         label.alpha = 0.6
         label.numberOfLines = 2
@@ -57,7 +47,7 @@ final class ConversationsListCell: UITableViewCell {
     }()
     
     private lazy var dateAndTimeLabel: UILabel = {
-        let label =  UILabel()
+        let label = UILabel()
         label.font = .systemFont(ofSize: 15)
         label.textColor = .label
         label.alpha = 0.3
@@ -69,23 +59,14 @@ final class ConversationsListCell: UITableViewCell {
     
     private lazy var disclosureImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "chevron.right")
+        imageView.image = UIImage(named: "IconChevronRight")
         imageView.tintColor = .label
-        imageView.alpha = 0.3
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
-    lazy var customSeparator: UIView = {
-        let view = UIView()
-        view.backgroundColor = .separator
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
         setupView()
         setConstraints()
     }
@@ -96,35 +77,13 @@ final class ConversationsListCell: UITableViewCell {
     
     private func setupView() {
         backgroundColor = .clear
-        
         contentView.addSubview(photoView)
         photoView.addSubview(photoImageView)
-        contentView.addSubview(customSeparator)
         contentView.addSubview(wrapperView)
         wrapperView.addSubview(nameLabel)
         wrapperView.addSubview(dateAndTimeLabel)
         wrapperView.addSubview(lastMessageLabel)
         wrapperView.addSubview(disclosureImageView)
-    }
-    
-    private func addOnlineBadge() {
-        photoView.addSubview(onlineView)
-        NSLayoutConstraint.activate([
-            onlineView.topAnchor.constraint(equalTo: photoView.topAnchor),
-            onlineView.trailingAnchor.constraint(equalTo: photoView.trailingAnchor),
-            onlineView.widthAnchor.constraint(equalToConstant: 16),
-            onlineView.heightAnchor.constraint(equalToConstant: 16),
-        ])
-    }
-    
-    private func removeOnlineBadge() {
-        onlineView.removeFromSuperview()
-        NSLayoutConstraint.deactivate([
-            onlineView.topAnchor.constraint(equalTo: photoView.topAnchor),
-            onlineView.trailingAnchor.constraint(equalTo: photoView.trailingAnchor),
-            onlineView.widthAnchor.constraint(equalToConstant: 16),
-            onlineView.heightAnchor.constraint(equalToConstant: 16),
-        ])
     }
     
     func resetCell() {
@@ -134,40 +93,31 @@ final class ConversationsListCell: UITableViewCell {
         lastMessageLabel.text = nil
         lastMessageLabel.font = .systemFont(ofSize: 15, weight: .regular)
         lastMessageLabel.alpha = 0.6
-        removeOnlineBadge()
     }
 }
 
 // MARK: - ConfigurableViewProtocol
 
-extension ConversationsListCell: ConfigurableViewProtocol {
-    func configure(with model: ConversationsListCellModel) {
+extension ChannelsListCell: ConfigurableViewProtocol {
+    func configure(with model: ChannelsListCellModel) {
         nameLabel.text = model.name
-        photoImageView.image = model.photo
-        dateAndTimeLabel.text = model.date?.toString()
-        
-        if let message = model.message {
+        dateAndTimeLabel.text = model.lastActivity?.toString()
+        photoImageView.loadImage(url: model.logoURL)
+        if let message = model.lastMessage {
             lastMessageLabel.text = message
         } else {
             lastMessageLabel.text = "No messages yet"
             lastMessageLabel.font = .italicSystemFont(ofSize: 15)
-        }
-        
-        if model.hasUnreadMessages {
-            lastMessageLabel.font = .boldSystemFont(ofSize: 15)
-            lastMessageLabel.alpha = 1
-        }
-        
-        if model.isOnline {
-            addOnlineBadge()
         }
     }
 }
 
 // MARK: - Setting Constraints
 
-extension ConversationsListCell {
+extension ChannelsListCell {
     private func setConstraints() {
+        nameLabel.setContentCompressionResistancePriority(UILayoutPriority(749), for: .horizontal)
+        nameLabel.setContentHuggingPriority(UILayoutPriority(249), for: .horizontal)
         NSLayoutConstraint.activate([
             photoView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             photoView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
@@ -183,25 +133,21 @@ extension ConversationsListCell {
             wrapperView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             wrapperView.centerYAnchor.constraint(equalTo: photoImageView.centerYAnchor),
             
+            disclosureImageView.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor),
+            disclosureImageView.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor),
+            disclosureImageView.widthAnchor.constraint(equalToConstant: 6.42),
+            
+            dateAndTimeLabel.trailingAnchor.constraint(equalTo: disclosureImageView.leadingAnchor, constant: -14),
+            dateAndTimeLabel.leadingAnchor.constraint(equalTo: nameLabel.trailingAnchor, constant: -4),
+            dateAndTimeLabel.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor),
+            
             nameLabel.topAnchor.constraint(equalTo: wrapperView.topAnchor),
             nameLabel.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor),
             
-            dateAndTimeLabel.leadingAnchor.constraint(equalTo: nameLabel.trailingAnchor, constant: 4),
-            dateAndTimeLabel.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor),
-            
-            disclosureImageView.leadingAnchor.constraint(equalTo: dateAndTimeLabel.trailingAnchor, constant: 14),
-            disclosureImageView.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor),
-            disclosureImageView.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor),
-            
-            lastMessageLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor),
+            lastMessageLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 2),
             lastMessageLabel.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor),
             lastMessageLabel.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor),
-            lastMessageLabel.bottomAnchor.constraint(equalTo: wrapperView.bottomAnchor),
-            
-            customSeparator.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            customSeparator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            customSeparator.widthAnchor.constraint(equalTo: wrapperView.widthAnchor),
-            customSeparator.heightAnchor.constraint(equalToConstant: 0.333)
+            lastMessageLabel.bottomAnchor.constraint(equalTo: wrapperView.bottomAnchor)
         ])
     }
 }

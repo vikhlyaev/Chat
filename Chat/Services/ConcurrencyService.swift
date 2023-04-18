@@ -29,10 +29,14 @@ final class ConcurrencyService {
             .encode(encoder: PropertyListEncoder())
             .subscribe(on: DispatchQueue.main)
             .receive(on: DispatchQueue.global(qos: .utility))
-            .sink { completion in
+            .sink { _ in
                 print("profile saved")
             } receiveValue: { [weak self] profileData in
-                guard let url = self?.documentDirectory?.appendingPathComponent(DataType.plistData.fileName) else { return }
+                guard
+                    let url = self?.documentDirectory?.appendingPathComponent(DataType.plistData.fileName)
+                else {
+                    return
+                }
                 try? profileData.write(to: url)
             }
             .store(in: &cancellables)
@@ -41,7 +45,7 @@ final class ConcurrencyService {
             .map({ $0?.pngData() ?? Data() })
             .subscribe(on: DispatchQueue.main)
             .receive(on: DispatchQueue.global(qos: .utility))
-            .sink(receiveCompletion: { completion in
+            .sink(receiveCompletion: { _ in
                 print("photo saved")
             }, receiveValue: { [weak self] photo in
                 guard let url = self?.documentDirectory?.appendingPathComponent(DataType.photo.fileName) else { return }

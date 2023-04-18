@@ -1,7 +1,7 @@
 import UIKit
 
 final class ThemesButton: UIButton {
-    
+
     private lazy var interfaceImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -54,7 +54,6 @@ final class ThemesButton: UIButton {
         self.theme = theme
         self.completion = completion
         super.init(frame: .zero)
-        
         setupButton()
         prepareButton()
         setConstraints()
@@ -68,7 +67,6 @@ final class ThemesButton: UIButton {
         addSubview(interfaceImageView)
         addSubview(label)
         addSubview(checkmarkImageView)
-        
         addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
     }
     
