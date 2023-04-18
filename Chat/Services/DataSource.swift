@@ -10,7 +10,7 @@ protocol DataSourceDelegate: AnyObject {
 
 protocol DataSourceProtocol {
     var channelsPublisher: CurrentValueSubject<[ChannelModel], Never> { get }
-    var messagesPublisher: Publishers.Sequence<[MessageModel], Never>? { get set }
+    var messagesPublisher: PassthroughSubject<[MessageModel], Never> { get }
     func createChannelInNetwork(name: String, logoUrl: String?)
     func deleteChannelFromNetwork(with channelModel: ChannelModel)
     func deleteChannelFromStorage(with channelModel: ChannelModel)
@@ -23,7 +23,7 @@ final class DataSource: DataSourceProtocol {
     // MARK: - Data Source
     
     private var channels: [ChannelModel] = []
-    private var messages: [MessageModel]?
+    private var messages: [MessageModel] = []
     
     // MARK: - Helpers
     
@@ -45,7 +45,7 @@ final class DataSource: DataSourceProtocol {
     // MARK: - Publishers
     
     lazy var channelsPublisher = CurrentValueSubject<[ChannelModel], Never>(channels)
-    var messagesPublisher: Publishers.Sequence<[MessageModel], Never>?
+    lazy var messagesPublisher = PassthroughSubject<[MessageModel], Never>()
     
     // MARK: - Init
     
@@ -174,10 +174,12 @@ final class DataSource: DataSourceProtocol {
             .subscribe(on: DispatchQueue.main)
             .receive(on: DispatchQueue.global(qos: .userInitiated))
             .sink { [weak self] completion in
+                guard let self else { return }
                 switch completion {
                 case .finished:
-                    self?.logger.info("🟢 Channels loaded and saved")
-                    self?.getChannelsFromStorage()
+                    self.logger.info("🟢 Channels loaded and saved")
+                    self.getChannelsFromStorage()
+                    self.channelsPublisher.send(self.channels)
                 case .failure:
                     let alert = UIAlertController(title: "Error", message: "Could not load channels", preferredStyle: .alert)
                     let okAction = UIAlertAction(title: "OK", style: .default)
