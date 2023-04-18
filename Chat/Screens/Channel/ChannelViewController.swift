@@ -1,7 +1,5 @@
 import UIKit
 import Combine
-import TFSChatTransport
-import CoreData
 
 final class ChannelViewController: UIViewController {
     
@@ -70,7 +68,7 @@ final class ChannelViewController: UIViewController {
     
     // MARK: - Services
     
-    private lazy var dataSource: DataSourceProtocol = DataSource()
+    private lazy var dataSource: DataSourceProtocol = DataSource(delegate: self)
     
     // MARK: - Private properties
     
@@ -95,6 +93,7 @@ final class ChannelViewController: UIViewController {
     init(channel: ChannelModel) {
         self.channel = channel
         super.init(nibName: nil, bundle: nil)
+        dataSource.getMessages(for: channel.id)
     }
     
     required init?(coder: NSCoder) {
@@ -103,6 +102,7 @@ final class ChannelViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        getMessages()
         setupView()
         setDelegates()
         setConstraints()
@@ -195,58 +195,38 @@ final class ChannelViewController: UIViewController {
     
     // MARK: - Messages
     
+    private func getMessages() {
+        dataSource.messagesPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] messages in
+                guard let self else { return }
+                self.sortedMessages = self.groupMessages(messages)
+            }
+            .store(in: &cancellables)
+    }
+    
     private func groupMessages(_ messages: [MessageModel]) -> [SortedMessage] {
         messages.daySorted
-            .map { SortedMessage(date: $0.key, messages: $0.value) }
-            .sorted { $0.date < $1.date }
+            .map { SortedMessage(date: $0.key, messages: $0.value.sorted { $0.date > $1.date }) }
+            .sorted { $0.date > $1.date }
     }
     
     @objc
     private func sendMessageButtonTapped() {
-        var userID: String {
-            if let id = UserDataStorage.userID {
+        var userId: String {
+            if let id = UserDataStorage.userId {
                 return id
             } else {
                 let id = "\(UUID())"
-                UserDataStorage.userID = id
+                UserDataStorage.userId = id
                 return id
             }
         }
-//        let userName = Constants.userName.rawValue
-//        guard let text = textView.text else { return }
-//        chatService.sendMessage(text: text, channelId: channel.id, userId: userID, userName: userName)
-//            .subscribe(on: DispatchQueue.main)
-//            .receive(on: DispatchQueue.global(qos: .utility))
-//            .sink { [weak self] completion in
-//                switch completion {
-//                case .finished:
-//                    print("message sended")
-//                case .failure:
-//                    let alert = UIAlertController(title: "Error", message: "Unable to send message", preferredStyle: .alert)
-//                    let okAction = UIAlertAction(title: "OK", style: .default)
-//                    let tryAgainAction = UIAlertAction(title: "Try again", style: .default) { [weak self] _ in
-//                        self?.sendMessageButtonTapped()
-//                    }
-//                    alert.addAction(okAction)
-//                    alert.addAction(tryAgainAction)
-//                    DispatchQueue.main.async { [weak self] in
-//                        self?.present(alert, animated: true)
-//                    }
-//                }
-//            } receiveValue: { [weak self] newMessage in
-//                guard let self else { return }
-//                let message = self.convert(message: newMessage)
-//                if self.sortedMessages.isEmpty {
-//                    let today = SortedMessage(date: Date(), messages: [message])
-//                    self.sortedMessages.append(today)
-//                } else {
-//                    self.sortedMessages[0].addMessage(message)
-//                }
-//            }
-//            .store(in: &cancellables)
-//
-//        textView.text = nil
-//        sendMessageButton.isEnabled = false
+        let userName = Constants.userName.rawValue
+        guard let text = textView.text else { return }
+        dataSource.sendMessage(text: text, channelId: channel.id, userId: userId, userName: userName)
+        textView.text = nil
+        sendMessageButton.isEnabled = false
     }
 }
 
@@ -254,7 +234,9 @@ final class ChannelViewController: UIViewController {
 
 extension ChannelViewController: DataSourceDelegate {
     func didShowAlert(alert: UIAlertController) {
-        present(alert, animated: true)
+        DispatchQueue.main.async { [weak self] in
+            self?.present(alert, animated: true)
+        }
     }
 }
 
@@ -300,7 +282,7 @@ extension ChannelViewController: UITableViewDataSource {
                                                                for: indexPath) as? ChannelCell else { return UITableViewCell() }
         let message = sortedMessages[indexPath.section].messages[indexPath.row]
 
-        if message.id == UserDataStorage.userID {
+        if message.id == UserDataStorage.userId {
             cellSent.resetCell()
             cellSent.configure(with: message)
             return cellSent
