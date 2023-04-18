@@ -1,7 +1,5 @@
 import UIKit
 import Combine
-import TFSChatTransport
-import CoreData
 
 final class ChannelsListViewController: UIViewController {
     
@@ -22,7 +20,7 @@ final class ChannelsListViewController: UIViewController {
     
     // MARK: - DataSource
     
-    private lazy var dataSource = DataSource()
+    private lazy var dataSource: DataSourceProtocol = DataSource(delegate: self)
     
     // MARK: - DiffableDataSource
     
@@ -36,7 +34,6 @@ final class ChannelsListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupDiffableDataSource()
         setupInitialSnapshot()
         getChannels()
@@ -54,14 +51,14 @@ final class ChannelsListViewController: UIViewController {
     
     // MARK: - Setup UI
     
+    private func setupDiffableDataSource() {
+        channelsListDataSource = ChannelsListDataSource(tableView: channelsTableView)
+    }
+    
     private func setupInitialSnapshot() {
         var snapshot = NSDiffableDataSourceSnapshot<Int, ChannelModel>()
         snapshot.appendSections([0])
         channelsListDataSource?.apply(snapshot, animatingDifferences: false)
-    }
-    
-    private func setupDiffableDataSource() {
-        channelsListDataSource = ChannelsListDataSource(tableView: channelsTableView)
     }
     
     private func setupNavBar() {
@@ -84,7 +81,6 @@ final class ChannelsListViewController: UIViewController {
     private func setDelegates() {
         channelsTableView.delegate = self
         channelsTableView.dataSource = channelsListDataSource
-        dataSource.delegate = self
     }
     
     private func setupRefreshControl() {
@@ -96,7 +92,7 @@ final class ChannelsListViewController: UIViewController {
     @objc
     private func handleRefreshControl() {
         refreshControl.endRefreshing()
-        getChannels()
+        dataSource.loadChannelsFromNetwork()
     }
     
     // MARK: - Data Source Publisher
@@ -107,9 +103,7 @@ final class ChannelsListViewController: UIViewController {
             .sink { [weak self] newChannelModels in
                 guard var snapshot = self?.channelsListDataSource?.snapshot() else { return }
                 newChannelModels.forEach { newChannel in
-                    if snapshot.itemIdentifiers.contains(newChannel) {
-                        return
-                    }
+                    if snapshot.itemIdentifiers.contains(newChannel) { return }
                     snapshot.appendItems([newChannel])
                 }
                 self?.channelsListDataSource?.apply(snapshot, animatingDifferences: false)
