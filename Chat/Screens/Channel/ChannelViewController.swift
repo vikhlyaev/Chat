@@ -1,13 +1,13 @@
 import UIKit
 import Combine
 import TFSChatTransport
+import CoreData
 
 final class ChannelViewController: UIViewController {
     
     private enum Constants: String {
         case channelCellSent
         case channelCellReceived
-        case userId = "vikhlyaev"
         case userName = "Anton Vikhlyaev"
     }
     
@@ -70,7 +70,7 @@ final class ChannelViewController: UIViewController {
     
     // MARK: - Services
     
-    private let chatService = ChatService()
+    private lazy var dataSource: DataSourceProtocol = DataSource()
     
     // MARK: - Private properties
     
@@ -95,8 +95,6 @@ final class ChannelViewController: UIViewController {
     init(channel: ChannelModel) {
         self.channel = channel
         super.init(nibName: nil, bundle: nil)
-        
-        loadMessages(channelId: channel.id)
     }
     
     required init?(coder: NSCoder) {
@@ -105,7 +103,6 @@ final class ChannelViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupView()
         setDelegates()
         setConstraints()
@@ -204,93 +201,60 @@ final class ChannelViewController: UIViewController {
             .sorted { $0.date < $1.date }
     }
     
-    private func loadMessages(channelId: String) {
-        chatService.loadMessages(channelId: channelId)
-            .subscribe(on: DispatchQueue.main)
-            .receive(on: DispatchQueue.global(qos: .utility))
-            .sink { [weak self] completion in
-                switch completion {
-                case .finished:
-                    print("messages loaded")
-                case .failure:
-                    let alert = UIAlertController(title: "Error", message: "Could not load messages", preferredStyle: .alert)
-                    let okAction = UIAlertAction(title: "OK", style: .default)
-                    let tryAgainAction = UIAlertAction(title: "Try again", style: .default) { [weak self] _ in
-                        self?.loadMessages(channelId: channelId)
-                    }
-                    alert.addAction(okAction)
-                    alert.addAction(tryAgainAction)
-                    DispatchQueue.main.async { [weak self] in
-                        self?.present(alert, animated: true)
-                    }
-                }
-            } receiveValue: { [weak self] newMessages in
-                guard let self else { return }
-                let messages = self.convert(messages: newMessages)
-                let sortedMessages = self.groupMessages(messages)
-                self.sortedMessages = sortedMessages
-            }
-            .store(in: &cancellables)
-    }
-    
     @objc
     private func sendMessageButtonTapped() {
         var userID: String {
             if let id = UserDataStorage.userID {
                 return id
             } else {
-                let id = Constants.userId.rawValue
+                let id = "\(UUID())"
                 UserDataStorage.userID = id
                 return id
             }
         }
-        let userName = Constants.userName.rawValue
-        guard let text = textView.text else { return }
-        chatService.sendMessage(text: text, channelId: channel.id, userId: userID, userName: userName)
-            .subscribe(on: DispatchQueue.main)
-            .receive(on: DispatchQueue.global(qos: .utility))
-            .sink { [weak self] completion in
-                switch completion {
-                case .finished:
-                    print("message sended")
-                case .failure:
-                    let alert = UIAlertController(title: "Error", message: "Unable to send message", preferredStyle: .alert)
-                    let okAction = UIAlertAction(title: "OK", style: .default)
-                    let tryAgainAction = UIAlertAction(title: "Try again", style: .default) { [weak self] _ in
-                        self?.sendMessageButtonTapped()
-                    }
-                    alert.addAction(okAction)
-                    alert.addAction(tryAgainAction)
-                    DispatchQueue.main.async { [weak self] in
-                        self?.present(alert, animated: true)
-                    }
-                }
-            } receiveValue: { [weak self] newMessage in
-                guard let self else { return }
-                let message = self.convert(message: newMessage)
-                if self.sortedMessages.isEmpty {
-                    let today = SortedMessage(date: Date(), messages: [message])
-                    self.sortedMessages.append(today)
-                } else {
-                    self.sortedMessages[0].addMessage(message)
-                }
-            }
-            .store(in: &cancellables)
-        
-        textView.text = nil
-        sendMessageButton.isEnabled = false
+//        let userName = Constants.userName.rawValue
+//        guard let text = textView.text else { return }
+//        chatService.sendMessage(text: text, channelId: channel.id, userId: userID, userName: userName)
+//            .subscribe(on: DispatchQueue.main)
+//            .receive(on: DispatchQueue.global(qos: .utility))
+//            .sink { [weak self] completion in
+//                switch completion {
+//                case .finished:
+//                    print("message sended")
+//                case .failure:
+//                    let alert = UIAlertController(title: "Error", message: "Unable to send message", preferredStyle: .alert)
+//                    let okAction = UIAlertAction(title: "OK", style: .default)
+//                    let tryAgainAction = UIAlertAction(title: "Try again", style: .default) { [weak self] _ in
+//                        self?.sendMessageButtonTapped()
+//                    }
+//                    alert.addAction(okAction)
+//                    alert.addAction(tryAgainAction)
+//                    DispatchQueue.main.async { [weak self] in
+//                        self?.present(alert, animated: true)
+//                    }
+//                }
+//            } receiveValue: { [weak self] newMessage in
+//                guard let self else { return }
+//                let message = self.convert(message: newMessage)
+//                if self.sortedMessages.isEmpty {
+//                    let today = SortedMessage(date: Date(), messages: [message])
+//                    self.sortedMessages.append(today)
+//                } else {
+//                    self.sortedMessages[0].addMessage(message)
+//                }
+//            }
+//            .store(in: &cancellables)
+//
+//        textView.text = nil
+//        sendMessageButton.isEnabled = false
     }
-    
-    private func convert(message: Message) -> MessageModel {
-        MessageModel(id: message.userID,
-                     text: message.text,
-                     userID: message.userID,
-                     userName: message.userName,
-                     date: message.date)
-    }
-    
-    private func convert(messages: [Message]) -> [MessageModel] {
-        messages.map { convert(message: $0) }
+}
+
+// MARK: - DataSourceDelegate
+
+extension ChannelViewController: DataSourceDelegate {
+    func didShowAlert(alert: UIAlertController) {
+        present(alert, animated: true)
     }
 }
 
