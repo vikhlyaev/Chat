@@ -6,7 +6,7 @@ final class UserDataStorage {
     private static let userIDKey = "MyUserID"
     private static let keychain = Keychain(service: "ru.vikhlyaev.Chat")
     
-    static var userID: String? {
+    static var userId: String? {
         get {
             keychain[userIDKey]
         }
