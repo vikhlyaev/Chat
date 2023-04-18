@@ -10,10 +10,13 @@ protocol DataSourceDelegate: AnyObject {
 
 protocol DataSourceProtocol {
     var channelsPublisher: CurrentValueSubject<[ChannelModel], Never> { get }
-    var messagesPublisher: PassthroughSubject<[MessageModel], Never> { get }
+    var messagesPublisher: CurrentValueSubject<[MessageModel], Never> { get }
+    func loadChannelsFromNetwork()
     func createChannelInNetwork(name: String, logoUrl: String?)
     func deleteChannelFromNetwork(with channelModel: ChannelModel)
     func deleteChannelFromStorage(with channelModel: ChannelModel)
+    func getMessages(for channelId: String)
+    func sendMessage(text: String, channelId: String, userId: String, userName: String)
 }
 
 final class DataSource: DataSourceProtocol {
@@ -45,18 +48,24 @@ final class DataSource: DataSourceProtocol {
     // MARK: - Publishers
     
     lazy var channelsPublisher = CurrentValueSubject<[ChannelModel], Never>(channels)
-    lazy var messagesPublisher = PassthroughSubject<[MessageModel], Never>()
+    lazy var messagesPublisher = CurrentValueSubject<[MessageModel], Never>(messages)
     
     // MARK: - Init
     
-    init() {
-        getChannelsFromStorage()
+    init(delegate: DataSourceDelegate) {
+        self.delegate = delegate
+        updateChannelsFromStorage()
         loadChannelsFromNetwork()
+    }
+    
+    func getMessages(for channelId: String) {
+        updateMessagesFromStorage(for: channelId)
+        loadMessagesFromNetwork(for: channelId)
     }
     
     // MARK: - Storage
     
-    private func getChannelsFromStorage() {
+    private func updateChannelsFromStorage() {
         do {
             let channelManagedObjects = try coreDataService.fetchChannels()
             let channels: [ChannelModel] = channelManagedObjects.compactMap { channelManagerObject in
@@ -77,6 +86,7 @@ final class DataSource: DataSourceProtocol {
             }
             logger.info("🟢 Channels received")
             self.channels = channels
+            self.channelsPublisher.send(self.channels)
         } catch {
             logger.error("🔴 Channels not received")
             fatalError()
@@ -121,7 +131,8 @@ final class DataSource: DataSourceProtocol {
         }
     }
     
-    private func getMessagesFromStorage(for channelId: String) -> [MessageModel] {
+    private func updateMessagesFromStorage(for channelId: String) {
+        messages = []
         do {
             let messageManagedObjects = try coreDataService.fetchMessages(for: channelId)
             let messages: [MessageModel] = messageManagedObjects.compactMap { messageManagedObject in
@@ -141,7 +152,8 @@ final class DataSource: DataSourceProtocol {
                                     date: date)
             }
             logger.info("🟢 Messages received")
-            return messages
+            self.messages = messages
+            self.messagesPublisher.send(self.messages)
         } catch {
             logger.error("🔴 Messages not received")
             fatalError()
@@ -152,52 +164,40 @@ final class DataSource: DataSourceProtocol {
         coreDataService.update { context in
             let fetchRequest = ChannelManagedObject.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "id == %@", channelId as CVarArg)
-            let channelManagedObject = try context.fetch(fetchRequest).first
-
-            guard let channelManagedObject else { return }
-
-            let messageManagedObject = MessageManagedObject(context: context)
-            messageManagedObject.id = messageModel.id
-            messageManagedObject.text = messageModel.text
-            messageManagedObject.userID = messageModel.userID
-            messageManagedObject.userName = messageModel.userName
-            messageManagedObject.date = messageModel.date
-
-            channelManagedObject.addToMessages(messageManagedObject)
+            guard
+                let channelManagedObject = try context.fetch(fetchRequest).first,
+                let messageManagedObjects = channelManagedObject.messages?.array as? [MessageManagedObject]
+            else { return }
+            let checkingForDuplicates = messageManagedObjects.contains { messageManagedObject in
+                messageManagedObject.date == messageModel.date
+            }
+            if !checkingForDuplicates {
+                let messageManagedObject = MessageManagedObject(context: context)
+                messageManagedObject.id = messageModel.id
+                messageManagedObject.text = messageModel.text
+                messageManagedObject.userID = messageModel.userID
+                messageManagedObject.userName = messageModel.userName
+                messageManagedObject.date = messageModel.date
+                channelManagedObject.addToMessages(messageManagedObject)
+                logger.info("🟢 Messages added")
+            }
         }
     }
     
     // MARK: - Network
     
-    private func loadChannelsFromNetwork() {
+    func loadChannelsFromNetwork() {
         chatService.loadChannels()
             .subscribe(on: DispatchQueue.main)
             .receive(on: DispatchQueue.global(qos: .userInitiated))
-            .sink { [weak self] completion in
-                guard let self else { return }
-                switch completion {
-                case .finished:
-                    self.logger.info("🟢 Channels loaded and saved")
-                    self.getChannelsFromStorage()
-                    self.channelsPublisher.send(self.channels)
-                case .failure:
-                    let alert = UIAlertController(title: "Error", message: "Could not load channels", preferredStyle: .alert)
-                    let okAction = UIAlertAction(title: "OK", style: .default)
-                    let tryAgainAction = UIAlertAction(title: "Try again", style: .default) { [weak self] _ in
-                        self?.loadChannelsFromNetwork()
-                    }
-                    alert.addAction(okAction)
-                    alert.addAction(tryAgainAction)
-                    DispatchQueue.main.async { [weak self] in
-                        self?.delegate?.didShowAlert(alert: alert)
-                    }
-                }
+            .sink { [weak self] _ in
+                self?.updateChannelsFromStorage()
             } receiveValue: { [weak self] channels in
                 guard let self else { return }
                 channels.forEach { channel in
                     let model = self.convert(channel: channel)
                     self.saveChannelInStorage(with: model)
-                    self.logger.info("🟢 Channel loaded and saved in storage")
+                    self.logger.info("🟢 Channel loaded")
                 }
             }
             .store(in: &cancellables)
@@ -211,8 +211,7 @@ final class DataSource: DataSourceProtocol {
                 guard let self else { return }
                 switch completion {
                 case .finished:
-                    self.getChannelsFromStorage()
-                    self.channelsPublisher.send(self.channels)
+                    self.updateChannelsFromStorage()
                 case .failure:
                     let alert = UIAlertController(title: "Error", message: "Could not create a channel", preferredStyle: .alert)
                     let okAction = UIAlertAction(title: "OK", style: .default)
@@ -230,7 +229,7 @@ final class DataSource: DataSourceProtocol {
                 guard let self else { return }
                 let model = self.convert(channel: newChannel)
                 self.saveChannelInStorage(with: model)
-                self.logger.info("🟢 Channel created and saved in storage")
+                self.logger.info("🟢 Channel created")
             }
             .store(in: &cancellables)
     }
@@ -253,19 +252,37 @@ final class DataSource: DataSourceProtocol {
             .store(in: &cancellables)
     }
     
-    private func loadMessagesFromNetwork(channelId: String) {
+    private func loadMessagesFromNetwork(for channelId: String) {
         chatService.loadMessages(channelId: channelId)
             .subscribe(on: DispatchQueue.main)
             .receive(on: DispatchQueue.global(qos: .userInitiated))
+            .sink { [weak self] _ in
+                self?.updateMessagesFromStorage(for: channelId)
+            } receiveValue: { [weak self] messages in
+                guard let self else { return }
+                messages.forEach { message in
+                    let model = self.convert(message: message)
+                    self.saveMessageModelInStorage(with: model, in: channelId)
+                    self.logger.info("🟢 Message loaded")
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
+    func sendMessage(text: String, channelId: String, userId: String, userName: String) {
+        chatService.sendMessage(text: text, channelId: channelId, userId: userId, userName: userName)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
+                guard let self else { return }
                 switch completion {
                 case .finished:
-                    print("messages loaded")
+                    self.updateMessagesFromStorage(for: channelId)
+                    print(self.channels)
                 case .failure:
-                    let alert = UIAlertController(title: "Error", message: "Could not load messages", preferredStyle: .alert)
+                    let alert = UIAlertController(title: "Error", message: "Unable to send message", preferredStyle: .alert)
                     let okAction = UIAlertAction(title: "OK", style: .default)
                     let tryAgainAction = UIAlertAction(title: "Try again", style: .default) { [weak self] _ in
-                        self?.loadMessagesFromNetwork(channelId: channelId)
+                        self?.sendMessage(text: text, channelId: channelId, userId: userId, userName: userName)
                     }
                     alert.addAction(okAction)
                     alert.addAction(tryAgainAction)
@@ -273,14 +290,10 @@ final class DataSource: DataSourceProtocol {
                         self?.delegate?.didShowAlert(alert: alert)
                     }
                 }
-            } receiveValue: { [weak self] messages in
+            } receiveValue: { [weak self] newMessage in
                 guard let self else { return }
-                
-                messages.forEach { message in
-                    let model = self.convert(message: message)
-                    self.saveMessageModelInStorage(with: model, in: channelId)
-                    self.logger.info("🟢 Message loaded and saved in storage")
-                }
+                let message = self.convert(message: newMessage)
+                self.saveMessageModelInStorage(with: message, in: channelId)
             }
             .store(in: &cancellables)
     }
