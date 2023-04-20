@@ -1,24 +1,20 @@
 PODS:
-  - KeychainAccess (4.2.2)
   - SwiftLint (0.51.0)
   - TFSChatTransport (2.1.0)
 
 DEPENDENCIES:
-  - KeychainAccess
   - SwiftLint
   - TFSChatTransport
 
 SPEC REPOS:
   trunk:
-    - KeychainAccess
     - SwiftLint
     - TFSChatTransport
 
 SPEC CHECKSUMS:
-  KeychainAccess: c0c4f7f38f6fc7bbe58f5702e25f7bd2f65abf51
   SwiftLint: 1b7561918a19e23bfed960e40759086e70f4dba5
   TFSChatTransport: e22cb35c77828741ec11043e407d2c17b3897791
 
-PODFILE CHECKSUM: 008782df0e29614c2bb3cb3da00abd7eb248faad
+PODFILE CHECKSUM: 0eda549d230086af2b645172d9bef7398a62f76e
 
 COCOAPODS: 1.12.0
