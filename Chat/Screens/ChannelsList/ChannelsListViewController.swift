@@ -1,11 +1,11 @@
 import UIKit
 import Combine
-import TFSChatTransport
 
 final class ChannelsListViewController: UIViewController {
     
-    private lazy var refreshControl = UIRefreshControl()
+    // MARK: - UI
     
+    private lazy var refreshControl = UIRefreshControl()
     private lazy var channelsTableView: UITableView = {
         let tableView = UITableView(frame: .zero)
         if #available(iOS 15.0, *) {
@@ -18,19 +18,25 @@ final class ChannelsListViewController: UIViewController {
         return tableView
     }()
     
-    private let chatService = ChatService(host: "167.235.86.234", port: 8080)
-    private var channels: [Channel]? {
-        didSet {
-            DispatchQueue.main.async { [weak self] in
-                self?.channelsTableView.reloadData()
-            }
-        }
-    }
+    // MARK: - DataSource
+    
+    private lazy var dataSource: DataSourceProtocol = DataSource(delegate: self)
+    
+    // MARK: - DiffableDataSource
+    
+    private var channelsListDataSource: ChannelsListDataSource?
+    
+    // MARK: - Combine
     
     private var cancellables = Set<AnyCancellable>()
     
+    // MARK: - Life Cycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupDiffableDataSource()
+        setupInitialSnapshot()
+        getChannels()
         setupNavBar()
         setupView()
         setConstraints()
@@ -41,12 +47,18 @@ final class ChannelsListViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.isNavigationBarHidden = false
-        loadChannels()
     }
     
-    private func setupView() {
-        view.backgroundColor = .systemBackground
-        view.addSubview(channelsTableView)
+    // MARK: - Setup UI
+    
+    private func setupDiffableDataSource() {
+        channelsListDataSource = ChannelsListDataSource(tableView: channelsTableView)
+    }
+    
+    private func setupInitialSnapshot() {
+        var snapshot = NSDiffableDataSourceSnapshot<Int, ChannelModel>()
+        snapshot.appendSections([0])
+        channelsListDataSource?.apply(snapshot, animatingDifferences: false)
     }
     
     private func setupNavBar() {
@@ -61,83 +73,56 @@ final class ChannelsListViewController: UIViewController {
         title = "Channels"
     }
     
+    private func setupView() {
+        view.backgroundColor = .systemBackground
+        view.addSubview(channelsTableView)
+    }
+    
+    private func setDelegates() {
+        channelsTableView.delegate = self
+        channelsTableView.dataSource = channelsListDataSource
+    }
+    
     private func setupRefreshControl() {
         refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
         refreshControl.addTarget(self, action: #selector(handleRefreshControl), for: .valueChanged)
         channelsTableView.refreshControl = refreshControl
     }
     
-    private func setDelegates() {
-        channelsTableView.delegate = self
-        channelsTableView.dataSource = self
+    @objc
+    private func handleRefreshControl() {
+        refreshControl.endRefreshing()
+        dataSource.loadChannelsFromNetwork()
     }
     
-    private func convert(channel: Channel) -> ChannelsListCellModel {
-        ChannelsListCellModel(name: channel.name,
-                              logoURL: channel.logoURL,
-                              lastMessage: channel.lastMessage,
-                              lastActivity: channel.lastActivity)
-    }
+    // MARK: - Data Source Publisher
     
-    private func loadChannels() {
-        chatService.loadChannels()
-            .subscribe(on: DispatchQueue.main)
-            .receive(on: DispatchQueue.global(qos: .utility))
-            .sink { [weak self] completion in
-                switch completion {
-                case .finished:
-                    print("channels loaded")
-                case .failure:
-                    let alert = UIAlertController(title: "Error", message: "Could not load channels", preferredStyle: .alert)
-                    let okAction = UIAlertAction(title: "OK", style: .default)
-                    let tryAgainAction = UIAlertAction(title: "Try again", style: .default) { [weak self] _ in
-                        self?.loadChannels()
-                    }
-                    alert.addAction(okAction)
-                    alert.addAction(tryAgainAction)
-                    DispatchQueue.main.async { [weak self] in
-                        self?.present(alert, animated: true)
-                    }
+    private func getChannels() {
+        dataSource.channelsPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] newChannelModels in
+                guard var snapshot = self?.channelsListDataSource?.snapshot() else { return }
+                newChannelModels.forEach { newChannel in
+                    if snapshot.itemIdentifiers.contains(newChannel) { return }
+                    snapshot.appendItems([newChannel])
                 }
-            } receiveValue: { [weak self] channels in
-                self?.channels = channels.sorted { ($0.lastActivity ?? Date()) > ($1.lastActivity ?? Date()) }
+                self?.channelsListDataSource?.apply(snapshot, animatingDifferences: false)
             }
             .store(in: &cancellables)
     }
     
-    private func createChannel(name: String, logoUrl: String? = nil) {
-        chatService.createChannel(name: name, logoUrl: logoUrl)
-            .subscribe(on: DispatchQueue.main)
-            .receive(on: DispatchQueue.global(qos: .utility))
-            .sink { [weak self] completion in
-                switch completion {
-                case .finished:
-                    print("channel created")
-                case .failure:
-                    let alert = UIAlertController(title: "Error", message: "Could not create a channel", preferredStyle: .alert)
-                    let okAction = UIAlertAction(title: "OK", style: .default)
-                    let tryAgainAction = UIAlertAction(title: "Try again", style: .default) { [weak self] _ in
-                        self?.createChannel(name: name)
-                    }
-                    alert.addAction(okAction)
-                    alert.addAction(tryAgainAction)
-                    DispatchQueue.main.async { [weak self] in
-                        self?.present(alert, animated: true)
-                    }
-                }
-            } receiveValue: { [weak self] newChannel in
-                self?.channels?.insert(newChannel, at: 0)
-            }
-            .store(in: &cancellables)
-    }
+    // MARK: - Add Channel
     
     @objc
     private func addChannelTapped() {
         let alert = UIAlertController(title: "New channel", message: nil, preferredStyle: .alert)
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         let createAction = UIAlertAction(title: "Create", style: .default) { [weak self] _ in
-            guard let channelName = alert.textFields?.first?.text else { return }
-            self?.createChannel(name: channelName)
+            guard
+                let self = self,
+                let channelName = alert.textFields?.first?.text
+            else { return }
+            self.dataSource.createChannelInNetwork(name: channelName, logoUrl: nil)
         }
         createAction.isEnabled = false
         alert.addTextField { [weak self] textField in
@@ -160,11 +145,13 @@ final class ChannelsListViewController: UIViewController {
         alert.addAction(createAction)
         present(alert, animated: true)
     }
-    
-    @objc
-    private func handleRefreshControl() {
-        refreshControl.endRefreshing()
-        loadChannels()
+}
+
+// MARK: - DataSourceDelegate
+
+extension ChannelsListViewController: DataSourceDelegate {
+    func didShowAlert(alert: UIAlertController) {
+        present(alert, animated: true)
     }
 }
 
@@ -173,40 +160,30 @@ final class ChannelsListViewController: UIViewController {
 extension ChannelsListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard let channel = channels?[indexPath.row] else { return }
-        let channelViewController = ChannelViewController(channel: channel)
+        let snapshot = channelsListDataSource?.snapshot()
+        guard let model = snapshot?.itemIdentifiers[indexPath.row] else { return }
+        let channelViewController = ChannelViewController(channel: model)
         navigationController?.pushViewController(channelViewController, animated: true)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         76
     }
-}
-
-// MARK: - UITableViewDataSource
-
-extension ChannelsListViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        channels?.count ?? 0
-    }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard
-            let cell = tableView.dequeueReusableCell(withIdentifier: ChannelsListCell.identifier,
-                                                     for: indexPath) as? ChannelsListCell,
-            let channels = channels
-        else {
-            return UITableViewCell()
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _, _, completion in
+            completion(true)
+            guard
+                let self = self,
+                var snapshot = self.channelsListDataSource?.snapshot()
+            else { return }
+            let model = snapshot.itemIdentifiers[indexPath.row]
+            snapshot.deleteItems([model])
+            self.channelsListDataSource?.apply(snapshot)
+            self.dataSource.deleteChannelFromNetwork(with: model)
+            self.dataSource.deleteChannelFromStorage(with: model)
         }
-        
-        let indexLastCellInSection = channels.isEmpty ? 0 : channels.count - 1
-        if indexPath.row == indexLastCellInSection {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
-        }
-        let model = convert(channel: channels[indexPath.row])
-        cell.resetCell()
-        cell.configure(with: model)
-        return cell
+        return UISwipeActionsConfiguration(actions: [deleteAction])
     }
 }
 

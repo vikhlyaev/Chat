@@ -1,15 +1,15 @@
 import UIKit
 import Combine
-import TFSChatTransport
 
 final class ChannelViewController: UIViewController {
     
     private enum Constants: String {
         case channelCellSent
         case channelCellReceived
-        case userId = "vikhlyaev"
         case userName = "Anton Vikhlyaev"
     }
+    
+    // MARK: - UI
     
     private lazy var channelTableView: UITableView = {
         let tableView = UITableView(frame: .zero)
@@ -66,9 +66,16 @@ final class ChannelViewController: UIViewController {
         return
     }
     
-    private var lastName: String?
-    private let chatService = ChatService(host: "167.235.86.234", port: 8080)
-    private let channel: Channel
+    // MARK: - Services
+    
+    private lazy var dataSource: DataSourceProtocol = DataSource(delegate: self)
+    
+    // MARK: - Private properties
+    
+    private let channel: ChannelModel
+    
+    // MARK: - DataSource
+    
     private var sortedMessages: [SortedMessage] = [] {
         didSet {
             DispatchQueue.main.async { [weak self] in
@@ -77,12 +84,16 @@ final class ChannelViewController: UIViewController {
         }
     }
     
+    // MARK: - Combine
+    
     private var cancellables = Set<AnyCancellable>()
     
-    init(channel: Channel) {
+    // MARK: - Life Cycle
+    
+    init(channel: ChannelModel) {
         self.channel = channel
         super.init(nibName: nil, bundle: nil)
-        loadMessages(channelId: channel.id)
+        dataSource.getMessages(for: channel.id)
     }
     
     required init?(coder: NSCoder) {
@@ -91,7 +102,7 @@ final class ChannelViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        getMessages()
         setupView()
         setDelegates()
         setConstraints()
@@ -113,6 +124,8 @@ final class ChannelViewController: UIViewController {
         moveScrollIndicator()
     }
     
+    // MARK: - Setup UI
+    
     private func setupView() {
         view.backgroundColor = .systemBackground
         view.addSubview(channelTableView)
@@ -132,6 +145,15 @@ final class ChannelViewController: UIViewController {
         navigationController?.isNavigationBarHidden = true
     }
     
+    private func moveScrollIndicator() {
+        channelTableView.scrollIndicatorInsets = UIEdgeInsets(top: 0.0,
+                                                              left: 0.0,
+                                                              bottom: 0.0,
+                                                              right: channelTableView.bounds.size.width - 8.0)
+    }
+    
+    // MARK: - Observers
+    
     private func addObserverKeyboard() {
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(keyboardWillChange),
@@ -143,55 +165,6 @@ final class ChannelViewController: UIViewController {
         NotificationCenter.default.removeObserver(self,
                                                   name: UIResponder.keyboardWillChangeFrameNotification,
                                                   object: nil)
-    }
-    
-    private func moveScrollIndicator() {
-        channelTableView.scrollIndicatorInsets = UIEdgeInsets(top: 0.0,
-                                                              left: 0.0,
-                                                              bottom: 0.0,
-                                                              right: channelTableView.bounds.size.width - 8.0)
-    }
-    
-    private func sortMessages(_ messages: [Message]) -> [SortedMessage] {
-        var sortedMessages: [SortedMessage] = []
-        for (date, messages) in messages.daySorted {
-            sortedMessages.append(SortedMessage(date: date, messages: messages))
-        }
-        return sortedMessages.sorted { $0.date < $1.date }
-    }
-    
-    private func loadMessages(channelId: String) {
-        chatService.loadMessages(channelId: channelId)
-            .subscribe(on: DispatchQueue.main)
-            .receive(on: DispatchQueue.global(qos: .utility))
-            .map { self.sortMessages($0.reversed()).reversed() }
-            .sink { [weak self] completion in
-                switch completion {
-                case .finished:
-                    print("messages loaded")
-                case .failure:
-                    let alert = UIAlertController(title: "Error", message: "Could not load messages", preferredStyle: .alert)
-                    let okAction = UIAlertAction(title: "OK", style: .default)
-                    let tryAgainAction = UIAlertAction(title: "Try again", style: .default) { [weak self] _ in
-                        self?.loadMessages(channelId: channelId)
-                    }
-                    alert.addAction(okAction)
-                    alert.addAction(tryAgainAction)
-                    DispatchQueue.main.async { [weak self] in
-                        self?.present(alert, animated: true)
-                    }
-                }
-            } receiveValue: { [weak self] sortedMessages in
-                self?.sortedMessages = sortedMessages
-            }
-            .store(in: &cancellables)
-    }
-    
-    private func convert(message: Message) -> MessageCellModel {
-        MessageCellModel(id: message.userID,
-                         name: message.userName,
-                         text: message.text,
-                         date: message.date)
     }
     
     @objc
@@ -220,53 +193,50 @@ final class ChannelViewController: UIViewController {
         }, completion: nil)
     }
     
+    // MARK: - Messages
+    
+    private func getMessages() {
+        dataSource.messagesPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] messages in
+                guard let self else { return }
+                self.sortedMessages = self.groupMessages(messages)
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func groupMessages(_ messages: [MessageModel]) -> [SortedMessage] {
+        messages.daySorted
+            .map { SortedMessage(date: $0.key, messages: $0.value.sorted { $0.date > $1.date }) }
+            .sorted { $0.date > $1.date }
+    }
+    
     @objc
     private func sendMessageButtonTapped() {
-        var userID: String {
-            if let id = UserDataStorage.userID {
+        var userId: String {
+            if let id = UserDataStorage.userId {
                 return id
             } else {
-                let id = Constants.userId.rawValue
-                UserDataStorage.userID = id
+                let id = "\(UUID())"
+                UserDataStorage.userId = id
                 return id
             }
         }
-        
         let userName = Constants.userName.rawValue
-        
         guard let text = textView.text else { return }
-        chatService.sendMessage(text: text, channelId: channel.id, userId: userID, userName: userName)
-            .subscribe(on: DispatchQueue.main)
-            .receive(on: DispatchQueue.global(qos: .utility))
-            .sink { [weak self] completion in
-                switch completion {
-                case .finished:
-                    print("message sended")
-                case .failure:
-                    let alert = UIAlertController(title: "Error", message: "Unable to send message", preferredStyle: .alert)
-                    let okAction = UIAlertAction(title: "OK", style: .default)
-                    let tryAgainAction = UIAlertAction(title: "Try again", style: .default) { [weak self] _ in
-                        self?.sendMessageButtonTapped()
-                    }
-                    alert.addAction(okAction)
-                    alert.addAction(tryAgainAction)
-                    DispatchQueue.main.async { [weak self] in
-                        self?.present(alert, animated: true)
-                    }
-                }
-            } receiveValue: { [weak self] message in
-                guard let self = self else { return }
-                if self.sortedMessages.isEmpty {
-                    let today = SortedMessage(date: Date(), messages: [message])
-                    self.sortedMessages.append(today)
-                } else {
-                    self.sortedMessages[0].addMessage(message)
-                }
-            }
-            .store(in: &cancellables)
-        
+        dataSource.sendMessage(text: text, channelId: channel.id, userId: userId, userName: userName)
         textView.text = nil
         sendMessageButton.isEnabled = false
+    }
+}
+
+// MARK: - DataSourceDelegate
+
+extension ChannelViewController: DataSourceDelegate {
+    func didShowAlert(alert: UIAlertController) {
+        DispatchQueue.main.async { [weak self] in
+            self?.present(alert, animated: true)
+        }
     }
 }
 
@@ -311,14 +281,14 @@ extension ChannelViewController: UITableViewDataSource {
         guard let cellReceived = tableView.dequeueReusableCell(withIdentifier: Constants.channelCellReceived.rawValue,
                                                                for: indexPath) as? ChannelCell else { return UITableViewCell() }
         let message = sortedMessages[indexPath.section].messages[indexPath.row]
-        let model = convert(message: message)
-        if model.id == UserDataStorage.userID {
+
+        if message.id == UserDataStorage.userId {
             cellSent.resetCell()
-            cellSent.configure(with: model)
+            cellSent.configure(with: message)
             return cellSent
         } else {
             cellReceived.resetCell()
-            cellReceived.configure(with: model)
+            cellReceived.configure(with: message)
             return cellReceived
         }
     }

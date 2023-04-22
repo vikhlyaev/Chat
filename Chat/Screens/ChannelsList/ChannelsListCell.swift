@@ -4,6 +4,8 @@ final class ChannelsListCell: UITableViewCell {
     
     static let identifier = String(describing: ChannelsListCell.self)
     
+    // MARK: - UI
+    
     private lazy var photoView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -65,6 +67,8 @@ final class ChannelsListCell: UITableViewCell {
         return imageView
     }()
     
+    // MARK: - Life Cycle
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupView()
@@ -74,6 +78,8 @@ final class ChannelsListCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: - Setup UI
     
     private func setupView() {
         backgroundColor = .clear
@@ -99,10 +105,11 @@ final class ChannelsListCell: UITableViewCell {
 // MARK: - ConfigurableViewProtocol
 
 extension ChannelsListCell: ConfigurableViewProtocol {
-    func configure(with model: ChannelsListCellModel) {
+    func configure(with model: ChannelModel) {
         nameLabel.text = model.name
         dateAndTimeLabel.text = model.lastActivity?.toString()
         photoImageView.loadImage(url: model.logoURL)
+        
         if let message = model.lastMessage {
             lastMessageLabel.text = message
         } else {

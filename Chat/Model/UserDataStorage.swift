@@ -1,17 +1,15 @@
 import Foundation
-import KeychainAccess
 
 final class UserDataStorage {
     
-    private static let userIDKey = "MyUserID"
-    private static let keychain = Keychain(service: "ru.vikhlyaev.Chat")
+    private static let userIdKey = "MyUserId"
     
-    static var userID: String? {
+    static var userId: String? {
         get {
-            keychain[userIDKey]
+            UserDefaults.standard.string(forKey: userIdKey)
         }
         set {
-            keychain[userIDKey] = newValue
+            UserDefaults.standard.set(newValue, forKey: userIdKey)
         }
     }
 }

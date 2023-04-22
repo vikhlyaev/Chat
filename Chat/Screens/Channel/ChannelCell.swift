@@ -64,8 +64,8 @@ final class ChannelCell: UITableViewCell {
 // MARK: - ConfigurableViewProtocol
 
 extension ChannelCell: ConfigurableViewProtocol {
-    func configure(with model: MessageCellModel) {
-        if model.id == UserDataStorage.userID {
+    func configure(with model: MessageModel) {
+        if model.id == UserDataStorage.userId {
             bubbleView.backgroundColor = .appBubbleSent
             bubbleView.arrowDirection = .right
             messageLabel.textColor = .appBubbleTextSent
@@ -78,7 +78,7 @@ extension ChannelCell: ConfigurableViewProtocol {
             bubbleView.arrowDirection = .left
             messageLabel.textColor = .appBubbleTextReceived
             timeLabel.textColor = .appBubbleTextReceived
-            nameLabel.text = model.name
+            nameLabel.text = model.userName
             bubbleView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4).isActive = true
             bubbleView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8).isActive = false
             bubbleView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8).isActive = true

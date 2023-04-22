@@ -224,12 +224,12 @@ final class ProfileViewController: UIViewController {
         switch textField.tag {
         case TableViewSection.name.rawValue:
             textField.textPublisher()
-                .assign(to: \.text, onWeak: nameLabel)
+                .assign(to: \.text, on: nameLabel)
                 .store(in: &cancellables)
             model.name = textField.text
         case TableViewSection.information.rawValue:
             textField.textPublisher()
-                .assign(to: \.text, onWeak: informationLabel)
+                .assign(to: \.text, on: informationLabel)
                 .store(in: &cancellables)
             model.information = textField.text
         default:
