@@ -14,7 +14,7 @@ disabled_rules:
   - trailing_whitespace
   - todo
   - cyclomatic_complexity
-  - function_body_length
+  # - function_body_length
   - identifier_name
   - unused_setter_value
   - weak_delegate
@@ -45,7 +45,7 @@ file_length:
   warning: 500
 
 type_body_length:
-  warning: 400
+  warning: 300
   error: 450
 
 nesting:
