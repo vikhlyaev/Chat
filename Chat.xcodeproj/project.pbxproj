@@ -19,6 +19,7 @@
 		0A3D726929CB3599002774AE /* String + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3D726829CB3599002774AE /* String + Extensions.swift */; };
 		0A41D39B29E6D75500FE0A0F /* Chat.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0A41D39929E6D75500FE0A0F /* Chat.xcdatamodeld */; };
 		0A41D71B29C97FE600F7987D /* ProfileEditCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A41D71A29C97FE600F7987D /* ProfileEditCell.swift */; };
+		0A47FB6729FAB50400D4736F /* UITableView + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A47FB6629FAB50400D4736F /* UITableView + Extensions.swift */; };
 		0A4D605529DB3EAA00585535 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF3178F29A3C1BB005417A5 /* ProfileViewController.swift */; };
 		0A714C0329DB4B7A007D76C5 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A714C0229DB4B7A007D76C5 /* TabBarController.swift */; };
 		0A714C0B29DC5F89007D76C5 /* UIImageView + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A714C0A29DC5F89007D76C5 /* UIImageView + Extensions.swift */; };
@@ -61,6 +62,7 @@
 		0A3D726829CB3599002774AE /* String + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String + Extensions.swift"; sourceTree = "<group>"; };
 		0A41D39A29E6D75500FE0A0F /* Chat.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Chat.xcdatamodel; sourceTree = "<group>"; };
 		0A41D71A29C97FE600F7987D /* ProfileEditCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditCell.swift; sourceTree = "<group>"; };
+		0A47FB6629FAB50400D4736F /* UITableView + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView + Extensions.swift"; sourceTree = "<group>"; };
 		0A714C0229DB4B7A007D76C5 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		0A714C0A29DC5F89007D76C5 /* UIImageView + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView + Extensions.swift"; sourceTree = "<group>"; };
 		0A80C74129E7DBAE00C96E8C /* ChatService + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatService + Extensions.swift"; sourceTree = "<group>"; };
@@ -112,6 +114,7 @@
 				0A03CD5A29B984A500B9CC8E /* UIColor + Extensions.swift */,
 				0A9F45B029D74FF400BB7A4A /* UITextField + Extensions.swift */,
 				0A714C0A29DC5F89007D76C5 /* UIImageView + Extensions.swift */,
+				0A47FB6629FAB50400D4736F /* UITableView + Extensions.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -458,6 +461,7 @@
 				0A41D39B29E6D75500FE0A0F /* Chat.xcdatamodeld in Sources */,
 				0A3D726929CB3599002774AE /* String + Extensions.swift in Sources */,
 				0A03CD5F29B988EE00B9CC8E /* Date + Extensions.swift in Sources */,
+				0A47FB6729FAB50400D4736F /* UITableView + Extensions.swift in Sources */,
 				0A80C74429E7DE1700C96E8C /* DataSource.swift in Sources */,
 				0ADB6DEF29EAEFE700EBE31F /* ChannelsListDataSource.swift in Sources */,
 				0AB6B5C629C1EC6A00361A2C /* ThemesButton.swift in Sources */,
