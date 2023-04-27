@@ -128,6 +128,36 @@
 			path = Channel;
 			sourceTree = "<group>";
 		};
+		0A47FB6329FAB45C00D4736F /* Core Layer */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Core Layer";
+			sourceTree = "<group>";
+		};
+		0A47FB6429FAB46800D4736F /* Service Layer */ = {
+			isa = PBXGroup;
+			children = (
+				0A3D726129C9CB9A002774AE /* ConcurrencyService.swift */,
+				0AB6B5C929C1ED8700361A2C /* ThemesManager.swift */,
+				0A80C74329E7DE1700C96E8C /* DataSource.swift */,
+				0ADB6DF629ED613000EBE31F /* CoreDataService.swift */,
+			);
+			path = "Service Layer";
+			sourceTree = "<group>";
+		};
+		0A47FB6529FAB47700D4736F /* Presentation Layer */ = {
+			isa = PBXGroup;
+			children = (
+				0AB6B5BD29C1EB7B00361A2C /* Settings */,
+				0A03CD6E29B99BB300B9CC8E /* Channel */,
+				0A63C5DA29A900D50000173B /* ChannelsList */,
+				0A63C5D929A900CD0000173B /* Profile */,
+				0A714C0229DB4B7A007D76C5 /* TabBarController.swift */,
+			);
+			name = "Presentation Layer";
+			sourceTree = "<group>";
+		};
 		0A63C5D629A8F69B0000173B /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -181,17 +211,6 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
-		0AB6B5B529C1E50B00361A2C /* Services */ = {
-			isa = PBXGroup;
-			children = (
-				0A3D726129C9CB9A002774AE /* ConcurrencyService.swift */,
-				0AB6B5C929C1ED8700361A2C /* ThemesManager.swift */,
-				0A80C74329E7DE1700C96E8C /* DataSource.swift */,
-				0ADB6DF629ED613000EBE31F /* CoreDataService.swift */,
-			);
-			path = Services;
-			sourceTree = "<group>";
-		};
 		0AB6B5BD29C1EB7B00361A2C /* Settings */ = {
 			isa = PBXGroup;
 			children = (
@@ -233,10 +252,11 @@
 		0AF3176629A0D667005417A5 /* Chat */ = {
 			isa = PBXGroup;
 			children = (
+				0A47FB6529FAB47700D4736F /* Presentation Layer */,
+				0A47FB6429FAB46800D4736F /* Service Layer */,
+				0A47FB6329FAB45C00D4736F /* Core Layer */,
 				0AF3177B29A0D84B005417A5 /* Application */,
 				0A63C5D629A8F69B0000173B /* Model */,
-				0AF3177E29A0D8EB005417A5 /* Screens */,
-				0AB6B5B529C1E50B00361A2C /* Services */,
 				0AA5CE6129A7865500C4BBE4 /* Extensions */,
 				0AF3177C29A0D877005417A5 /* Resources */,
 				0AF3177D29A0D884005417A5 /* Supporting Files */,
@@ -268,18 +288,6 @@
 				0AF3177529A0D66A005417A5 /* Info.plist */,
 			);
 			path = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		0AF3177E29A0D8EB005417A5 /* Screens */ = {
-			isa = PBXGroup;
-			children = (
-				0AB6B5BD29C1EB7B00361A2C /* Settings */,
-				0A03CD6E29B99BB300B9CC8E /* Channel */,
-				0A63C5DA29A900D50000173B /* ChannelsList */,
-				0A63C5D929A900CD0000173B /* Profile */,
-				0A714C0229DB4B7A007D76C5 /* TabBarController.swift */,
-			);
-			path = Screens;
 			sourceTree = "<group>";
 		};
 		C81EA66786004A5B0FC4B826 /* Pods */ = {
