@@ -1,6 +1,6 @@
 import Foundation
 
-struct ChannelModel {
+struct ChannelModel: Decodable, Hashable {
     let id: String
     let name: String
     let logoURL: String?
@@ -13,6 +13,3 @@ extension ChannelModel: Equatable {
         return lhs.id == rhs.id && lhs.name == rhs.name
     }
 }
-
-extension ChannelModel: Decodable {}
-extension ChannelModel: Hashable {}
