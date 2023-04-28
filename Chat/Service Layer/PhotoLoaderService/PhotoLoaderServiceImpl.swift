@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 final class PhotoLoaderServiceImpl {
     
@@ -53,6 +54,19 @@ extension PhotoLoaderServiceImpl: PhotoLoaderService {
             case .failure(let error):
                 completionOnMainQueue(.failure(error))
             }
+        }
+    }
+    
+    func downloadPhoto(by url: String, _ completion: @escaping(Result<UIImage, Error>) -> Void) {
+        guard let url = URL(string: url) else { return }
+        do {
+            let data = try Data(contentsOf: url)
+            if let photo = UIImage(data: data) {
+                completion(.success(photo))
+            }
+        } catch {
+            print(error)
+            completion(.failure(error))
         }
     }
 }
