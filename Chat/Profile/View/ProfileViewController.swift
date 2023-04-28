@@ -133,13 +133,13 @@ final class ProfileViewController: UIViewController {
         let chooseFromGalleryAction = UIAlertAction(title: "Choose from gallery", style: .default) { [weak self] _ in
             self?.output.chooseFromGallery()
         }
-        let loadFromUnsplashAction = UIAlertAction(title: "Load from Unsplash", style: .default) { [weak self] _ in
-            self?.output.loadFromUnsplash()
+        let loadFromNetworkAction = UIAlertAction(title: "Load from network", style: .default) { [weak self] _ in
+            self?.output.loadFromNetwork()
         }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         alert.addAction(takePhotoAction)
         alert.addAction(chooseFromGalleryAction)
-        alert.addAction(loadFromUnsplashAction)
+        alert.addAction(loadFromNetworkAction)
         alert.addAction(cancelAction)
         present(alert, animated: true)
     }

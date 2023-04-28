@@ -6,5 +6,5 @@ protocol ProfileViewOutput {
     func saveProfile(_ profile: ProfileModel)
     func takePhoto()
     func chooseFromGallery()
-    func loadFromUnsplash()
+    func loadFromNetwork()
 }

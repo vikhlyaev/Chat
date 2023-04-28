@@ -73,7 +73,7 @@ extension ProfilePresenter: ProfileViewOutput {
         }
     }
     
-    func loadFromUnsplash() {
+    func loadFromNetwork() {
         let presenter = PhotoSelectionPresenter()
         let photoSelectionViewController = PhotoSelectionViewController(output: presenter)
         presenter.viewInput = photoSelectionViewController
