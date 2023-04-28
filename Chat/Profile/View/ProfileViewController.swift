@@ -257,9 +257,6 @@ extension ProfileViewController {
     @objc
     private func cancelButtonTapped() {
         setEditing(false, animated: true)
-        nameLabel.text = output.profileModel?.name
-        informationLabel.text = output.profileModel?.information
-        photoImageView.image = output.profileModel?.photo
     }
 }
 
