@@ -10,7 +10,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow(frame: UIScreen.main.bounds)
         let tabBarController = TabBarController()
         window?.rootViewController = tabBarController
-        window?.overrideUserInterfaceStyle = ThemesManager().currentTheme
+        window?.overrideUserInterfaceStyle = ServiceAssembly.shared.makeThemesService().currentTheme
         window?.makeKeyAndVisible()
         return true
     }
