@@ -43,7 +43,7 @@ final class DataSource: DataSourceProtocol {
     // MARK: - Services
     
     private let chatService = ChatService()
-    private let coreDataService: CoreDataServiceProtocol = CoreDataService()
+    private let coreDataService: CoreDataService = ServiceAssembly.shared.coreDataService
     
     // MARK: - Publishers
     
