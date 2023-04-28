@@ -41,6 +41,7 @@ final class ProfileServiceImpl {
         fileManagerService.write(photoData, with: "photoData") { [weak self] error in
             guard let error else {
                 self?.logService.success("Photo successfully update")
+                completion(nil)
                 return
             }
             completion(error)
@@ -97,6 +98,10 @@ extension ProfileServiceImpl: ProfileService {
             }
         }
         savePhoto(profile) { error in
+            guard error != nil else {
+                completion(nil)
+                return
+            }
             completion(error)
         }
     }
