@@ -1,8 +1,9 @@
 import UIKit
 import PhotosUI
-import Combine
 
 final class ProfileViewController: UIViewController {
+    
+    // MARK: - Sections
     
     private enum TableViewSection: Int, CaseIterable {
         case name, information
@@ -15,6 +16,8 @@ final class ProfileViewController: UIViewController {
             }
         }
     }
+    
+    // MARK: - UI
     
     private lazy var photoImageView: UIImageView = {
         let imageView = UIImageView()
@@ -63,64 +66,41 @@ final class ProfileViewController: UIViewController {
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
         tableView.rowHeight = 44
         tableView.isHidden = true
-        tableView.register(ProfileEditCell.self, forCellReuseIdentifier: ProfileEditCell.identifier)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
     
-    private var imagePicker: UIImagePickerController?
     private lazy var activityIndicator = UIActivityIndicatorView(style: .medium)
-    private var concurrencyService: ConcurrencyServiceProtocol = ConcurrencyService()
-    private var cancellables = Set<AnyCancellable>()
-    private var model: ProfileViewModel = ProfileViewModel() {
-        didSet {
-            configure(with: model)
-            nameAndInformationTableView.reloadData()
-        }
+    
+    private let output: ProfileViewOutput
+    
+    // MARK: - Life Cycle
+    
+    init(output: ProfileViewOutput) {
+        self.output = output
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadProfile()
         setupNavBar()
         setupView()
+        setupTableView()
         setDelegates()
         setConstraints()
         hideKeyboardByTapOnView()
+        output.viewIsReady()
     }
     
-    private func loadProfile() {
-        concurrencyService
-            .profilePublisher()
-            .receive(on: DispatchQueue.main)
-            .subscribe(on: DispatchQueue.global(qos: .userInitiated))
-            .sink { [ weak self ] completion in
-                guard let self = self else { return }
-                switch completion {
-                case .finished:
-                    print("profile loaded")
-                case .failure:
-                    self.configure(with: self.model)
-                    let alert = UIAlertController(title: "User data not found",
-                                                  message: "The default profile is loaded.",
-                                                  preferredStyle: .alert)
-                    let okAction = UIAlertAction(title: "OK", style: .default)
-                    alert.addAction(okAction)
-                    self.present(alert, animated: true)
-                }
-            } receiveValue: { [weak self] model in
-                self?.model = model
-            }
-            .store(in: &cancellables)
-    }
+    // MARK: - Setup UI
     
     private func setupNavBar() {
         navigationItem.rightBarButtonItem = editButtonItem
         title = "Profile"
-    }
-    
-    private func setDelegates() {
-        nameAndInformationTableView.dataSource = self
     }
     
     private func setupView() {
@@ -132,32 +112,39 @@ final class ProfileViewController: UIViewController {
         view.addSubview(nameAndInformationTableView)
     }
     
-    private func takePhoto() {
-        guard UIImagePickerController.isSourceTypeAvailable(.camera) else {
-            chooseFromGallery()
-            return
+    private func setupTableView() {
+        nameAndInformationTableView.registerReusableCell(cellType: ProfileEditCell.self)
+    }
+    
+    private func setDelegates() {
+        nameAndInformationTableView.dataSource = self
+    }
+    
+    // MARK: - Add Photo methods
+    
+    @objc
+    private func addPhotoButtonTapped() {
+        setEditing(true, animated: true)
+        
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let takePhotoAction = UIAlertAction(title: "Take photo", style: .default) { [weak self] _ in
+            self?.output.takePhoto()
         }
-        imagePicker = UIImagePickerController()
-        guard let imagePicker = imagePicker else { return }
-        imagePicker.delegate = self
-        imagePicker.sourceType = .camera
-        imagePicker.cameraCaptureMode = .photo
-        imagePicker.cameraDevice = .front
-        present(imagePicker, animated: true, completion: nil)
+        let chooseFromGalleryAction = UIAlertAction(title: "Choose from gallery", style: .default) { [weak self] _ in
+            self?.output.chooseFromGallery()
+        }
+        let loadFromUnsplashAction = UIAlertAction(title: "Load from Unsplash", style: .default) { [weak self] _ in
+            self?.output.loadFromUnsplash()
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        alert.addAction(takePhotoAction)
+        alert.addAction(chooseFromGalleryAction)
+        alert.addAction(loadFromUnsplashAction)
+        alert.addAction(cancelAction)
+        present(alert, animated: true)
     }
     
-    private func chooseFromGallery() {
-        let configuration = PHPickerConfiguration()
-        let picker = PHPickerViewController(configuration: configuration)
-        picker.delegate = self
-        present(picker, animated: true)
-    }
-    
-    private func updatePhoto(_ photo: UIImage) {
-        photoImageView.image = photo
-        model.photo = photo
-        concurrencyService.photoSubject.send(photo)
-    }
+    // MARK: - Keyboard methods
     
     private func hideKeyboardByTapOnView() {
         let tapScreen = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
@@ -169,116 +156,25 @@ final class ProfileViewController: UIViewController {
         view.addGestureRecognizer(swipeScreen)
     }
     
-    private func showErrorAlert() {
-        let alert = UIAlertController(title: "Could not save profile", message: "Try again", preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "OK", style: .cancel) { [weak self] _ in
-            guard let self = self else { return }
-            self.setEditing(false, animated: true)
-            self.configure(with: self.model)
-        }
-        let tryAgainAction = UIAlertAction(title: "Try again", style: .default) { [weak self] _ in
-            self?.saveButtonTapped()
-        }
-        alert.addAction(okAction)
-        alert.addAction(tryAgainAction)
-        present(alert, animated: true)
-    }
-    
-    private func showSuccessAlert() {
-        let alert = UIAlertController(title: "Success", message: "You are breathtaking", preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "OK", style: .cancel)
-        alert.addAction(okAction)
-        present(alert, animated: true)
-    }
-    
     @objc
     private func hideKeyboard() {
         view.endEditing(true)
     }
     
-    @objc
-    private func closeButtonTapped() {
-        dismiss(animated: true)
-    }
-    
-    @objc
-    private func addPhotoButtonTapped() {
-        setEditing(true, animated: true)
-        
-        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let takePhotoAction = UIAlertAction(title: "Take photo", style: .default) { [weak self] _ in
-            self?.takePhoto()
-        }
-        let chooseFromGalleryAction = UIAlertAction(title: "Choose from gallery", style: .default) { [weak self] _ in
-            self?.chooseFromGallery()
-        }
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
-        alert.addAction(takePhotoAction)
-        alert.addAction(chooseFromGalleryAction)
-        alert.addAction(cancelAction)
-        present(alert, animated: true)
-    }
+    // MARK: - TextField methods
     
     @objc
     private func textFieldValueChanged(_ textField: UITextField) {
         switch textField.tag {
         case TableViewSection.name.rawValue:
-            textField.textPublisher()
-                .assign(to: \.text, on: nameLabel)
-                .store(in: &cancellables)
-            model.name = textField.text
+            nameLabel.text = textField.text
         case TableViewSection.information.rawValue:
-            textField.textPublisher()
-                .assign(to: \.text, on: informationLabel)
-                .store(in: &cancellables)
-            model.information = textField.text
+            informationLabel.text = textField.text
         default:
             break
         }
     }
 }
-
-// MARK: - ConfigurableViewProtocol
-
-extension ProfileViewController: ConfigurableViewProtocol {
-    func configure(with model: ProfileViewModel) {
-        nameLabel.text = model.name != nil ? model.name : "No name"
-        informationLabel.text = model.information != nil ? model.information : "No bio specified"
-        photoImageView.image = model.photo != nil ? model.photo : UIImage(named: "PlaceholderAvatar")
-    }
-}
-
-// MARK: - UIImagePickerControllerDelegate
-
-extension ProfileViewController: PHPickerViewControllerDelegate {
-    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        picker.dismiss(animated: true)
-        guard let itemProvider = results.first?.itemProvider,
-              itemProvider.canLoadObject(ofClass: UIImage.self) else { return }
-        itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, _ in
-            if let image = image as? UIImage {
-                DispatchQueue.main.async { [weak self] in
-                    self?.updatePhoto(image)
-                }
-            }
-        }
-    }
-}
-
-// MARK: - UIImagePickerControllerDelegate
-
-extension ProfileViewController: UIImagePickerControllerDelegate {
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-        guard let imagePicker = imagePicker,
-              let image = info[.originalImage] as? UIImage else { return }
-        imagePicker.dismiss(animated: true, completion: nil)
-        updatePhoto(image)
-    }
-}
-
-// MARK: - UINavigationControllerDelegate
-
-extension ProfileViewController: UINavigationControllerDelegate {}
 
 // MARK: - UITableViewDataSource
 
@@ -288,20 +184,14 @@ extension ProfileViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard
-            let cell = tableView.dequeueReusableCell(withIdentifier: ProfileEditCell.identifier,
-                                                     for: indexPath) as? ProfileEditCell
-        else {
-            return UITableViewCell()
-        }
-        
+        let cell = tableView.dequeueReusableCell(cellType: ProfileEditCell.self)
         let indexLastCellInSection = TableViewSection.allCases.count - 1
         if indexPath.row == indexLastCellInSection {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
         }
         cell.textField.delegate = self
         cell.textField.tag = indexPath.row
-        cell.configure(title: TableViewSection.allCases[indexPath.row].title, value: model[indexPath.row])
+        cell.configure(title: TableViewSection.allCases[indexPath.row].title, value: output.profileModel?[indexPath.row])
         return cell
     }
 }
@@ -352,22 +242,71 @@ extension ProfileViewController {
     @objc
     private func saveButtonTapped() {
         view.endEditing(true)
-        
         let activityIndicatorBarButton = UIBarButtonItem(customView: activityIndicator)
         navigationItem.setRightBarButton(activityIndicatorBarButton, animated: true)
-        activityIndicator.startAnimating()
-        
-        concurrencyService.profileSubject.send(model)
-        
-        activityIndicator.stopAnimating()
-        showSuccessAlert()
+        output.saveProfile(
+            ProfileModel(
+                name: nameLabel.text,
+                information: informationLabel.text,
+                photo: photoImageView.image
+            )
+        )
         setEditing(false, animated: true)
     }
     
     @objc
     private func cancelButtonTapped() {
         setEditing(false, animated: true)
-        configure(with: model)
+        nameLabel.text = output.profileModel?.name
+        informationLabel.text = output.profileModel?.information
+        photoImageView.image = output.profileModel?.photo
+    }
+}
+
+// MARK: - ProfileViewInput
+
+extension ProfileViewController: ProfileViewInput {
+    func showController(_ controller: UIViewController) {
+        present(controller, animated: true)
+    }
+    
+    func startActivityIndicator() {
+        activityIndicator.startAnimating()
+    }
+    
+    func stopActivityIndicator() {
+        activityIndicator.stopAnimating()
+    }
+    
+    func updatePhoto(_ photo: UIImage) {
+        photoImageView.image = photo
+    }
+    
+    func showProfile(with model: ProfileModel) {
+        nameLabel.text = model.name
+        informationLabel.text = model.information
+        photoImageView.image = model.photo
+    }
+    
+    func showErrorAlert() {
+        let alert = UIAlertController(title: "Could not save profile", message: "Try again", preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .cancel) { [weak self] _ in
+            guard let self = self else { return }
+            self.setEditing(false, animated: true)
+        }
+        let tryAgainAction = UIAlertAction(title: "Try again", style: .default) { [weak self] _ in
+            self?.saveButtonTapped()
+        }
+        alert.addAction(okAction)
+        alert.addAction(tryAgainAction)
+        present(alert, animated: true)
+    }
+    
+    func showSuccessAlert() {
+        let alert = UIAlertController(title: "Success", message: "You are breathtaking", preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .cancel)
+        alert.addAction(okAction)
+        present(alert, animated: true)
     }
 }
 
