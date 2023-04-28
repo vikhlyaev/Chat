@@ -1,6 +1,7 @@
 import UIKit
 
-struct ProfileViewModel: Codable {
+struct ProfileModel: Codable {
+    let id = UUID()
     var name: String?
     var information: String?
     var photo: UIImage?
