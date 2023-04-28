@@ -1,6 +1,8 @@
 import UIKit
 
 final class ThemesButton: UIButton {
+    
+    // MARK: - UI
 
     private lazy var interfaceImageView: UIImageView = {
         let imageView = UIImageView()
@@ -34,6 +36,8 @@ final class ThemesButton: UIButton {
     private lazy var checkedImage = UIImage(systemName: "checkmark.circle.fill")
     private lazy var uncheckedImage = UIImage(systemName: "circle")
     
+    // MARK: - States
+    
     override var isHighlighted: Bool {
         didSet {
             layer.opacity = isHighlighted ? 0.6 : 1.0
@@ -47,8 +51,12 @@ final class ThemesButton: UIButton {
         }
     }
     
+    // MARK: - Properties
+    
     private let theme: UIUserInterfaceStyle
     private let completion: () -> Void
+    
+    // MARK: - Init
     
     required init(theme: UIUserInterfaceStyle, completion: @escaping () -> Void) {
         self.theme = theme
@@ -62,6 +70,8 @@ final class ThemesButton: UIButton {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: - Setup Button
     
     private func setupButton() {
         addSubview(interfaceImageView)

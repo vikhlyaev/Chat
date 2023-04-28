@@ -2,29 +2,24 @@ import UIKit
 
 final class SettingsViewController: UIViewController {
     
-    private enum SettingsSection: CaseIterable {
-        case themes
-        var count: Int {
-            switch self {
-            case .themes:
-                return 1
-            }
-        }
-    }
+    // MARK: - UI
     
     private lazy var settingsTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.allowsSelection = false
         tableView.bounces = false
-        tableView.register(ThemesCell.self, forCellReuseIdentifier: ThemesCell.identifier)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
     
-    private var themesManager: ThemesManagerProtocol
+    // MARK: - Output
     
-    init(themesManager: ThemesManagerProtocol = ThemesManager()) {
-        self.themesManager = themesManager
+    private var output: SettingsViewOutput
+    
+    // MARK: - Init
+    
+    init(output: SettingsViewOutput) {
+        self.output = output
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -32,21 +27,22 @@ final class SettingsViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Life Cycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
         setConstraints()
-        setDelegates()
         setupNavBar()
+        setupTableView()
+        setDelegates()
     }
+    
+    // MARK: - Setup View
     
     private func setupView() {
         view.backgroundColor = .systemBackground
         view.addSubview(settingsTableView)
-    }
-    
-    private func setDelegates() {
-        settingsTableView.dataSource = self
     }
     
     private func setupNavBar() {
@@ -54,25 +50,24 @@ final class SettingsViewController: UIViewController {
         navigationController?.navigationBar.backgroundColor = .clear
         title = "Settings"
     }
+    
+    private func setupTableView() {
+        settingsTableView.registerReusableCell(cellType: ThemesCell.self)
+    }
+    
+    private func setDelegates() {
+        settingsTableView.dataSource = self
+    }
 }
 
 // MARK: - UITableViewDataSource
 
 extension SettingsViewController: UITableViewDataSource {
-    func numberOfSections(in tableView: UITableView) -> Int {
-        SettingsSection.allCases.count
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        SettingsSection.allCases[section].count
-    }
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { 1 }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard
-            let cell = tableView.dequeueReusableCell(withIdentifier: ThemesCell.identifier, for: indexPath) as? ThemesCell
-        else {
-            return UITableViewCell()
-        }
+        let cell = tableView.dequeueReusableCell(cellType: ThemesCell.self)
+        cell.configureInitialState(currentTheme: output.currentTheme)
         cell.delegate = self
         return cell
     }
@@ -82,13 +77,15 @@ extension SettingsViewController: UITableViewDataSource {
 
 extension SettingsViewController: ThemesCellDelegate {
     func didDayButtonTapped() {
-        themesManager.apply(theme: .light)
+        output.didButtonTapped(theme: .light)
     }
     
     func didNightButtonTapped() {
-        themesManager.apply(theme: .dark)
+        output.didButtonTapped(theme: .dark)
     }
 }
+
+extension SettingsViewController: SettingsViewInput {}
 
 // MARK: - Setting Constraints
 

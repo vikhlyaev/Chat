@@ -2,7 +2,7 @@ import UIKit
 
 final class ThemesCell: UITableViewCell {
     
-    static let identifier = String(describing: ThemesCell.self)
+    // MARK: - UI
     
     private lazy var themeButtonsStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [dayThemeButton, nightThemeButton])
@@ -18,6 +18,8 @@ final class ThemesCell: UITableViewCell {
     
     weak var delegate: ThemesCellDelegate?
     
+    // MARK: - Init
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupView()
@@ -28,9 +30,10 @@ final class ThemesCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Setup View
+    
     private func setupView() {
         contentView.addSubview(themeButtonsStackView)
-        checkCurrentTheme()
     }
     
     private func dayThemeButtonTapped() {
@@ -43,18 +46,21 @@ final class ThemesCell: UITableViewCell {
         delegate?.didNightButtonTapped()
     }
     
-    private func checkCurrentTheme() {
-        switch ThemesManager().currentTheme {
-        case .light:
-            dayThemeButton.isSelected = true
-            nightThemeButton.isSelected = false
-        case .dark:
-            dayThemeButton.isSelected = false
-            nightThemeButton.isSelected = true
-        default:
-            dayThemeButton.isSelected = false
-            nightThemeButton.isSelected = false
-        }
+    func configureInitialState(currentTheme: UIUserInterfaceStyle) {
+        dayThemeButton.isSelected = currentTheme == .light
+        nightThemeButton.isSelected = !dayThemeButton.isSelected
+//
+//        switch currentTheme {
+//        case .light:
+//            dayThemeButton.isSelected = true
+//            nightThemeButton.isSelected = false
+//        case .dark:
+//            dayThemeButton.isSelected = false
+//            nightThemeButton.isSelected = true
+//        default:
+//            dayThemeButton.isSelected = false
+//            nightThemeButton.isSelected = false
+//        }
     }
 }
 
