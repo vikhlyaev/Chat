@@ -67,7 +67,7 @@ final class PhotoSelectionViewController: UIViewController {
 
 extension PhotoSelectionViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        output.photos.count
+        output.photosCount
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -78,7 +78,8 @@ extension PhotoSelectionViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         
-        cell.configure(with: output.photos[indexPath.item])
+        let photo = output.didRequestPhoto(by: indexPath.item)
+        cell.configure(with: photo)
         return cell
     }
 }
@@ -110,6 +111,13 @@ extension PhotoSelectionViewController: UICollectionViewDelegateFlowLayout {
 extension PhotoSelectionViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print("ho")
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        let lastItemIndex = collectionView.numberOfItems(inSection: 0) - 1
+        if indexPath.item == lastItemIndex {
+            output.didLoadNextPhoto()
+        }
     }
 }
 
