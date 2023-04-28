@@ -8,7 +8,7 @@ final class ProfilePresenter: NSObject {
     private let profileService: ProfileService
     
     var profileModel: ProfileModel?
-    
+
     private var imagePicker: UIImagePickerController?
     
     init(profileService: ProfileService) {
@@ -74,7 +74,13 @@ extension ProfilePresenter: ProfileViewOutput {
     }
     
     func loadFromUnsplash() {
-        print("loadFromUnsplash")
+        let presenter = PhotoSelectionPresenter()
+        let photoSelectionViewController = PhotoSelectionViewController(output: presenter)
+        presenter.viewInput = photoSelectionViewController
+        let navigationController = UINavigationController(rootViewController: photoSelectionViewController)
+        DispatchQueue.main.async { [weak self] in
+            self?.viewInput?.showController(navigationController)
+        }
     }
 }
 
