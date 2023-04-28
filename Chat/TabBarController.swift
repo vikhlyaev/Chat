@@ -28,9 +28,17 @@ final class TabBarController: UITabBarController {
             case .channels:
                 return UINavigationController(rootViewController: ChannelsListViewController())
             case .settings:
-                return UINavigationController(rootViewController: SettingsViewController())
+                let themesService = ServiceAssembly.shared.makeThemesService()
+                let presenter = SettingsPresenter(themesService: themesService)
+                let settingsViewController = SettingsViewController(output: presenter)
+                presenter.viewInput = settingsViewController
+                return UINavigationController(rootViewController: settingsViewController)
             case .profile:
-                return UINavigationController(rootViewController: ProfileViewController())
+                let profileService = ServiceAssembly.shared.makeProfileService()
+                let presenter = ProfilePresenter(profileService: profileService)
+                let profileViewController = ProfileViewController(output: presenter)
+                presenter.viewInput = profileViewController
+                return UINavigationController(rootViewController: profileViewController)
             }
         }
         

@@ -74,7 +74,8 @@ extension ProfilePresenter: ProfileViewOutput {
     }
     
     func loadFromNetwork() {
-        let presenter = PhotoSelectionPresenter()
+        let photoLoaderService = ServiceAssembly.shared.makePhotoLoaderService()
+        let presenter = PhotoSelectionPresenter(photoLoaderService: photoLoaderService)
         let photoSelectionViewController = PhotoSelectionViewController(output: presenter)
         presenter.viewInput = photoSelectionViewController
         let navigationController = UINavigationController(rootViewController: photoSelectionViewController)
