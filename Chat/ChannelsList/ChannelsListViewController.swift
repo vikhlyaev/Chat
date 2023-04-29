@@ -13,7 +13,6 @@ final class ChannelsListViewController: UIViewController {
         }
         tableView.tableHeaderView = UIView()
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 73, bottom: 0, right: 0)
-        tableView.register(ChannelsListCell.self, forCellReuseIdentifier: ChannelsListCell.identifier)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
@@ -34,6 +33,7 @@ final class ChannelsListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupTableView()
         setupDiffableDataSource()
         setupInitialSnapshot()
         getChannels()
@@ -50,6 +50,10 @@ final class ChannelsListViewController: UIViewController {
     }
     
     // MARK: - Setup UI
+    
+    private func setupTableView() {
+        channelsTableView.registerReusableCell(cellType: ChannelsListCell.self)
+    }
     
     private func setupDiffableDataSource() {
         channelsListDataSource = ChannelsListDataSource(tableView: channelsTableView)
