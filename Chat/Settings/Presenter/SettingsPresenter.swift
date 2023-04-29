@@ -1,7 +1,9 @@
 import UIKit
 
 final class SettingsPresenter {
+    
     weak var viewInput: SettingsViewInput?
+    
     private let themesService: ThemesService
     
     init(themesService: ThemesService) {
