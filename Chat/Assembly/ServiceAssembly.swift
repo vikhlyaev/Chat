@@ -13,7 +13,6 @@ final class ServiceAssembly {
     )
     
     private let networkService: NetworkService = NetworkServiceImpl(
-        session: URLSession.shared,
         logService: LogServiceImpl(name: "NetworkService")
     )
     
