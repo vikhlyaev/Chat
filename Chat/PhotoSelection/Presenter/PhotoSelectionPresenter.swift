@@ -1,4 +1,5 @@
 import UIKit
+import Combine
 
 final class PhotoSelectionPresenter {
     
@@ -6,12 +7,15 @@ final class PhotoSelectionPresenter {
     
     weak var viewInput: PhotoSelectionViewInput?
     
-    var photos: [Photo] = []
+    private var photos: [PhotoModel] = []
     
     init(photoLoaderService: PhotoLoaderService) {
         self.photoLoaderService = photoLoaderService
     }
     
+    private func didLoadPhoto(_ photos: [PhotoModel]) {
+        viewInput?.updatePhotos(photos)
+    }
 }
 
 // MARK: - PhotoSelectionViewOutput
@@ -21,17 +25,15 @@ extension PhotoSelectionPresenter: PhotoSelectionViewOutput {
         photos.count
     }
     
-    func didRequestPhoto(by index: Int) -> UIImage {
-        var image: UIImage = UIImage()
-        photoLoaderService.downloadPhoto(by: photos[index].previewURL) { result in
+    func didRequestPhoto(by photo: PhotoModel, completion: @escaping (UIImage?) -> Void) {
+        photoLoaderService.fetchPhoto(by: photo.webformatURL) { result in
             switch result {
-            case .success(let success):
-                image = success
-            case .failure(let failure):
-                print(failure)
+            case .success(let photo):
+                completion(photo)
+            case .failure:
+                completion(nil)
             }
         }
-        return image
     }
     
     func loadPhoto() {
@@ -39,7 +41,7 @@ extension PhotoSelectionPresenter: PhotoSelectionViewOutput {
             switch result {
             case .success(let photos):
                 self?.photos.append(contentsOf: photos)
-                print(photos)
+                self?.didLoadPhoto(photos)
             case .failure(let error):
                 print(error)
             }
@@ -47,10 +49,6 @@ extension PhotoSelectionPresenter: PhotoSelectionViewOutput {
     }
     
     func viewIsReady() {
-        loadPhoto()
-    }
-    
-    func didLoadNextPhoto() {
         loadPhoto()
     }
 }

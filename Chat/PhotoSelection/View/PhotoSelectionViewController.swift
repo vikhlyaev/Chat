@@ -10,6 +10,8 @@ final class PhotoSelectionViewController: UIViewController {
         return collectionView
     }()
     
+    private var photosCollectionViewDataSource: UICollectionViewDiffableDataSource<Int, PhotoModel>?
+    
     private let output: PhotoSelectionViewOutput
     
     // MARK: - Life Cycle
@@ -27,6 +29,8 @@ final class PhotoSelectionViewController: UIViewController {
         super.viewDidLoad()
         setupView()
         setConstraints()
+        setupDiffableDataSource()
+        setupInitialSnapshot()
         setupCollectionView()
         setDelegates()
         setupNavBar()
@@ -40,12 +44,30 @@ final class PhotoSelectionViewController: UIViewController {
         view.addSubview(photosCollectionView)
     }
     
+    private func setupDiffableDataSource() {
+        photosCollectionViewDataSource = UICollectionViewDiffableDataSource<Int, PhotoModel>(
+            collectionView: photosCollectionView,
+            cellProvider: { collectionView, indexPath, itemIdentifier in
+                let cell = collectionView.dequeueReusableCell(cellType: PhotoSelectionCell.self, for: indexPath)
+                cell.delegate = self
+                cell.resetCell()
+                cell.configure(with: itemIdentifier)
+                return cell
+            })
+    }
+    
     private func setupCollectionView() {
         photosCollectionView.register(PhotoSelectionCell.self, forCellWithReuseIdentifier: PhotoSelectionCell.reuseIdentifier)
     }
     
+    private func setupInitialSnapshot() {
+        var shapshot = NSDiffableDataSourceSnapshot<Int, PhotoModel>()
+        shapshot.appendSections([0])
+        photosCollectionViewDataSource?.apply(shapshot, animatingDifferences: false)
+    }
+    
     private func setDelegates() {
-        photosCollectionView.dataSource = self
+        photosCollectionView.dataSource = photosCollectionViewDataSource
         photosCollectionView.delegate = self
     }
     
@@ -63,24 +85,17 @@ final class PhotoSelectionViewController: UIViewController {
     }
 }
 
-// MARK: - UICollectionViewDataSource
+// MARK: - PhotoSelectionCellDelegate
 
-extension PhotoSelectionViewController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        output.photosCount
+extension PhotoSelectionViewController: PhotoSelectionCellDelegate {
+    func didRecievePhoto(for photoModel: PhotoModel, _ completion: @escaping (UIImage?) -> Void) {
+        output.didRequestPhoto(by: photoModel) { image in
+            completion(image)
+        }
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard
-            let cell = collectionView
-                .dequeueReusableCell(withReuseIdentifier: PhotoSelectionCell.reuseIdentifier, for: indexPath) as? PhotoSelectionCell
-        else {
-            return UICollectionViewCell()
-        }
+    func didSelectPhoto() {
         
-        let photo = output.didRequestPhoto(by: indexPath.item)
-        cell.configure(with: photo)
-        return cell
     }
 }
 
@@ -116,7 +131,7 @@ extension PhotoSelectionViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let lastItemIndex = collectionView.numberOfItems(inSection: 0) - 1
         if indexPath.item == lastItemIndex {
-            output.didLoadNextPhoto()
+            output.loadPhoto()
         }
     }
 }
@@ -124,7 +139,12 @@ extension PhotoSelectionViewController: UICollectionViewDelegate {
 // MARK: - PhotoSelectionViewInput
 
 extension PhotoSelectionViewController: PhotoSelectionViewInput {
-    
+    func updatePhotos(_ photos: [PhotoModel]) {
+        guard let photosCollectionViewDataSource else { return }
+        var snapshot = photosCollectionViewDataSource.snapshot()
+        snapshot.appendItems(photos, toSection: 0)
+        photosCollectionViewDataSource.apply(snapshot, animatingDifferences: false)
+    }
 }
 
 // MARK: - Setting Constraints
