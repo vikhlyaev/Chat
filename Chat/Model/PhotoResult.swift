@@ -8,7 +8,7 @@ struct PhotoResult: Decodable {
     }
 }
 
-struct Photo: Decodable {
+struct Photo: Decodable, Hashable {
     let id: Int
     let previewURL: String
     let webformatURL: String
