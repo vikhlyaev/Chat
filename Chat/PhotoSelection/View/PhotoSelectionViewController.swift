@@ -2,6 +2,8 @@ import UIKit
 
 final class PhotoSelectionViewController: UIViewController {
     
+    // MARK: - UI
+    
     private lazy var photosCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -20,7 +22,6 @@ final class PhotoSelectionViewController: UIViewController {
     private var photosCollectionViewDataSource: UICollectionViewDiffableDataSource<Int, PhotoModel>?
     
     private let output: PhotoSelectionViewOutput
-    
     weak var delegate: PhotoSelectionDelegate?
     
     // MARK: - Life Cycle
