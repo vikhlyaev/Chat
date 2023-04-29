@@ -1,14 +1,14 @@
 import Foundation
 
 struct PhotoResult: Decodable {
-    let photos: [Photo]
+    let photos: [PhotoModel]
     
     enum CodingKeys: String, CodingKey {
         case photos = "hits"
     }
 }
 
-struct Photo: Decodable, Hashable {
+struct PhotoModel: Decodable, Hashable {
     let id: Int
     let previewURL: String
     let webformatURL: String

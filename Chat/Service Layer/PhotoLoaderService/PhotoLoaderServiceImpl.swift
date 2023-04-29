@@ -10,6 +10,8 @@ final class PhotoLoaderServiceImpl {
     private let searchKeyword = "mountains"
     private var lastLoadedPage: Int?
     
+    private let backgroundQueue = DispatchQueue(label: "PhotoLoaderService", qos: .userInitiated)
+    
     init(networkService: NetworkService, logService: LogService) {
         self.networkService = networkService
         self.logService = logService
@@ -37,36 +39,46 @@ final class PhotoLoaderServiceImpl {
 // MARK: - PhotoLoaderService
 
 extension PhotoLoaderServiceImpl: PhotoLoaderService {
-    func fetchPhotosNextPage(_ completion: @escaping (Result<[Photo], Error>) -> Void) {
-        let completionOnMainQueue: (Result<[Photo], Error>) -> Void = { result in
+    func fetchPhotosNextPage(_ completion: @escaping (Result<[PhotoModel], Error>) -> Void) {
+        let completionOnMainQueue: (Result<[PhotoModel], Error>) -> Void = { result in
             DispatchQueue.main.async {
                 completion(result)
             }
         }
-        
-        let nextPage = lastLoadedPage == nil ? 1 : lastLoadedPage ?? 0 + 1
+        let nextPage = lastLoadedPage == nil ? 1 : (lastLoadedPage ?? 0) + 1
         guard let request = try? makeHTTPRequest(with: searchKeyword, for: nextPage) else { return }
         networkService.fetch(for: request) { [weak self] (result: Result<PhotoResult, Error>)  in
             switch result {
             case .success(let photoResult):
-                completionOnMainQueue(.success(photoResult.photos))
                 self?.lastLoadedPage = nextPage
+                completionOnMainQueue(.success(photoResult.photos))
             case .failure(let error):
                 completionOnMainQueue(.failure(error))
             }
         }
     }
     
-    func downloadPhoto(by url: String, _ completion: @escaping(Result<UIImage, Error>) -> Void) {
-        guard let url = URL(string: url) else { return }
-        do {
-            let data = try Data(contentsOf: url)
-            if let photo = UIImage(data: data) {
-                completion(.success(photo))
+    func fetchPhoto(by url: String, _ completion: @escaping (Result<UIImage, Error>) -> Void) {
+        guard let url = URL(string: url) else {
+            completion(.failure(PhotoLoaderError.incorrectUrl))
+            return
+        }
+        let completionOnMainQueue: (Result<UIImage, Error>) -> Void = { result in
+            DispatchQueue.main.async {
+                completion(result)
             }
-        } catch {
-            print(error)
-            completion(.failure(error))
+        }
+        let request = URLRequest(url: url)
+        networkService.download(with: request) { result in
+            switch result {
+            case .success(let photoData):
+                if let photo = UIImage(data: photoData) {
+                    completionOnMainQueue(.success(photo))
+                }
+                completionOnMainQueue(.failure(PhotoLoaderError.incorrectData))
+            case .failure(let error):
+                completionOnMainQueue(.failure(error))
+            }
         }
     }
 }
