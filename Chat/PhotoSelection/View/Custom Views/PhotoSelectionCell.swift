@@ -16,13 +16,6 @@ final class PhotoSelectionCell: UICollectionViewCell {
         return imageView
     }()
     
-    lazy var activityIndicator: UIActivityIndicatorView = {
-        let activityIndicator = UIActivityIndicatorView(style: .medium)
-        activityIndicator.hidesWhenStopped = true
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        return activityIndicator
-    }()
-    
     weak var delegate: PhotoSelectionCellDelegate?
     
     override init(frame: CGRect) {
@@ -38,17 +31,14 @@ final class PhotoSelectionCell: UICollectionViewCell {
     private func setupView() {
         contentView.addSubview(wrapperView)
         wrapperView.addSubview(photoImageView)
-        wrapperView.addSubview(activityIndicator)
     }
     
     func configure(with photoModel: PhotoModel) {
-        activityIndicator.startAnimating()
         photoImageView.image = UIImage(named: "PlaceholderPhoto")
 
         delegate?.didRecievePhoto(for: photoModel, { [weak self] photo in
             if let photo = photo {
                 self?.photoImageView.image = photo
-                self?.activityIndicator.stopAnimating()
             }
         })
     }
@@ -71,10 +61,7 @@ extension PhotoSelectionCell {
             photoImageView.topAnchor.constraint(equalTo: wrapperView.topAnchor),
             photoImageView.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor),
             photoImageView.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor),
-            photoImageView.bottomAnchor.constraint(equalTo: wrapperView.bottomAnchor),
-
-            activityIndicator.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+            photoImageView.bottomAnchor.constraint(equalTo: wrapperView.bottomAnchor)
         ])
     }
 }

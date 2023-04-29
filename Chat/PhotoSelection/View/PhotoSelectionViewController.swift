@@ -10,6 +10,13 @@ final class PhotoSelectionViewController: UIViewController {
         return collectionView
     }()
     
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView(style: .large)
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        return activityIndicator
+    }()
+    
     private var photosCollectionViewDataSource: UICollectionViewDiffableDataSource<Int, PhotoModel>?
     
     private let output: PhotoSelectionViewOutput
@@ -42,6 +49,9 @@ final class PhotoSelectionViewController: UIViewController {
     private func setupView() {
         view.backgroundColor = .systemBackground
         view.addSubview(photosCollectionView)
+        view.addSubview(activityIndicator)
+        
+        activityIndicator.startAnimating()
     }
     
     private func setupDiffableDataSource() {
@@ -144,6 +154,7 @@ extension PhotoSelectionViewController: PhotoSelectionViewInput {
         var snapshot = photosCollectionViewDataSource.snapshot()
         snapshot.appendItems(photos, toSection: 0)
         photosCollectionViewDataSource.apply(snapshot, animatingDifferences: false)
+        activityIndicator.stopAnimating()
     }
 }
 
@@ -155,7 +166,10 @@ extension PhotoSelectionViewController {
             photosCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             photosCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             photosCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            photosCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            photosCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
 }
