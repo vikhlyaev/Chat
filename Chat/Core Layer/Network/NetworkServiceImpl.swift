@@ -13,8 +13,8 @@ final class NetworkServiceImpl {
     private func setupDownloadSession() {
         let configuration = URLSessionConfiguration.default
         configuration.urlCache = URLCache(
-            memoryCapacity: 100 * 1024 * 1024,
-            diskCapacity: 200 * 1024 * 1024
+            memoryCapacity: 200 * 1024 * 1024,
+            diskCapacity: 500 * 1024 * 1024
         )
         
         downloadSession = URLSession(configuration: configuration)
