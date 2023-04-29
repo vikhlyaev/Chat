@@ -28,7 +28,7 @@ final class PhotoLoaderServiceImpl {
             URLQueryItem(name: "key", value: "35861770-94831b655d8cb35ee0929d805"),
             URLQueryItem(name: "q", value: keyword),
             URLQueryItem(name: "image_type", value: "true"),
-            URLQueryItem(name: "per_page", value: "20"),
+            URLQueryItem(name: "per_page", value: "100"),
             URLQueryItem(name: "page", value: "\(page)")
         ]
         guard let url = urlComponents.url else { throw NetworkError.badRequest }
