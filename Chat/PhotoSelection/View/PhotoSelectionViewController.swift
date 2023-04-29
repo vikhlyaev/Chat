@@ -21,6 +21,8 @@ final class PhotoSelectionViewController: UIViewController {
     
     private let output: PhotoSelectionViewOutput
     
+    weak var delegate: PhotoSelectionDelegate?
+    
     // MARK: - Life Cycle
     
     init(output: PhotoSelectionViewOutput) {
@@ -103,10 +105,6 @@ extension PhotoSelectionViewController: PhotoSelectionCellDelegate {
             completion(image)
         }
     }
-    
-    func didSelectPhoto() {
-        
-    }
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
@@ -135,7 +133,12 @@ extension PhotoSelectionViewController: UICollectionViewDelegateFlowLayout {
 
 extension PhotoSelectionViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("ho")
+        guard
+            let cell = collectionView.cellForItem(at: indexPath) as? PhotoSelectionCell,
+            let photo = cell.fetchPhoto()
+        else { return }
+        delegate?.didSelectPhotoModel(with: photo)
+        dismiss(animated: true)
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {

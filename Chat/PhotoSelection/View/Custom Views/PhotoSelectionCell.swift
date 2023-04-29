@@ -46,6 +46,10 @@ final class PhotoSelectionCell: UICollectionViewCell {
     func resetCell() {
         photoImageView.image = nil
     }
+    
+    func fetchPhoto() -> UIImage? {
+        photoImageView.image
+    }
 }
 
 // MARK: - Setting Constraints

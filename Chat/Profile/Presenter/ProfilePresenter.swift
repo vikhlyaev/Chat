@@ -77,11 +77,20 @@ extension ProfilePresenter: ProfileViewOutput {
         let photoLoaderService = ServiceAssembly.shared.makePhotoLoaderService()
         let presenter = PhotoSelectionPresenter(photoLoaderService: photoLoaderService)
         let photoSelectionViewController = PhotoSelectionViewController(output: presenter)
+        photoSelectionViewController.delegate = self
         presenter.viewInput = photoSelectionViewController
         let navigationController = UINavigationController(rootViewController: photoSelectionViewController)
         DispatchQueue.main.async { [weak self] in
             self?.viewInput?.showController(navigationController)
         }
+    }
+}
+
+// MARK: - PhotoSelectionDelegate
+
+extension ProfilePresenter: PhotoSelectionDelegate {
+    func didSelectPhotoModel(with photo: UIImage) {
+        viewInput?.updatePhoto(photo)
     }
 }
 
