@@ -6,6 +6,7 @@ final class ChannelsListViewController: UIViewController {
     // MARK: - UI
     
     private lazy var refreshControl = UIRefreshControl()
+    
     private lazy var channelsTableView: UITableView = {
         let tableView = UITableView(frame: .zero)
         if #available(iOS 15.0, *) {
@@ -17,31 +18,32 @@ final class ChannelsListViewController: UIViewController {
         return tableView
     }()
     
-    // MARK: - DataSource
-    
-    private lazy var dataSource: DataSourceProtocol = DataSource(delegate: self)
-    
-    // MARK: - DiffableDataSource
-    
     private var channelsListDataSource: ChannelsListDataSource?
-    
-    // MARK: - Combine
-    
     private var cancellables = Set<AnyCancellable>()
+    private let output: ChannelsListViewOutput
     
     // MARK: - Life Cycle
+    
+    init(output: ChannelsListViewOutput) {
+        self.output = output
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
         setupDiffableDataSource()
         setupInitialSnapshot()
-        getChannels()
         setupNavBar()
         setupView()
         setConstraints()
         setDelegates()
         setupRefreshControl()
+        output.viewIsReady()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -95,24 +97,8 @@ final class ChannelsListViewController: UIViewController {
     
     @objc
     private func handleRefreshControl() {
+        output.didUpdateChannels()
         refreshControl.endRefreshing()
-        dataSource.loadChannelsFromNetwork()
-    }
-    
-    // MARK: - Data Source Publisher
-    
-    private func getChannels() {
-        dataSource.channelsPublisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] newChannelModels in
-                guard var snapshot = self?.channelsListDataSource?.snapshot() else { return }
-                newChannelModels.forEach { newChannel in
-                    if snapshot.itemIdentifiers.contains(newChannel) { return }
-                    snapshot.appendItems([newChannel])
-                }
-                self?.channelsListDataSource?.apply(snapshot, animatingDifferences: false)
-            }
-            .store(in: &cancellables)
     }
     
     // MARK: - Add Channel
@@ -126,7 +112,7 @@ final class ChannelsListViewController: UIViewController {
                 let self = self,
                 let channelName = alert.textFields?.first?.text
             else { return }
-            self.dataSource.createChannelInNetwork(name: channelName, logoUrl: nil)
+            self.output.didCreateChannel(with: channelName, and: nil)
         }
         createAction.isEnabled = false
         alert.addTextField { [weak self] textField in
@@ -151,11 +137,16 @@ final class ChannelsListViewController: UIViewController {
     }
 }
 
-// MARK: - DataSourceDelegate
+// MARK: - ChannelsListViewInput
 
-extension ChannelsListViewController: DataSourceDelegate {
-    func didShowAlert(alert: UIAlertController) {
-        present(alert, animated: true)
+extension ChannelsListViewController: ChannelsListViewInput {
+    func showChannels(_ channelModels: [ChannelModel]) {
+        guard var snapshot = channelsListDataSource?.snapshot() else { return }
+        channelModels.forEach {
+            if snapshot.itemIdentifiers.contains($0) { return }
+            snapshot.appendItems([$0], toSection: 0)
+        }
+        channelsListDataSource?.apply(snapshot, animatingDifferences: false)
     }
 }
 
@@ -166,6 +157,9 @@ extension ChannelsListViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         let snapshot = channelsListDataSource?.snapshot()
         guard let model = snapshot?.itemIdentifiers[indexPath.row] else { return }
+        
+        // FIXME: Implements assembly
+        
         let channelViewController = ChannelViewController(channel: model)
         navigationController?.pushViewController(channelViewController, animated: true)
     }
@@ -184,8 +178,7 @@ extension ChannelsListViewController: UITableViewDelegate {
             let model = snapshot.itemIdentifiers[indexPath.row]
             snapshot.deleteItems([model])
             self.channelsListDataSource?.apply(snapshot)
-            self.dataSource.deleteChannelFromNetwork(with: model)
-            self.dataSource.deleteChannelFromStorage(with: model)
+            self.output.didDeleteChannel(with: model)
         }
         return UISwipeActionsConfiguration(actions: [deleteAction])
     }
