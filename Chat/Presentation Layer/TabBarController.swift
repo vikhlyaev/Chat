@@ -26,7 +26,11 @@ final class TabBarController: UITabBarController {
         viewControllers = dataSource.map {
             switch $0 {
             case .channels:
-                return UINavigationController(rootViewController: ChannelsListViewController())
+                let dataService = ServiceAssembly.shared.makeDataService()
+                let presenter = ChannelsListPresenter(dataService: dataService)
+                let channelsListViewController = ChannelsListViewController(output: presenter)
+                presenter.viewInput = channelsListViewController
+                return UINavigationController(rootViewController: channelsListViewController)
             case .settings:
                 let themesService = ServiceAssembly.shared.makeThemesService()
                 let presenter = SettingsPresenter(themesService: themesService)
