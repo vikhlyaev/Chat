@@ -14,11 +14,6 @@ final class LogServiceImpl {
     
     init(name: String) {
         self.name = name
-        setEnvironmentVar(name: name, value: "", overwrite: true)
-    }
-    
-    private func setEnvironmentVar(name: String, value: String, overwrite: Bool) {
-        setenv(name, value, overwrite ? 1 : 0)
     }
 }
 
