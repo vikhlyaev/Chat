@@ -1,11 +1,13 @@
 import UIKit
 
 struct ProfileModel {
+    var id: String?
     var name: String?
     var information: String?
     var photo: UIImage?
     
-    init(name: String? = nil, information: String? = nil, photo: UIImage? = nil) {
+    init(id: String? = nil, name: String? = nil, information: String? = nil, photo: UIImage? = nil) {
+        self.id = id
         self.name = name
         self.information = information
         self.photo = photo

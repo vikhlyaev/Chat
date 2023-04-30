@@ -64,7 +64,8 @@ extension ProfileServiceImpl: ProfileService {
                 completion(.success(profileModel))
                 return
             }
-            var profileModel = ProfileModel(name: profileManagedObject.name,
+            var profileModel = ProfileModel(id: profileManagedObject.id,
+                                            name: profileManagedObject.name,
                                             information: profileManagedObject.info)
             loadPhoto { [weak self] result in
                 switch result {
@@ -92,6 +93,7 @@ extension ProfileServiceImpl: ProfileService {
                 logService.success("Profile successfully update")
             } else {
                 let profileManagedObject = ProfileManagedObject(context: context)
+                profileManagedObject.id = "\(UUID())"
                 profileManagedObject.name = profile.name
                 profileManagedObject.info = profile.information
                 logService.success("Profile successfully created")
