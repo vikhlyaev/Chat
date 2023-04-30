@@ -159,8 +159,11 @@ extension ChannelsListViewController: UITableViewDelegate {
         guard let model = snapshot?.itemIdentifiers[indexPath.row] else { return }
         
         // FIXME: Implements assembly
-        
-        let channelViewController = ChannelViewController(channel: model)
+        let profileService = ServiceAssembly.shared.makeProfileService()
+        let dataService = ServiceAssembly.shared.makeDataService()
+        let presenter = ChannelPresenter(dataService: dataService, profileService: profileService, channel: model)
+        let channelViewController = ChannelViewController(output: presenter)
+        presenter.viewInput = channelViewController
         navigationController?.pushViewController(channelViewController, animated: true)
     }
     

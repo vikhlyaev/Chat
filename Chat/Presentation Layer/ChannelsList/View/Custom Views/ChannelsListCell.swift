@@ -92,19 +92,6 @@ final class ChannelsListCell: UITableViewCell {
         wrapperView.addSubview(disclosureImageView)
     }
     
-    func resetCell() {
-        nameLabel.text = nil
-        photoImageView.image = nil
-        dateAndTimeLabel.text = nil
-        lastMessageLabel.text = nil
-        lastMessageLabel.font = .systemFont(ofSize: 15, weight: .regular)
-        lastMessageLabel.alpha = 0.6
-    }
-}
-
-// MARK: - ConfigurableViewProtocol
-
-extension ChannelsListCell: ConfigurableViewProtocol {
     func configure(with model: ChannelModel) {
         nameLabel.text = model.name
         dateAndTimeLabel.text = model.lastActivity?.toString()
@@ -116,6 +103,15 @@ extension ChannelsListCell: ConfigurableViewProtocol {
             lastMessageLabel.text = "No messages yet"
             lastMessageLabel.font = .italicSystemFont(ofSize: 15)
         }
+    }
+    
+    func resetCell() {
+        nameLabel.text = nil
+        photoImageView.image = nil
+        dateAndTimeLabel.text = nil
+        lastMessageLabel.text = nil
+        lastMessageLabel.font = .systemFont(ofSize: 15, weight: .regular)
+        lastMessageLabel.alpha = 0.6
     }
 }
 
