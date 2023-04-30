@@ -53,19 +53,10 @@ final class ChannelCell: UITableViewCell {
         bubbleView.addSubview(messageLabel)
         bubbleView.addSubview(timeLabel)
     }
-
-    func resetCell() {
-        nameLabel.text = nil
-        messageLabel.text = nil
-        timeLabel.text = nil
-    }
-}
-
-// MARK: - ConfigurableViewProtocol
-
-extension ChannelCell: ConfigurableViewProtocol {
-    func configure(with model: MessageModel) {
-        if model.id == UserDataStorage.userId {
+    
+    func configure(cellType: CellType, with model: MessageModel) {
+        switch cellType {
+        case .cellSent:
             bubbleView.backgroundColor = .appBubbleSent
             bubbleView.arrowDirection = .right
             messageLabel.textColor = .appBubbleTextSent
@@ -73,7 +64,7 @@ extension ChannelCell: ConfigurableViewProtocol {
             bubbleView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4).isActive = true
             bubbleView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8).isActive = true
             bubbleView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8).isActive = false
-        } else {
+        case .cellReceived:
             bubbleView.backgroundColor = .appBubbleReceived
             bubbleView.arrowDirection = .left
             messageLabel.textColor = .appBubbleTextReceived
@@ -85,6 +76,12 @@ extension ChannelCell: ConfigurableViewProtocol {
         }
         messageLabel.text = model.text
         timeLabel.text = model.date.onlyHoursAndMinutes()
+    }
+
+    func resetCell() {
+        nameLabel.text = nil
+        messageLabel.text = nil
+        timeLabel.text = nil
     }
 }
 

@@ -3,12 +3,6 @@ import Combine
 
 final class ChannelViewController: UIViewController {
     
-    private enum Constants: String {
-        case channelCellSent
-        case channelCellReceived
-        case userName = "Anton Vikhlyaev"
-    }
-    
     // MARK: - UI
     
     private lazy var channelTableView: UITableView = {
@@ -21,8 +15,8 @@ final class ChannelViewController: UIViewController {
         tableView.separatorStyle = .none
         tableView.keyboardDismissMode = .onDrag
         tableView.transform = CGAffineTransform(rotationAngle: -(CGFloat)(Double.pi))
-        tableView.register(ChannelCell.self, forCellReuseIdentifier: Constants.channelCellSent.rawValue)
-        tableView.register(ChannelCell.self, forCellReuseIdentifier: Constants.channelCellReceived.rawValue)
+        tableView.register(ChannelCell.self, forCellReuseIdentifier: CellType.cellSent.rawValue)
+        tableView.register(ChannelCell.self, forCellReuseIdentifier: CellType.cellReceived.rawValue)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
@@ -57,8 +51,8 @@ final class ChannelViewController: UIViewController {
         return button
     }()
     
-    private lazy var customNavBar = CustomNavBar(name: channel.name,
-                                                 imageURL: channel.logoUrl,
+    private lazy var customNavBar = CustomNavBar(name: output.didRequestName(),
+                                                 imageURL: output.didRequestLogoUrl(),
                                                  completion: backButtonTapped)
     
     private lazy var backButtonTapped = { [weak self] in
@@ -66,34 +60,14 @@ final class ChannelViewController: UIViewController {
         return
     }
     
-    // MARK: - Services
-    
-    private lazy var dataSource: DataSourceProtocol = DataSource(delegate: self)
-    
-    // MARK: - Private properties
-    
-    private let channel: ChannelModel
-    
-    // MARK: - DataSource
-    
-    private var sortedMessages: [SortedMessage] = [] {
-        didSet {
-            DispatchQueue.main.async { [weak self] in
-                self?.channelTableView.reloadData()
-            }
-        }
-    }
-    
-    // MARK: - Combine
-    
     private var cancellables = Set<AnyCancellable>()
+    private let output: ChannelViewOutput
     
     // MARK: - Life Cycle
     
-    init(channel: ChannelModel) {
-        self.channel = channel
+    init(output: ChannelViewOutput) {
+        self.output = output
         super.init(nibName: nil, bundle: nil)
-        dataSource.getMessages(for: channel.id)
     }
     
     required init?(coder: NSCoder) {
@@ -102,11 +76,11 @@ final class ChannelViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        getMessages()
         setupView()
         setDelegates()
         setConstraints()
         setupNavBar()
+        output.viewIsReady()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -172,10 +146,7 @@ final class ChannelViewController: UIViewController {
         guard
             let userInfo = notification.userInfo,
             let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue
-        else {
-            return
-        }
-        
+        else { return }
         let keyboardFrameInView = view.convert(keyboardFrame, from: nil)
         let safeAreaFrame = view.safeAreaLayoutGuide.layoutFrame.insetBy(dx: 0, dy: -additionalSafeAreaInsets.bottom)
         let intersection = safeAreaFrame.intersection(keyboardFrameInView)
@@ -195,47 +166,23 @@ final class ChannelViewController: UIViewController {
     
     // MARK: - Messages
     
-    private func getMessages() {
-        dataSource.messagesPublisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] messages in
-                guard let self else { return }
-                self.sortedMessages = self.groupMessages(messages)
-            }
-            .store(in: &cancellables)
-    }
-    
-    private func groupMessages(_ messages: [MessageModel]) -> [SortedMessage] {
-        messages.daySorted
-            .map { SortedMessage(date: $0.key, messages: $0.value.sorted { $0.date > $1.date }) }
-            .sorted { $0.date > $1.date }
-    }
-    
     @objc
     private func sendMessageButtonTapped() {
-        var userId: String {
-            if let id = UserDataStorage.userId {
-                return id
-            } else {
-                let id = "\(UUID())"
-                UserDataStorage.userId = id
-                return id
-            }
-        }
-        let userName = Constants.userName.rawValue
         guard let text = textView.text else { return }
-        dataSource.sendMessage(text: text, channelId: channel.id, userId: userId, userName: userName)
+        output.didSendMessage(text: text)
         textView.text = nil
         sendMessageButton.isEnabled = false
     }
 }
 
-// MARK: - DataSourceDelegate
-
-extension ChannelViewController: DataSourceDelegate {
-    func didShowAlert(alert: UIAlertController) {
+extension ChannelViewController: ChannelViewInput {
+    func showErrorAlert() {
+        print("error")
+    }
+    
+    func updateTableView() {
         DispatchQueue.main.async { [weak self] in
-            self?.present(alert, animated: true)
+            self?.channelTableView.reloadData()
         }
     }
 }
@@ -268,27 +215,25 @@ extension ChannelViewController: UITextViewDelegate {
 
 extension ChannelViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        sortedMessages.count
+        output.didRequestNumberOfSections()
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        sortedMessages[section].messages.count
+        output.didRequestNumberOfRows(inSection: section)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cellSent = tableView.dequeueReusableCell(withIdentifier: Constants.channelCellSent.rawValue,
-                                                           for: indexPath) as? ChannelCell else { return UITableViewCell() }
-        guard let cellReceived = tableView.dequeueReusableCell(withIdentifier: Constants.channelCellReceived.rawValue,
-                                                               for: indexPath) as? ChannelCell else { return UITableViewCell() }
-        let message = sortedMessages[indexPath.section].messages[indexPath.row]
-
-        if message.id == UserDataStorage.userId {
+        guard let cellSent = tableView.dequeueReusableCell(withIdentifier: CellType.cellSent.rawValue, for: indexPath) as? ChannelCell,
+              let cellReceived = tableView.dequeueReusableCell(withIdentifier: CellType.cellReceived.rawValue, for: indexPath) as? ChannelCell
+        else { return UITableViewCell() }
+        let message = output.didRequestMessage(for: indexPath)
+        if message.id == output.didRequestUserId() {
             cellSent.resetCell()
-            cellSent.configure(with: message)
+            cellSent.configure(cellType: .cellSent, with: message)
             return cellSent
         } else {
             cellReceived.resetCell()
-            cellReceived.configure(with: message)
+            cellReceived.configure(cellType: .cellReceived, with: message)
             return cellReceived
         }
     }
@@ -298,7 +243,7 @@ extension ChannelViewController: UITableViewDataSource {
 
 extension ChannelViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        let footer = ChannelHeader(title: sortedMessages[section].date.onlyDayAndMonth())
+        let footer = ChannelHeader(title: output.didRequestDate(inSection: section).onlyDayAndMonth())
         footer.transform = CGAffineTransform(rotationAngle: -(CGFloat)(Double.pi))
         return footer
     }
@@ -339,4 +284,9 @@ extension ChannelViewController {
             sendMessageButton.heightAnchor.constraint(equalToConstant: 26)
         ])
     }
+}
+
+enum CellType: String {
+    case cellSent
+    case cellReceived
 }
