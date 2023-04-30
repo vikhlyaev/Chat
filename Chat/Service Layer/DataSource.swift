@@ -80,7 +80,7 @@ final class DataSource: DataSourceProtocol {
                 let lastActivity = channelManagerObject.lastActivity
                 return ChannelModel(id: id,
                                     name: name,
-                                    logoURL: logoURL,
+                                    logoUrl: logoURL,
                                     lastMessage: lastMessage,
                                     lastActivity: lastActivity)
             }
@@ -107,7 +107,7 @@ final class DataSource: DataSourceProtocol {
                 let channelManagedObject = ChannelManagedObject(context: context)
                 channelManagedObject.id = channelModel.id
                 channelManagedObject.name = channelModel.name
-                channelManagedObject.logoURL = channelModel.logoURL
+                channelManagedObject.logoURL = channelModel.logoUrl
                 channelManagedObject.lastMessage = channelModel.lastMessage
                 channelManagedObject.lastActivity = channelModel.lastActivity
                 channelManagedObject.messages = NSOrderedSet()
@@ -303,7 +303,7 @@ final class DataSource: DataSourceProtocol {
     private func convert(channel: Channel) -> ChannelModel {
         ChannelModel(id: channel.id,
                      name: channel.name,
-                     logoURL: channel.logoURL,
+                     logoUrl: channel.logoURL,
                      lastMessage: channel.lastMessage,
                      lastActivity: channel.lastActivity)
     }
@@ -311,7 +311,7 @@ final class DataSource: DataSourceProtocol {
     private func convert(channelManagedObject: ChannelManagedObject) -> ChannelModel {
         ChannelModel(id: channelManagedObject.id ?? "",
                      name: channelManagedObject.name ?? "",
-                     logoURL: channelManagedObject.logoURL,
+                     logoUrl: channelManagedObject.logoURL,
                      lastMessage: channelManagedObject.lastMessage,
                      lastActivity: channelManagedObject.lastActivity)
     }

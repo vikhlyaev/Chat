@@ -58,7 +58,7 @@ final class ChannelViewController: UIViewController {
     }()
     
     private lazy var customNavBar = CustomNavBar(name: channel.name,
-                                                 imageURL: channel.logoURL,
+                                                 imageURL: channel.logoUrl,
                                                  completion: backButtonTapped)
     
     private lazy var backButtonTapped = { [weak self] in

@@ -54,7 +54,7 @@ extension DataServiceImpl: DataService {
                 let lastActivity = channelManagerObject.lastActivity
                 return ChannelModel(id: id,
                                     name: name,
-                                    logoURL: logoURL,
+                                    logoUrl: logoURL,
                                     lastMessage: lastMessage,
                                     lastActivity: lastActivity)
             }
@@ -80,7 +80,7 @@ extension DataServiceImpl: DataService {
                 let channelManagedObject = ChannelManagedObject(context: context)
                 channelManagedObject.id = channelModel.id
                 channelManagedObject.name = channelModel.name
-                channelManagedObject.logoURL = channelModel.logoURL
+                channelManagedObject.logoURL = channelModel.logoUrl
                 channelManagedObject.lastMessage = channelModel.lastMessage
                 channelManagedObject.lastActivity = channelModel.lastActivity
                 channelManagedObject.messages = NSOrderedSet()

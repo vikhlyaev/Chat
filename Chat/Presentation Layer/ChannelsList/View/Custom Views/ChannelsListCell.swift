@@ -108,7 +108,7 @@ extension ChannelsListCell: ConfigurableViewProtocol {
     func configure(with model: ChannelModel) {
         nameLabel.text = model.name
         dateAndTimeLabel.text = model.lastActivity?.toString()
-        photoImageView.loadImage(url: model.logoURL)
+        photoImageView.loadImage(url: model.logoUrl)
         
         if let message = model.lastMessage {
             lastMessageLabel.text = message

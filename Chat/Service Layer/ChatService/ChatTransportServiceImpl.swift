@@ -26,7 +26,7 @@ extension ChatTransportServiceImpl: ChatTransportService {
         chatService.createChannel(name: name, logoUrl: logoUrl)
             .map { ChannelModel(id: $0.id,
                                 name: $0.name,
-                                logoURL: $0.logoURL,
+                                logoUrl: $0.logoURL,
                                 lastMessage: $0.lastMessage,
                                 lastActivity: $0.lastActivity) }
             .eraseToAnyPublisher()
@@ -36,7 +36,7 @@ extension ChatTransportServiceImpl: ChatTransportService {
         chatService.loadChannels()
             .map { $0.map { ChannelModel(id: $0.id,
                                          name: $0.name,
-                                         logoURL: $0.logoURL,
+                                         logoUrl: $0.logoURL,
                                          lastMessage: $0.lastMessage,
                                          lastActivity: $0.lastActivity)
             }}
