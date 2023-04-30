@@ -7,4 +7,6 @@ protocol DataService {
     func loadChannelsFromNetwork()
     func createChannelInNetwork(name: String, logoUrl: String?)
     func deleteChannelFromNetwork(with channelModel: ChannelModel)
+    func loadMessagesFromNetwork(for channelId: String)
+    func sendMessage(text: String, channelId: String, userId: String, userName: String)
 }

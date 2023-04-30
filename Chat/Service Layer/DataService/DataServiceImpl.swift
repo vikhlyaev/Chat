@@ -191,33 +191,22 @@ extension DataServiceImpl: DataService {
             .store(in: &cancellables)
     }
     
-    private func loadMessagesFromNetwork(for channelId: String) {
+    func loadMessagesFromNetwork(for channelId: String) {
         chatTransportService.loadMessages(for: channelId)
-            .sink { completion in
-                switch completion {
-                case .finished:
-                    print("loaded")
-                case .failure(let error):
-                    print(error)
-                }
+            .sink { [weak self] _ in
+                self?.updateMessagesFromStorage(for: channelId)
             } receiveValue: { [weak self] messageModels in
                 messageModels.forEach { messageModel in
                     self?.saveMessageModelInStorage(with: messageModel, in: channelId)
-                    print("messages loaded")
                 }
             }
             .store(in: &cancellables)
     }
     
-    private func sendMessage(text: String, channelId: String, userId: String, userName: String) {
+    func sendMessage(text: String, channelId: String, userId: String, userName: String) {
         chatTransportService.sendMessage(text: text, channelId: channelId, userId: userId, userName: userName)
-            .sink { completion in
-                switch completion {
-                case .finished:
-                    print("sended")
-                case .failure(let error):
-                    print(error)
-                }
+            .sink { [weak self] _ in
+                self?.updateMessagesFromStorage(for: channelId)
             } receiveValue: { [weak self] newMessage in
                 self?.saveMessageModelInStorage(with: newMessage, in: channelId)
             }
