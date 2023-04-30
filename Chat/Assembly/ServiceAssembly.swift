@@ -2,8 +2,6 @@ import Foundation
 
 final class ServiceAssembly {
     
-    static let shared = ServiceAssembly()
-    
     private let fileManagerService: FileManagerService = FileManagerServiceImpl(
         logService: LogServiceImpl(name: "FileManagerService")
     )
@@ -19,8 +17,6 @@ final class ServiceAssembly {
     private let chatTransportService: ChatTransportService = ChatTransportServiceImpl(
         logService: LogServiceImpl(name: "ChatTransportService")
     )
-    
-    private init() {}
     
     func makeThemesService(with logService: LogService = LogServiceImpl(name: "ThemesService")) -> ThemesService {
         ThemesServiceImpl(logService: logService)
