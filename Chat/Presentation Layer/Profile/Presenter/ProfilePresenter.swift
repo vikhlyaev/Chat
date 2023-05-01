@@ -6,13 +6,16 @@ final class ProfilePresenter: NSObject {
     weak var viewInput: ProfileViewInput?
     
     private let profileService: ProfileService
+    weak var moduleOutput: ProfileModuleOutput?
     
     var profileModel: ProfileModel?
 
     private var imagePicker: UIImagePickerController?
     
-    init(profileService: ProfileService) {
+    init(profileService: ProfileService,
+         moduleOutput: ProfileModuleOutput?) {
         self.profileService = profileService
+        self.moduleOutput = moduleOutput
     }
     
     private func loadProfile() {
@@ -35,7 +38,7 @@ extension ProfilePresenter: ProfileViewOutput {
         loadProfile()
     }
     
-    func saveProfile(_ profile: ProfileModel) {
+    func didSaveProfile(_ profile: ProfileModel) {
         viewInput?.startActivityIndicator()
         profileService.saveProfile(profile) { [weak self] error in
             guard error != nil else {
@@ -48,9 +51,9 @@ extension ProfilePresenter: ProfileViewOutput {
         }
     }
     
-    func takePhoto() {
+    func didTakePhoto() {
         guard UIImagePickerController.isSourceTypeAvailable(.camera) else {
-            chooseFromGallery()
+            didChooseFromGallery()
             return
         }
         imagePicker = UIImagePickerController()
@@ -64,7 +67,7 @@ extension ProfilePresenter: ProfileViewOutput {
         }
     }
     
-    func chooseFromGallery() {
+    func didChooseFromGallery() {
         let configuration = PHPickerConfiguration()
         let picker = PHPickerViewController(configuration: configuration)
         picker.delegate = self
@@ -73,16 +76,8 @@ extension ProfilePresenter: ProfileViewOutput {
         }
     }
     
-    func loadFromNetwork() {
-        let photoLoaderService = ServiceAssembly.shared.makePhotoLoaderService()
-        let presenter = PhotoSelectionPresenter(photoLoaderService: photoLoaderService)
-        let photoSelectionViewController = PhotoSelectionViewController(output: presenter)
-        photoSelectionViewController.delegate = self
-        presenter.viewInput = photoSelectionViewController
-        let navigationController = UINavigationController(rootViewController: photoSelectionViewController)
-        DispatchQueue.main.async { [weak self] in
-            self?.viewInput?.showController(navigationController)
-        }
+    func didLoadFromNetwork() {
+        moduleOutput?.moduleWantsToOpenPhotoSelection()
     }
 }
 

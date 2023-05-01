@@ -157,14 +157,7 @@ extension ChannelsListViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         let snapshot = channelsListDataSource?.snapshot()
         guard let model = snapshot?.itemIdentifiers[indexPath.row] else { return }
-        
-        // FIXME: Implements assembly
-        let profileService = ServiceAssembly.shared.makeProfileService()
-        let dataService = ServiceAssembly.shared.makeDataService()
-        let presenter = ChannelPresenter(dataService: dataService, profileService: profileService, channel: model)
-        let channelViewController = ChannelViewController(output: presenter)
-        presenter.viewInput = channelViewController
-        navigationController?.pushViewController(channelViewController, animated: true)
+        output.didSelectChannel(with: model)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

@@ -5,4 +5,5 @@ protocol ChannelsListViewOutput {
     func didUpdateChannels()
     func didCreateChannel(with name: String, and logoUrl: String?)
     func didDeleteChannel(with channelModel: ChannelModel)
+    func didSelectChannel(with channelModel: ChannelModel)
 }

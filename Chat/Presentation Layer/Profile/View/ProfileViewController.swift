@@ -128,13 +128,13 @@ final class ProfileViewController: UIViewController {
         
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let takePhotoAction = UIAlertAction(title: "Take photo", style: .default) { [weak self] _ in
-            self?.output.takePhoto()
+            self?.output.didTakePhoto()
         }
         let chooseFromGalleryAction = UIAlertAction(title: "Choose from gallery", style: .default) { [weak self] _ in
-            self?.output.chooseFromGallery()
+            self?.output.didChooseFromGallery()
         }
         let loadFromNetworkAction = UIAlertAction(title: "Load from network", style: .default) { [weak self] _ in
-            self?.output.loadFromNetwork()
+            self?.output.didLoadFromNetwork()
         }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         alert.addAction(takePhotoAction)
@@ -244,7 +244,7 @@ extension ProfileViewController {
         view.endEditing(true)
         let activityIndicatorBarButton = UIBarButtonItem(customView: activityIndicator)
         navigationItem.setRightBarButton(activityIndicatorBarButton, animated: true)
-        output.saveProfile(
+        output.didSaveProfile(
             ProfileModel(
                 name: nameLabel.text,
                 information: informationLabel.text,

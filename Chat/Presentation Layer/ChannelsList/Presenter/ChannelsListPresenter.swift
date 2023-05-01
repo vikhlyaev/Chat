@@ -6,11 +6,13 @@ final class ChannelsListPresenter {
     weak var viewInput: ChannelsListViewInput?
     
     private let dataService: DataService
+    weak var moduleOutput: ChannelsListModuleOutput?
     
     private var cancellables = Set<AnyCancellable>()
     
-    init(dataService: DataService) {
+    init(dataService: DataService, moduleOutput: ChannelsListModuleOutput?) {
         self.dataService = dataService
+        self.moduleOutput = moduleOutput
     }
     
     private func getChannels() {
@@ -41,6 +43,10 @@ extension ChannelsListPresenter: ChannelsListViewOutput {
     
     func didDeleteChannel(with channelModel: ChannelModel) {
         dataService.deleteChannelFromNetwork(with: channelModel)
+    }
+    
+    func didSelectChannel(with channelModel: ChannelModel) {
+        moduleOutput?.moduleWantsToOpenChannel(with: channelModel)
     }
     
 }
