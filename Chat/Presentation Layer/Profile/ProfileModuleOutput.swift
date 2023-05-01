@@ -1,5 +1,5 @@
 import Foundation
 
 protocol ProfileModuleOutput: AnyObject {
-    func moduleWantsToOpenPhotoSelection()
+    func moduleWantsToOpenPhotoSelection(with delegate: PhotoSelectionDelegate)
 }

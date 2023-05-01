@@ -26,8 +26,9 @@ final class PhotoSelectionViewController: UIViewController {
     
     // MARK: - Life Cycle
     
-    init(output: PhotoSelectionViewOutput) {
+    init(output: PhotoSelectionViewOutput, delegate: PhotoSelectionDelegate?) {
         self.output = output
+        self.delegate = delegate
         super.init(nibName: nil, bundle: nil)
     }
     

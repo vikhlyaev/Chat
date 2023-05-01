@@ -23,8 +23,8 @@ final class ProfileCoordinator {
 }
 
 extension ProfileCoordinator: ProfileModuleOutput {
-    func moduleWantsToOpenPhotoSelection() {
-        let vc = moduleAssembly.makePhotoSelectionModule()
+    func moduleWantsToOpenPhotoSelection(with delegate: PhotoSelectionDelegate) {
+        let vc = moduleAssembly.makePhotoSelectionModule(with: delegate)
         let window = UIApplication.shared.windows.filter { $0.isKeyWindow }.first
         window?.rootViewController?.present(vc, animated: true)
     }

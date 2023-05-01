@@ -77,7 +77,7 @@ extension ProfilePresenter: ProfileViewOutput {
     }
     
     func didLoadFromNetwork() {
-        moduleOutput?.moduleWantsToOpenPhotoSelection()
+        moduleOutput?.moduleWantsToOpenPhotoSelection(with: self)
     }
 }
 

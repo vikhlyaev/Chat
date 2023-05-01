@@ -47,11 +47,11 @@ final class ModuleAssembly {
         return vc
     }
     
-    func makePhotoSelectionModule() -> UIViewController {
+    func makePhotoSelectionModule(with delegate: PhotoSelectionDelegate) -> UIViewController {
         let presenter = PhotoSelectionPresenter(
             photoLoaderService: serviceAssembly.makePhotoLoaderService()
         )
-        let vc = PhotoSelectionViewController(output: presenter)
+        let vc = PhotoSelectionViewController(output: presenter, delegate: delegate)
         let navigationController = UINavigationController(rootViewController: vc)
         presenter.viewInput = vc
         return navigationController
