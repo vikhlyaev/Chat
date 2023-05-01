@@ -5,7 +5,7 @@ protocol DataService {
     var channelsPublisher: CurrentValueSubject<[ChannelModel], Never> { get }
     var messagesPublisher: CurrentValueSubject<[MessageModel], Never> { get }
     func loadChannelsFromNetwork()
-    func createChannelInNetwork(name: String, logoUrl: String?)
+    func createChannelInNetwork(name: String, logoUrl: String?, _ completion: @escaping (ChannelModel) -> Void)
     func deleteChannelFromNetwork(with channelModel: ChannelModel)
     func loadMessagesFromNetwork(for channelId: String)
     func sendMessage(text: String, channelId: String, userId: String, userName: String)

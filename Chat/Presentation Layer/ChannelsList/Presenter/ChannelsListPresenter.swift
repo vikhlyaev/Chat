@@ -38,7 +38,9 @@ extension ChannelsListPresenter: ChannelsListViewOutput {
     }
     
     func didCreateChannel(with name: String, and logoUrl: String?) {
-        dataService.createChannelInNetwork(name: name, logoUrl: logoUrl)
+        dataService.createChannelInNetwork(name: name, logoUrl: logoUrl) { [weak self] newChannel in
+            self?.moduleOutput?.moduleWantsToOpenChannel(with: newChannel)
+        }
     }
     
     func didDeleteChannel(with channelModel: ChannelModel) {

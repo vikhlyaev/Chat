@@ -250,8 +250,8 @@
 		0A47FB6B29FAB53A00D4736F /* FileManager */ = {
 			isa = PBXGroup;
 			children = (
-				0A47FB6C29FAB53A00D4736F /* FileManagerServiceImpl.swift */,
 				0A47FB6D29FAB53A00D4736F /* FileManagerService.swift */,
+				0A47FB6C29FAB53A00D4736F /* FileManagerServiceImpl.swift */,
 			);
 			path = FileManager;
 			sourceTree = "<group>";
@@ -514,8 +514,8 @@
 		0AEAF7FF29FD645200B6024F /* ChatService */ = {
 			isa = PBXGroup;
 			children = (
-				0AEAF80029FD645200B6024F /* ChatTransportServiceImpl.swift */,
 				0AEAF80129FD645200B6024F /* ChatTransportService.swift */,
+				0AEAF80029FD645200B6024F /* ChatTransportServiceImpl.swift */,
 			);
 			path = ChatService;
 			sourceTree = "<group>";
@@ -532,8 +532,8 @@
 		0AEAF80929FE4D9D00B6024F /* LogService */ = {
 			isa = PBXGroup;
 			children = (
-				0AEAF80A29FE4D9D00B6024F /* LogServiceImpl.swift */,
 				0AEAF80B29FE4D9D00B6024F /* LogService.swift */,
+				0AEAF80A29FE4D9D00B6024F /* LogServiceImpl.swift */,
 			);
 			path = LogService;
 			sourceTree = "<group>";

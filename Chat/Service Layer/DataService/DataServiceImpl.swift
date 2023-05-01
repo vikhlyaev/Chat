@@ -172,12 +172,15 @@ extension DataServiceImpl: DataService {
             .store(in: &cancellables)
     }
     
-    func createChannelInNetwork(name: String, logoUrl: String?) {
+    func createChannelInNetwork(name: String, logoUrl: String?, _ completion: @escaping (ChannelModel) -> Void) {
         chatTransportService.createChannel(name: name, logoUrl: logoUrl)
             .sink { [weak self] _ in
                 self?.updateChannelsFromStorage()
             } receiveValue: { [weak self] channelModel in
                 self?.saveChannelInStorage(with: channelModel)
+                DispatchQueue.main.async {
+                    completion(channelModel)
+                }
                 self?.logService.success("Channel created")
             }
             .store(in: &cancellables)
