@@ -43,6 +43,17 @@ extension ChatTransportServiceImpl: ChatTransportService {
             .eraseToAnyPublisher()
     }
     
+    func loadChannel(with channelId: String) -> AnyPublisher<ChannelModel, Error> {
+        chatService.loadChannel(id: channelId)
+            .map { ChannelModel(id: $0.id,
+                                name: $0.name,
+                                logoUrl: $0.logoURL,
+                                lastMessage: $0.lastMessage,
+                                lastActivity: $0.lastActivity)
+            }
+            .eraseToAnyPublisher()
+    }
+    
     func deleteChannel(with channelId: String) -> AnyPublisher<Void, Error> {
         chatService.deleteChannel(id: channelId)
     }
