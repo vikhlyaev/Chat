@@ -97,7 +97,6 @@ extension ChannelPresenter: ChannelViewOutput {
                                 channelId: channel.id,
                                 userId: profile?.id ?? "",
                                 userName: profile?.name ?? "")
-
     }
     
     func viewIsReady() {

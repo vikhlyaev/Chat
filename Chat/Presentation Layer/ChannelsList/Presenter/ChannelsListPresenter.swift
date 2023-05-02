@@ -44,7 +44,7 @@ extension ChannelsListPresenter: ChannelsListViewOutput {
     }
     
     func didDeleteChannel(with channelModel: ChannelModel) {
-        dataService.deleteChannelFromNetwork(with: channelModel)
+        dataService.deleteChannelFromNetwork(with: channelModel.id)
     }
     
     func didSelectChannel(with channelModel: ChannelModel) {
