@@ -49,7 +49,6 @@ final class ChannelsListViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.isNavigationBarHidden = false
-        
         output.didUpdateChannels()
     }
     
@@ -74,7 +73,6 @@ final class ChannelsListViewController: UIViewController {
                                                 style: .plain,
                                                 target: self,
                                                 action: #selector(addChannelTapped))
-        
         navigationItem.rightBarButtonItem = addChannelsButton
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -146,6 +144,15 @@ extension ChannelsListViewController: ChannelsListViewInput {
         snapshot.deleteAllItems()
         snapshot.appendSections([0])
         snapshot.appendItems(channelModels, toSection: 0)
+        channelsListDataSource?.apply(snapshot, animatingDifferences: false)
+    }
+    
+    func deleteChannel(with channelId: String) {
+        guard
+            var snapshot = channelsListDataSource?.snapshot(),
+            let currentChannel = snapshot.itemIdentifiers.filter({ $0.id == channelId }).first
+        else { return }
+        snapshot.deleteItems([currentChannel])
         channelsListDataSource?.apply(snapshot, animatingDifferences: false)
     }
 }
