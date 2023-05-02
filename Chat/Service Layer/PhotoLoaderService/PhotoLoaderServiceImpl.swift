@@ -22,7 +22,7 @@ final class PhotoLoaderServiceImpl {
             let baseUrl = baseUrl,
             var urlComponents = URLComponents(url: baseUrl, resolvingAgainstBaseURL: false)
         else {
-            throw NetworkError.badRequest
+            throw NetworkError.invalidRequest
         }
         urlComponents.queryItems = [
             URLQueryItem(name: "key", value: "35861770-94831b655d8cb35ee0929d805"),
@@ -31,7 +31,7 @@ final class PhotoLoaderServiceImpl {
             URLQueryItem(name: "per_page", value: "100"),
             URLQueryItem(name: "page", value: "\(page)")
         ]
-        guard let url = urlComponents.url else { throw NetworkError.badRequest }
+        guard let url = urlComponents.url else { throw NetworkError.invalidRequest }
         return URLRequest(url: url)
     }
 }
