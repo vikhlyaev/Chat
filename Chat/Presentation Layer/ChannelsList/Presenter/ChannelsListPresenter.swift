@@ -14,15 +14,6 @@ final class ChannelsListPresenter {
         self.dataService = dataService
         self.moduleOutput = moduleOutput
     }
-    
-    private func getChannels() {
-        dataService.channelsPublisher
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] channelModels in
-                self?.viewInput?.showChannels(channelModels)
-            }
-            .store(in: &cancellables)
-    }
 }
 
 // MARK: - ChannelsListViewOutput
@@ -30,7 +21,12 @@ final class ChannelsListPresenter {
 extension ChannelsListPresenter: ChannelsListViewOutput {
 
     func viewIsReady() {
-        getChannels()
+        dataService.channelsPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] channelModels in
+                self?.viewInput?.showChannels(channelModels)
+            }
+            .store(in: &cancellables)
     }
     
     func didUpdateChannels() {

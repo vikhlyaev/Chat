@@ -49,6 +49,8 @@ final class ChannelsListViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.isNavigationBarHidden = false
+        
+        output.didUpdateChannels()
     }
     
     // MARK: - Setup UI
@@ -90,7 +92,6 @@ final class ChannelsListViewController: UIViewController {
     }
     
     private func setupRefreshControl() {
-        refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
         refreshControl.addTarget(self, action: #selector(handleRefreshControl), for: .valueChanged)
         channelsTableView.refreshControl = refreshControl
     }
@@ -142,10 +143,9 @@ final class ChannelsListViewController: UIViewController {
 extension ChannelsListViewController: ChannelsListViewInput {
     func showChannels(_ channelModels: [ChannelModel]) {
         guard var snapshot = channelsListDataSource?.snapshot() else { return }
-        channelModels.forEach {
-            if snapshot.itemIdentifiers.contains($0) { return }
-            snapshot.appendItems([$0], toSection: 0)
-        }
+        snapshot.deleteAllItems()
+        snapshot.appendSections([0])
+        snapshot.appendItems(channelModels, toSection: 0)
         channelsListDataSource?.apply(snapshot, animatingDifferences: false)
     }
 }
