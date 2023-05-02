@@ -5,6 +5,7 @@ enum NetworkError: Error {
     case urlRequestError(Error)
     case urlSessionError
     case parsingJsonError(Error)
-    case badRequest
-    case badData
+    case invalidRequest
+    case invalidData
+    case invalidUrl
 }

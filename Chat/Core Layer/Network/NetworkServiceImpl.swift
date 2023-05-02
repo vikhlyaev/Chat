@@ -58,7 +58,7 @@ extension NetworkServiceImpl: NetworkService {
                         let data = try Data(contentsOf: location)
                         completion(.success(data))
                     } catch {
-                        completion(.failure(NetworkError.badData))
+                        completion(.failure(NetworkError.invalidData))
                         self?.logService.error("Data not decoded. Error: \(error)")
                     }
                 } else {
@@ -71,6 +71,25 @@ extension NetworkServiceImpl: NetworkService {
             } else {
                 completion(.failure(NetworkError.urlSessionError))
                 self?.logService.error("URLSession error")
+            }
+        }.resume()
+    }
+    
+    func checkImageContentType(with request: URLRequest, _ completion: @escaping (Result<Bool, Error>) -> Void) {
+        session.dataTask(with: request) { [weak self] _, response, error in
+            if let response = response, let httpUrlResponse = (response as? HTTPURLResponse) {
+                if 200 ..< 300 ~= httpUrlResponse.statusCode {
+                    if let contentType = httpUrlResponse.value(forHTTPHeaderField: "Content-Type") {
+                        let imagesTypes = ["image/jpeg", "image/png", "image/svg+xml"]
+                        completion(.success(imagesTypes.contains(contentType)))
+                    }
+                } else {
+                    completion(.failure(NetworkError.httpStatusCode(httpUrlResponse.statusCode)))
+                    self?.logService.error("HTTP Status code: \(httpUrlResponse.statusCode)")
+                }
+            } else if let error = error {
+                completion(.failure(NetworkError.urlRequestError(error)))
+                self?.logService.error("URLRequest error: \(error)")
             }
         }.resume()
     }
