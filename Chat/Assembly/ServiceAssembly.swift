@@ -18,6 +18,10 @@ final class ServiceAssembly {
         logService: LogServiceImpl(name: "ChatTransportService")
     )
     
+    private let sseTransportService: SSETransportService = SSETransportServiceImpl(
+        logService: LogServiceImpl(name: "SSETransportService")
+    )
+    
     func makeThemesService(with logService: LogService = LogServiceImpl(name: "ThemesService")) -> ThemesService {
         ThemesServiceImpl(logService: logService)
     }
@@ -36,6 +40,7 @@ final class ServiceAssembly {
     func makeDataService(with logService: LogService = LogServiceImpl(name: "DataService")) -> DataService {
         DataServiceImpl(coreDataService: coreDataService,
                         chatTransportService: chatTransportService,
+                        sseTransportService: sseTransportService,
                         logService: logService)
     }
 }
