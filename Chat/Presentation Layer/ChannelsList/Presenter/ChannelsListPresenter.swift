@@ -5,7 +5,7 @@ final class ChannelsListPresenter {
     
     weak var viewInput: ChannelsListViewInput?
     
-    private let dataService: DataService
+    private var dataService: DataService
     weak var moduleOutput: ChannelsListModuleOutput?
     
     private var cancellables = Set<AnyCancellable>()
@@ -13,6 +13,8 @@ final class ChannelsListPresenter {
     init(dataService: DataService, moduleOutput: ChannelsListModuleOutput?) {
         self.dataService = dataService
         self.moduleOutput = moduleOutput
+        
+        self.dataService.delegate = self
     }
 }
 
@@ -47,4 +49,10 @@ extension ChannelsListPresenter: ChannelsListViewOutput {
         moduleOutput?.moduleWantsToOpenChannel(with: channelModel)
     }
     
+}
+
+extension ChannelsListPresenter: DataServiceDelegate {
+    func didDeleteChannel(with channelId: String) {
+        viewInput?.deleteChannel(with: channelId)
+    }
 }
