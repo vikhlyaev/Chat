@@ -57,6 +57,11 @@
             isEnabled = "NO">
          </EnvironmentVariable>
          <EnvironmentVariable
+            key = "SSETransportService"
+            value = ""
+            isEnabled = "NO">
+         </EnvironmentVariable>
+         <EnvironmentVariable
             key = "PhotoLoaderService"
             value = ""
             isEnabled = "NO">
