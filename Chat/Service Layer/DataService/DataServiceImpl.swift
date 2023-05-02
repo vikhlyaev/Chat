@@ -8,6 +8,7 @@ final class DataServiceImpl {
     
     private let coreDataService: CoreDataService
     private let chatTransportService: ChatTransportService
+    private let sseTransportService: SSETransportService
     private let logService: LogService
     
     // MARK: - Storages
@@ -24,12 +25,35 @@ final class DataServiceImpl {
     
     // MARK: - Init
     
-    init(coreDataService: CoreDataService, chatTransportService: ChatTransportService, logService: LogService) {
+    init(coreDataService: CoreDataService,
+         chatTransportService: ChatTransportService,
+         sseTransportService: SSETransportService,
+         logService: LogService) {
         self.coreDataService = coreDataService
         self.chatTransportService = chatTransportService
+        self.sseTransportService = sseTransportService
         self.logService = logService
         
         loadChannelsFromNetwork()
+        subscribeOnEvents()
+    }
+    
+    private func subscribeOnEvents() {
+        sseTransportService.subscribeOnEvents()
+            .sink { completion in
+                print(completion)
+            } receiveValue: { [weak self] event in
+                print(event)
+                switch event.eventType {
+                case .add:
+                    self?.loadChannelsFromNetwork()
+                case .update:
+                    break
+                case .delete:
+                    self?.deleteChannelFromNetwork(with: event.resourceID)
+                }
+            }
+            .store(in: &cancellables)
     }
 }
 
@@ -89,10 +113,10 @@ extension DataServiceImpl: DataService {
         }
     }
     
-    private func deleteChannelFromStorage(with channelModel: ChannelModel) {
+    private func deleteChannelFromStorage(with channelId: String) {
         coreDataService.update { context in
             let fetchRequest = ChannelManagedObject.fetchRequest()
-            fetchRequest.predicate = NSPredicate(format: "id == %@", channelModel.id as CVarArg)
+            fetchRequest.predicate = NSPredicate(format: "id == %@", channelId as CVarArg)
             guard
                 let channelManagedObject = try context.fetch(fetchRequest).first
             else {
@@ -172,6 +196,18 @@ extension DataServiceImpl: DataService {
             .store(in: &cancellables)
     }
     
+    func loadChannelFromNetwork(with channelId: String) {
+        chatTransportService.loadChannel(with: channelId)
+            .sink { [weak self] _ in
+                self?.updateChannelsFromStorage()
+            } receiveValue: { [weak self] channelModel in
+                self?.saveChannelInStorage(with: channelModel)
+                self?.logService.success("Channel loaded")
+            }
+            .store(in: &cancellables)
+
+    }
+    
     func createChannelInNetwork(name: String, logoUrl: String?, _ completion: @escaping (ChannelModel) -> Void) {
         chatTransportService.createChannel(name: name, logoUrl: logoUrl)
             .sink { [weak self] _ in
@@ -186,10 +222,10 @@ extension DataServiceImpl: DataService {
             .store(in: &cancellables)
     }
     
-    func deleteChannelFromNetwork(with channelModel: ChannelModel) {
-        chatTransportService.deleteChannel(with: channelModel.id)
+    func deleteChannelFromNetwork(with channelId: String) {
+        chatTransportService.deleteChannel(with: channelId)
             .sink { [weak self] _ in
-                self?.deleteChannelFromStorage(with: channelModel)
+                self?.deleteChannelFromStorage(with: channelId)
             } receiveValue: {}
             .store(in: &cancellables)
     }
@@ -210,6 +246,7 @@ extension DataServiceImpl: DataService {
         chatTransportService.sendMessage(text: text, channelId: channelId, userId: userId, userName: userName)
             .sink { [weak self] _ in
                 self?.updateMessagesFromStorage(for: channelId)
+                self?.loadChannelFromNetwork(with: channelId)
             } receiveValue: { [weak self] newMessage in
                 self?.saveMessageModelInStorage(with: newMessage, in: channelId)
             }
