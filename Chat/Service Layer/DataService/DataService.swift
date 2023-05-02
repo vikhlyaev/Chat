@@ -2,6 +2,7 @@ import Foundation
 import Combine
 
 protocol DataService {
+    var delegate: DataServiceDelegate? { get set }
     var channelsPublisher: CurrentValueSubject<[ChannelModel], Never> { get }
     var messagesPublisher: CurrentValueSubject<[MessageModel], Never> { get }
     func loadChannelsFromNetwork()

@@ -23,6 +23,8 @@ final class DataServiceImpl {
     
     private var cancellables = Set<AnyCancellable>()
     
+    weak var delegate: DataServiceDelegate?
+    
     // MARK: - Init
     
     init(coreDataService: CoreDataService,
@@ -38,19 +40,25 @@ final class DataServiceImpl {
         subscribeOnEvents()
     }
     
+    // MARK: - SSE Service
+    
     private func subscribeOnEvents() {
         sseTransportService.subscribeOnEvents()
+            .receive(on: DispatchQueue.global(qos: .utility))
             .sink { completion in
                 print(completion)
             } receiveValue: { [weak self] event in
-                print(event)
                 switch event.eventType {
                 case .add:
-                    self?.loadChannelsFromNetwork()
+                    self?.loadChannelFromNetwork(for: event.resourceID)
                 case .update:
-                    break
+                    self?.loadChannelFromNetwork(for: event.resourceID)
+                    self?.loadMessagesFromNetwork(for: event.resourceID)
                 case .delete:
-                    self?.deleteChannelFromNetwork(with: event.resourceID)
+                    self?.deleteChannelFromStorage(with: event.resourceID)
+                    DispatchQueue.main.async { [weak self] in
+                        self?.delegate?.didDeleteChannel(with: event.resourceID)
+                    }
                 }
             }
             .store(in: &cancellables)
@@ -120,11 +128,11 @@ extension DataServiceImpl: DataService {
             guard
                 let channelManagedObject = try context.fetch(fetchRequest).first
             else {
-                logService.error("Channel has not been deleted")
-                fatalError()
+                logService.error("The channel is not deleted from the database")
+                return
             }
             context.delete(channelManagedObject)
-            logService.info("Channel deleted")
+            logService.info("The channel has been deleted from the database")
         }
     }
     
@@ -153,7 +161,6 @@ extension DataServiceImpl: DataService {
             self.messagesPublisher.send(self.messages)
         } catch {
             logService.error("Messages not received")
-            fatalError()
         }
     }
     
@@ -196,7 +203,7 @@ extension DataServiceImpl: DataService {
             .store(in: &cancellables)
     }
     
-    func loadChannelFromNetwork(with channelId: String) {
+    func loadChannelFromNetwork(for channelId: String) {
         chatTransportService.loadChannel(with: channelId)
             .sink { [weak self] _ in
                 self?.updateChannelsFromStorage()
@@ -210,23 +217,28 @@ extension DataServiceImpl: DataService {
     
     func createChannelInNetwork(name: String, logoUrl: String?, _ completion: @escaping (ChannelModel) -> Void) {
         chatTransportService.createChannel(name: name, logoUrl: logoUrl)
-            .sink { [weak self] _ in
-                self?.updateChannelsFromStorage()
-            } receiveValue: { [weak self] channelModel in
+            .receive(on: DispatchQueue.main)
+            .sink { _ in }
+            receiveValue: { [weak self] channelModel in
                 self?.saveChannelInStorage(with: channelModel)
-                DispatchQueue.main.async {
-                    completion(channelModel)
-                }
-                self?.logService.success("Channel created")
+                completion(channelModel)
+                self?.logService.success("The channel is created and saved to the database")
             }
             .store(in: &cancellables)
     }
     
     func deleteChannelFromNetwork(with channelId: String) {
         chatTransportService.deleteChannel(with: channelId)
-            .sink { [weak self] _ in
-                self?.deleteChannelFromStorage(with: channelId)
-            } receiveValue: {}
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] completion in
+                switch completion {
+                case .finished:
+                    self?.logService.success("The channel is deleted on the server")
+                case .failure:
+                    self?.deleteChannelFromStorage(with: channelId)
+                }
+            }
+            receiveValue: {}
             .store(in: &cancellables)
     }
     
@@ -246,7 +258,7 @@ extension DataServiceImpl: DataService {
         chatTransportService.sendMessage(text: text, channelId: channelId, userId: userId, userName: userName)
             .sink { [weak self] _ in
                 self?.updateMessagesFromStorage(for: channelId)
-                self?.loadChannelFromNetwork(with: channelId)
+                self?.loadChannelFromNetwork(for: channelId)
             } receiveValue: { [weak self] newMessage in
                 self?.saveMessageModelInStorage(with: newMessage, in: channelId)
             }
