@@ -14,7 +14,6 @@ final class CoreDataServiceImpl {
         container.loadPersistentStores { [weak self] _, error in
             if let error = error as NSError? {
                 self?.logService.error("Failed to create persistant container")
-                fatalError()
             }
         }
         return container
@@ -80,5 +79,4 @@ extension CoreDataServiceImpl: CoreDataService {
             }
         }
     }
-    
 }
