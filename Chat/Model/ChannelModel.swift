@@ -11,10 +11,6 @@ struct ChannelModel: Decodable, Hashable {
 extension ChannelModel: Equatable {
     static func == (lhs: ChannelModel, rhs: ChannelModel) -> Bool {
         return
-            lhs.id == rhs.id &&
-            lhs.name == rhs.name &&
-            lhs.logoUrl == rhs.logoUrl &&
-            lhs.lastMessage == rhs.lastMessage &&
-            lhs.lastActivity == rhs.lastActivity
+            lhs.id == rhs.id
     }
 }
