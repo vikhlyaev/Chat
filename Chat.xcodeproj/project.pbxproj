@@ -72,6 +72,8 @@
 		0ACD164A29FFB9C900F32CAC /* ProfileCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD164929FFB9C900F32CAC /* ProfileCoordinator.swift */; };
 		0ACD164C29FFB9D400F32CAC /* SettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD164B29FFB9D400F32CAC /* SettingsCoordinator.swift */; };
 		0ACD164E29FFD60700F32CAC /* ChannelsListModuleOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD164D29FFD60700F32CAC /* ChannelsListModuleOutput.swift */; };
+		0ACD165029FFF7E400F32CAC /* SSETransportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD164F29FFF7E400F32CAC /* SSETransportService.swift */; };
+		0ACD165229FFF7ED00F32CAC /* SSETransportServiceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD165129FFF7ED00F32CAC /* SSETransportServiceImpl.swift */; };
 		0ADAD7F629E7F0C00093D25E /* ChannelModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADAD7F529E7F0C00093D25E /* ChannelModel.swift */; };
 		0ADAD7F829E7F36B0093D25E /* MessageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADAD7F729E7F36B0093D25E /* MessageModel.swift */; };
 		0ADB6DEF29EAEFE700EBE31F /* ChannelsListDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADB6DEE29EAEFE700EBE31F /* ChannelsListDataSource.swift */; };
@@ -157,6 +159,8 @@
 		0ACD164929FFB9C900F32CAC /* ProfileCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCoordinator.swift; sourceTree = "<group>"; };
 		0ACD164B29FFB9D400F32CAC /* SettingsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCoordinator.swift; sourceTree = "<group>"; };
 		0ACD164D29FFD60700F32CAC /* ChannelsListModuleOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsListModuleOutput.swift; sourceTree = "<group>"; };
+		0ACD164F29FFF7E400F32CAC /* SSETransportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSETransportService.swift; sourceTree = "<group>"; };
+		0ACD165129FFF7ED00F32CAC /* SSETransportServiceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSETransportServiceImpl.swift; sourceTree = "<group>"; };
 		0ADAD7F529E7F0C00093D25E /* ChannelModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelModel.swift; sourceTree = "<group>"; };
 		0ADAD7F729E7F36B0093D25E /* MessageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageModel.swift; sourceTree = "<group>"; };
 		0ADB6DEE29EAEFE700EBE31F /* ChannelsListDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsListDataSource.swift; sourceTree = "<group>"; };
@@ -228,6 +232,7 @@
 		0A47FB6429FAB46800D4736F /* Service Layer */ = {
 			isa = PBXGroup;
 			children = (
+				0A8550082A003E7A00944138 /* SSETransportService */,
 				0AEAF80429FD648800B6024F /* DataService */,
 				0AEAF7FF29FD645200B6024F /* ChatService */,
 				0A59D0D329FC37FA008FD2C6 /* PhotoLoaderService */,
@@ -369,6 +374,15 @@
 				0A80C74129E7DBAE00C96E8C /* ChatService + Extensions.swift */,
 			);
 			path = TFSChatTransport;
+			sourceTree = "<group>";
+		};
+		0A8550082A003E7A00944138 /* SSETransportService */ = {
+			isa = PBXGroup;
+			children = (
+				0ACD164F29FFF7E400F32CAC /* SSETransportService.swift */,
+				0ACD165129FFF7ED00F32CAC /* SSETransportServiceImpl.swift */,
+			);
+			path = SSETransportService;
 			sourceTree = "<group>";
 		};
 		0A856FE129FAFA3700F46AFC /* ProfileService */ = {
@@ -842,12 +856,14 @@
 				0A85700029FBE4E700F46AFC /* ThemesButton.swift in Sources */,
 				0A47FB7829FABACF00D4736F /* ServiceAssembly.swift in Sources */,
 				0AB6B5BA29C1E5CD00361A2C /* CustomNavBar.swift in Sources */,
+				0ACD165029FFF7E400F32CAC /* SSETransportService.swift in Sources */,
 				0A856FE929FAFA4200F46AFC /* ThemesService.swift in Sources */,
 				0A80C74229E7DBAE00C96E8C /* ChatService + Extensions.swift in Sources */,
 				0A59D0CF29FC1510008FD2C6 /* NetworkServiceImpl.swift in Sources */,
 				0AEAF81129FE78FF00B6024F /* ChannelPresenter.swift in Sources */,
 				0A85700229FBE4E700F46AFC /* ThemesCell.swift in Sources */,
 				0AC2F8E829DFC2C100A6F320 /* BubbleView.swift in Sources */,
+				0ACD165229FFF7ED00F32CAC /* SSETransportServiceImpl.swift in Sources */,
 				0A85700329FBE4E700F46AFC /* SettingsViewController.swift in Sources */,
 				0AEAF81629FE794200B6024F /* ChannelViewInput.swift in Sources */,
 				0A03CD5B29B984A500B9CC8E /* UIColor + Extensions.swift in Sources */,
