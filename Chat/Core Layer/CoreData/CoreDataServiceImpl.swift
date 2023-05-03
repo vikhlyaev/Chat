@@ -61,7 +61,7 @@ extension CoreDataServiceImpl: CoreDataService {
                     try backgroundContext.save()
                 }
             } catch {
-                throw CoreDataServiceError.dataNotUpdate
+                assertionFailure("Data not update")
             }
         }
     }
