@@ -4,28 +4,23 @@ final class ProfileServiceImpl {
     
     private let coreDataService: CoreDataService
     private let fileManagerService: FileManagerService
-    private let logService: LogService
     
-    init(coreDataService: CoreDataService, fileManagerService: FileManagerService, logService: LogService) {
+    init(coreDataService: CoreDataService, fileManagerService: FileManagerService) {
         self.coreDataService = coreDataService
         self.fileManagerService = fileManagerService
-        self.logService = logService
     }
     
     private func loadPhoto(_ completion: @escaping (Result<UIImage, Error>) -> Void) {
-        fileManagerService.read(by: "photoData") { [weak self] result in
+        fileManagerService.read(by: "photoData") { result in
             switch result {
             case .success(let photoData):
                 if let image = UIImage(data: photoData) {
                     completion(.success(image))
-                    self?.logService.success("Photo successfully load")
                 } else {
                     completion(.failure(ProfileServiceError.badPhoto))
-                    self?.logService.error("Photo not load")
                 }
-            case .failure(let error):
+            case .failure:
                 completion(.failure(ProfileServiceError.badData))
-                self?.logService.error("Photo not load. Error: \(error)")
             }
         }
     }
@@ -34,18 +29,13 @@ final class ProfileServiceImpl {
         guard
             let photo = profile.photo,
             let photoData = photo.pngData()
-        else {
-            logService.error("No photo found")
-            return
-        }
-        fileManagerService.write(photoData, with: "photoData") { [weak self] error in
+        else { return }
+        fileManagerService.write(photoData, with: "photoData") { error in
             guard let error else {
-                self?.logService.success("Photo successfully update")
                 completion(nil)
                 return
             }
             completion(error)
-            self?.logService.error("Photo not update")
         }
     }
 }
@@ -67,20 +57,17 @@ extension ProfileServiceImpl: ProfileService {
             var profileModel = ProfileModel(id: profileManagedObject.id,
                                             name: profileManagedObject.name,
                                             information: profileManagedObject.info)
-            loadPhoto { [weak self] result in
+            loadPhoto { result in
                 switch result {
                 case .success(let photo):
                     profileModel.photo = photo
                     completion(.success(profileModel))
-                    self?.logService.success("Profile with photo successfully load")
-                case .failure(let error):
+                case .failure:
                     completion(.success(profileModel))
-                    self?.logService.success("Profile without photo load. Error: \(error)")
                 }
             }
         } catch {
             completion(.failure(ProfileServiceError.badProfile))
-            logService.success("Profile not load")
         }
     }
     
@@ -90,28 +77,19 @@ extension ProfileServiceImpl: ProfileService {
             if let profileManagedObject = try context.fetch(fetchRequest).first {
                 profileManagedObject.name = profile.name
                 profileManagedObject.info = profile.information
-                logService.success("Profile successfully update")
             } else {
                 let profileManagedObject = ProfileManagedObject(context: context)
                 profileManagedObject.id = "\(UUID())"
                 profileManagedObject.name = profile.name
                 profileManagedObject.info = profile.information
-                logService.success("Profile successfully created")
             }
         }
         savePhoto(profile) { error in
-            guard error != nil else {
+            guard let error else {
                 completion(nil)
                 return
             }
             completion(error)
         }
     }
-}
-
-enum ProfileServiceError: Error {
-    case badPhoto
-    case badData
-    case badProfile
-    case nonexistentProfile
 }
