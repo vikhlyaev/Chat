@@ -2,22 +2,13 @@ import Foundation
 
 final class NetworkServiceImpl {
     private let session: URLSession = URLSession.shared
-    private var downloadSession: URLSession?
+    private let fileManagerService: FileManagerService
     private let logService: LogService
     
-    init(logService: LogService) {
+    init(fileManagerService: FileManagerService,
+         logService: LogService) {
+        self.fileManagerService = fileManagerService
         self.logService = logService
-        setupDownloadSession()
-    }
-    
-    private func setupDownloadSession() {
-        let configuration = URLSessionConfiguration.default
-        configuration.urlCache = URLCache(
-            memoryCapacity: 200 * 1024 * 1024,
-            diskCapacity: 500 * 1024 * 1024
-        )
-        
-        downloadSession = URLSession(configuration: configuration)
     }
 }
 
@@ -51,46 +42,44 @@ extension NetworkServiceImpl: NetworkService {
     }
     
     func download(with request: URLRequest, _ completion: @escaping (Result<Data, Error>) -> Void) {
-        downloadSession?.downloadTask(with: request) { [weak self] location, response, error in
-            if let location = location, let response = response, let statusCode = (response as? HTTPURLResponse)?.statusCode {
-                if 200 ..< 300 ~= statusCode {
-                    do {
-                        let data = try Data(contentsOf: location)
-                        completion(.success(data))
-                    } catch {
-                        completion(.failure(NetworkError.invalidData))
-                        self?.logService.error("Data not decoded. Error: \(error)")
-                    }
-                } else {
-                    completion(.failure(NetworkError.httpStatusCode(statusCode)))
-                    self?.logService.error("HTTP Status code: \(statusCode)")
+        guard let photoName = request.url?.lastPathComponent else { return }
+        if fileManagerService.fileExist(at: photoName) {
+            fileManagerService.read(by: photoName) { result in
+                switch result {
+                case .success(let cachedPhotoData):
+                    completion(.success(cachedPhotoData))
+                case .failure(let error):
+                    completion(.failure(error))
                 }
-            } else if let error = error {
-                completion(.failure(NetworkError.urlRequestError(error)))
-                self?.logService.error("URLRequest error: \(error)")
-            } else {
-                completion(.failure(NetworkError.urlSessionError))
-                self?.logService.error("URLSession error")
             }
-        }.resume()
-    }
-    
-    func checkImageContentType(with request: URLRequest, _ completion: @escaping (Result<Bool, Error>) -> Void) {
-        session.dataTask(with: request) { [weak self] _, response, error in
-            if let response = response, let httpUrlResponse = (response as? HTTPURLResponse) {
-                if 200 ..< 300 ~= httpUrlResponse.statusCode {
-                    if let contentType = httpUrlResponse.value(forHTTPHeaderField: "Content-Type") {
-                        let imagesTypes = ["image/jpeg", "image/png", "image/svg+xml"]
-                        completion(.success(imagesTypes.contains(contentType)))
+        } else {
+            session.downloadTask(with: request) { [weak self] location, response, error in
+                if let location = location, let response = response, let statusCode = (response as? HTTPURLResponse)?.statusCode {
+                    if 200 ..< 300 ~= statusCode {
+                        do {
+                            let data = try Data(contentsOf: location)
+                            self?.fileManagerService.write(data, with: photoName, { error in
+                                if let error = error {
+                                    completion(.failure(error))
+                                }
+                            })
+                            completion(.success(data))
+                        } catch {
+                            completion(.failure(NetworkError.invalidData))
+                            self?.logService.error("Data not decoded. Error: \(error)")
+                        }
+                    } else {
+                        completion(.failure(NetworkError.httpStatusCode(statusCode)))
+                        self?.logService.error("HTTP Status code: \(statusCode)")
                     }
+                } else if let error = error {
+                    completion(.failure(NetworkError.urlRequestError(error)))
+                    self?.logService.error("URLRequest error: \(error)")
                 } else {
-                    completion(.failure(NetworkError.httpStatusCode(httpUrlResponse.statusCode)))
-                    self?.logService.error("HTTP Status code: \(httpUrlResponse.statusCode)")
+                    completion(.failure(NetworkError.urlSessionError))
+                    self?.logService.error("URLSession error")
                 }
-            } else if let error = error {
-                completion(.failure(NetworkError.urlRequestError(error)))
-                self?.logService.error("URLRequest error: \(error)")
-            }
-        }.resume()
+            }.resume()
+        }
     }
 }
