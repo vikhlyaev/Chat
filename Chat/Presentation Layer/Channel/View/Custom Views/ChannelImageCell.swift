@@ -119,7 +119,6 @@ extension ChannelImageCell {
             nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -14),
             
             photoImageView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4),
-//            photoImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
             photoImageView.widthAnchor.constraint(equalToConstant: 150),
             photoImageView.heightAnchor.constraint(equalToConstant: 150),
             
