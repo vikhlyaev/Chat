@@ -4,7 +4,6 @@ import UIKit
 final class PhotoLoaderServiceImpl {
     
     private let networkService: NetworkService
-    private let logService: LogService
     
     private let baseUrl = URL(string: "https://pixabay.com/api/")
     private let searchKeyword = "mountains"
@@ -12,18 +11,15 @@ final class PhotoLoaderServiceImpl {
     
     private let backgroundQueue = DispatchQueue(label: "PhotoLoaderService", qos: .userInitiated)
     
-    init(networkService: NetworkService, logService: LogService) {
+    init(networkService: NetworkService) {
         self.networkService = networkService
-        self.logService = logService
     }
     
     private func makeHTTPRequest(with keyword: String, for page: Int) throws -> URLRequest {
         guard
-            let baseUrl = baseUrl,
+            let baseUrl,
             var urlComponents = URLComponents(url: baseUrl, resolvingAgainstBaseURL: false)
-        else {
-            throw NetworkError.invalidRequest
-        }
+        else { throw PhotoLoaderError.invalidRequest }
         urlComponents.queryItems = [
             URLQueryItem(name: "key", value: "35861770-94831b655d8cb35ee0929d805"),
             URLQueryItem(name: "q", value: keyword),
@@ -31,7 +27,7 @@ final class PhotoLoaderServiceImpl {
             URLQueryItem(name: "per_page", value: "100"),
             URLQueryItem(name: "page", value: "\(page)")
         ]
-        guard let url = urlComponents.url else { throw NetworkError.invalidRequest }
+        guard let url = urlComponents.url else { throw PhotoLoaderError.invalidRequest }
         return URLRequest(url: url)
     }
 }
@@ -81,4 +77,25 @@ extension PhotoLoaderServiceImpl: PhotoLoaderService {
             }
         }
     }
+    
+//    func fetchPhotoData(by url: String, _ completion: @escaping (Result<Data, Error>) -> Void) {
+//        guard let url = URL(string: url) else {
+//            completion(.failure(PhotoLoaderError.incorrectUrl))
+//            return
+//        }
+//        let completionOnMainQueue: (Result<Data, Error>) -> Void = { result in
+//            DispatchQueue.main.async {
+//                completion(result)
+//            }
+//        }
+//        let request = URLRequest(url: url)
+//        networkService.download(with: request) { result in
+//            switch result {
+//            case .success(let photoData):
+//                completionOnMainQueue(.success(photoData))
+//            case .failure(let error):
+//                completionOnMainQueue(.failure(error))
+//            }
+//        }
+//    }
 }
