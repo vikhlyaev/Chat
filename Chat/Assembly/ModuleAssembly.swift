@@ -18,11 +18,12 @@ final class ModuleAssembly {
         return vc
     }
     
-    func makeChannelModule(with channel: ChannelModel) -> UIViewController {
+    func makeChannelModule(with channel: ChannelModel, and moduleOutput: ChannelModuleOutput) -> UIViewController {
         let presenter = ChannelPresenter(
             dataService: serviceAssembly.makeDataService(),
             profileService: serviceAssembly.makeProfileService(),
             photoLoaderService: serviceAssembly.makePhotoLoaderService(),
+            moduleOutput: moduleOutput,
             channel: channel)
         let vc = ChannelViewController(output: presenter)
         presenter.viewInput = vc
@@ -41,6 +42,7 @@ final class ModuleAssembly {
     func makeProfileModule(moduleOutput: ProfileModuleOutput) -> UIViewController {
         let presenter = ProfilePresenter(
             profileService: serviceAssembly.makeProfileService(),
+            photoLoaderService: serviceAssembly.makePhotoLoaderService(),
             moduleOutput: moduleOutput
         )
         let vc = ProfileViewController(output: presenter)
