@@ -6,6 +6,7 @@ final class ProfilePresenter: NSObject {
     weak var viewInput: ProfileViewInput?
     
     private let profileService: ProfileService
+    private let photoLoaderService: PhotoLoaderService
     weak var moduleOutput: ProfileModuleOutput?
     
     var profileModel: ProfileModel?
@@ -13,8 +14,10 @@ final class ProfilePresenter: NSObject {
     private var imagePicker: UIImagePickerController?
     
     init(profileService: ProfileService,
+         photoLoaderService: PhotoLoaderService,
          moduleOutput: ProfileModuleOutput?) {
         self.profileService = profileService
+        self.photoLoaderService = photoLoaderService
         self.moduleOutput = moduleOutput
     }
     
@@ -84,8 +87,15 @@ extension ProfilePresenter: ProfileViewOutput {
 // MARK: - PhotoSelectionDelegate
 
 extension ProfilePresenter: PhotoSelectionDelegate {
-    func didSelectPhotoModel(with photo: UIImage) {
-        viewInput?.updatePhoto(photo)
+    func didSelectPhotoModel(with photoModel: PhotoModel) {
+        photoLoaderService.fetchPhoto(by: photoModel.webformatURL) { [weak self] result in
+            switch result {
+            case .success(let photo):
+                self?.viewInput?.updatePhoto(photo)
+            case .failure:
+                break
+            }
+        }
     }
 }
 

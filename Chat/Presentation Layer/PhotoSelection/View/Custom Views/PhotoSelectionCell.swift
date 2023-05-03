@@ -35,12 +35,11 @@ final class PhotoSelectionCell: UICollectionViewCell {
     
     func configure(with photoModel: PhotoModel) {
         photoImageView.image = UIImage(named: "PlaceholderPhoto")
-
-        delegate?.didRecievePhoto(for: photoModel, { [weak self] photo in
+        delegate?.didRecievePhoto(for: photoModel) { [weak self] photo in
             if let photo = photo {
                 self?.photoImageView.image = photo
             }
-        })
+        }
     }
     
     func resetCell() {

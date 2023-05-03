@@ -135,11 +135,10 @@ extension PhotoSelectionViewController: UICollectionViewDelegateFlowLayout {
 
 extension PhotoSelectionViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard
-            let cell = collectionView.cellForItem(at: indexPath) as? PhotoSelectionCell,
-            let photo = cell.fetchPhoto()
-        else { return }
-        delegate?.didSelectPhotoModel(with: photo)
+        guard let currentPhotoModel = photosCollectionViewDataSource?.snapshot().itemIdentifiers[indexPath.item] else {
+            return
+        }
+        delegate?.didSelectPhotoModel(with: currentPhotoModel)
         dismiss(animated: true)
     }
     
