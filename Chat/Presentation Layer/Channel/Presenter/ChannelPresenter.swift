@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import UIKit
 
 final class ChannelPresenter {
     
@@ -12,6 +13,9 @@ final class ChannelPresenter {
     
     private let dataService: DataService
     private let profileService: ProfileService
+    private let photoLoaderService: PhotoLoaderService
+    
+    weak var moduleOutput: ChannelModuleOutput?
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -24,11 +28,16 @@ final class ChannelPresenter {
         }
     }
     
-    init(dataService: DataService, profileService: ProfileService, channel: ChannelModel) {
+    init(dataService: DataService,
+         profileService: ProfileService,
+         photoLoaderService: PhotoLoaderService,
+         moduleOutput: ChannelModuleOutput?,
+         channel: ChannelModel) {
         self.dataService = dataService
         self.profileService = profileService
+        self.photoLoaderService = photoLoaderService
+        self.moduleOutput = moduleOutput
         self.channel = channel
-        
         loadProfile()
         dataService.loadMessagesFromNetwork(for: channel.id)
     }
@@ -64,6 +73,22 @@ final class ChannelPresenter {
 // MARK: - ChannelViewOutput
 
 extension ChannelPresenter: ChannelViewOutput {
+    func didOpenPhotoSelection() {
+        moduleOutput?.moduleWantsToOpenPhotoSelection(with: self)
+    }
+    
+    func didRequestImage(by imageUrl: String, completion: @escaping (Data?) -> Void) {
+        photoLoaderService.fetchPhotoData(by: imageUrl) { result in
+            switch result {
+            case .success(let imageData):
+                completion(imageData)
+            case .failure(let error):
+                completion(nil)
+                print(error)
+            }
+        }
+    }
+    
     func didRequestUserId() -> String {
         profile?.id ?? ""
     }
@@ -76,8 +101,12 @@ extension ChannelPresenter: ChannelViewOutput {
         sortedMessages[section].messages.count
     }
     
-    func didRequestMessage(for indexPath: IndexPath) -> MessageModel {
-        sortedMessages[indexPath.section].messages[indexPath.row]
+    func didRequestMessage(for indexPath: IndexPath) -> (messages: MessageModel, isLink: Bool) {
+        let message = sortedMessages[indexPath.section].messages[indexPath.row]
+        if let url = URL(string: message.text) {
+            return (message, UIApplication.shared.canOpenURL(url))
+        }
+        return (message, false)
     }
     
     func didRequestName() -> String {
@@ -101,5 +130,11 @@ extension ChannelPresenter: ChannelViewOutput {
     
     func viewIsReady() {
         getMessages()
+    }
+}
+
+extension ChannelPresenter: PhotoSelectionDelegate {
+    func didSelectPhotoModel(with photoModel: PhotoModel) {
+        didSendMessage(text: photoModel.webformatURL)
     }
 }
