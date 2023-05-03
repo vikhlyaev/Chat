@@ -10,18 +10,15 @@ final class SSETransportServiceImpl {
     }
     
     private let sseService: SSEService
-    private let logService: LogService
     
     private var cancellables = Set<AnyCancellable>()
     
-    init(logService: LogService) {
-        self.logService = logService
+    init() {
         self.sseService = SSEService(host: SSEServiceSettings.ip, port: SSEServiceSettings.port)
     }
 }
 
 extension SSETransportServiceImpl: SSETransportService {
-    
     func subscribeOnEvents() -> AnyPublisher<ChatEvent, Error> {
         sseService.subscribeOnEvents()
     }
@@ -29,5 +26,4 @@ extension SSETransportServiceImpl: SSETransportService {
     func cancelSubscription() {
         sseService.cancelSubscription()
     }
-    
 }
