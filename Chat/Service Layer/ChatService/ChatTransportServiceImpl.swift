@@ -3,18 +3,16 @@ import TFSChatTransport
 import Combine
 
 final class ChatTransportServiceImpl {
+    
     private struct ChatServiceSettings {
         static let ip = "167.235.86.234"
         static let port = 8080
     }
     
     private let chatService: ChatService
-    private let logService: LogService
-    
     private var cancellables = Set<AnyCancellable>()
     
-    init(logService: LogService) {
-        self.logService = logService
+    init() {
         self.chatService = ChatService(host: ChatServiceSettings.ip, port: ChatServiceSettings.port)
     }
 }
