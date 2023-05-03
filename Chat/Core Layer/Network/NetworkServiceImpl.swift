@@ -14,7 +14,7 @@ final class NetworkServiceImpl {
 extension NetworkServiceImpl: NetworkService {
     func fetch<T: Decodable>(for request: URLRequest, _ completion: @escaping (Result<T, Error>) -> Void) {
         session.dataTask(with: request, completionHandler: { data, response, error in
-            if let data = data, let response = response, let statusCode = (response as? HTTPURLResponse)?.statusCode {
+            if let data, let response, let statusCode = (response as? HTTPURLResponse)?.statusCode {
                 if 200 ..< 300 ~= statusCode {
                     do {
                         let object = try JSONDecoder().decode(T.self, from: data)
@@ -25,7 +25,7 @@ extension NetworkServiceImpl: NetworkService {
                 } else {
                     completion(.failure(NetworkServiceError.httpStatusCode(statusCode)))
                 }
-            } else if let error = error {
+            } else if let error {
                 completion(.failure(NetworkServiceError.urlRequestError(error)))
             } else {
                 completion(.failure(NetworkServiceError.urlSessionError))
@@ -48,12 +48,12 @@ extension NetworkServiceImpl: NetworkService {
             }
         } else {
             session.downloadTask(with: request) { [weak self] location, response, error in
-                if let location = location, let response = response, let statusCode = (response as? HTTPURLResponse)?.statusCode {
+                if let location, let response, let statusCode = (response as? HTTPURLResponse)?.statusCode {
                     if 200 ..< 300 ~= statusCode {
                         do {
                             let data = try Data(contentsOf: location)
                             self?.fileManagerService.write(data, with: filename) { error in
-                                if let error = error {
+                                if let error {
                                     completion(.failure(error))
                                 }
                             }
@@ -64,7 +64,7 @@ extension NetworkServiceImpl: NetworkService {
                     } else {
                         completion(.failure(NetworkServiceError.httpStatusCode(statusCode)))
                     }
-                } else if let error = error {
+                } else if let error {
                     completion(.failure(NetworkServiceError.urlRequestError(error)))
                 } else {
                     completion(.failure(NetworkServiceError.urlSessionError))
@@ -75,7 +75,7 @@ extension NetworkServiceImpl: NetworkService {
     
     func checkImageContentType(with request: URLRequest, _ completion: @escaping (Result<Bool, Error>) -> Void) {
         session.dataTask(with: request) { _, response, error in
-            if let response = response, let httpUrlResponse = (response as? HTTPURLResponse) {
+            if let response, let httpUrlResponse = (response as? HTTPURLResponse) {
                 if 200 ..< 300 ~= httpUrlResponse.statusCode {
                     if let contentType = httpUrlResponse.value(forHTTPHeaderField: "Content-Type") {
                         let imagesTypes = ["image/jpeg", "image/png", "image/svg+xml"]
@@ -84,7 +84,7 @@ extension NetworkServiceImpl: NetworkService {
                 } else {
                     completion(.failure(NetworkServiceError.httpStatusCode(httpUrlResponse.statusCode)))
                 }
-            } else if let error = error {
+            } else if let error {
                 completion(.failure(NetworkServiceError.urlRequestError(error)))
             }
         }.resume()
