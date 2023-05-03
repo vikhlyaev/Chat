@@ -41,6 +41,11 @@ extension FileManagerServiceImpl: FileManagerService {
             logService.error("Data not write. Error: \(error)")
         }
     }
+    
+    func fileExist(at fileName: String) -> Bool {
+        guard let url = try? prepareUrl(for: fileName) else { return false }
+        return FileManager.default.fileExists(atPath: url.path)
+    }
 }
 
 enum FileManagerServiceError: Error {
