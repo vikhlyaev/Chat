@@ -9,7 +9,7 @@ final class SSETransportServiceImpl {
         static let port = 8080
     }
     
-    private let sseService: SSEService
+    private var sseService: SSEService?
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -19,11 +19,13 @@ final class SSETransportServiceImpl {
 }
 
 extension SSETransportServiceImpl: SSETransportService {
-    func subscribeOnEvents() -> AnyPublisher<ChatEvent, Error> {
-        sseService.subscribeOnEvents()
+    func subscribeOnEvents() -> AnyPublisher<ChatEvent, Error>? {
+        sseService = SSEService(host: SSEServiceSettings.ip, port: SSEServiceSettings.port)
+        return sseService?.subscribeOnEvents()
     }
     
     func cancelSubscription() {
-        sseService.cancelSubscription()
+        sseService = nil
+        sseService?.cancelSubscription()
     }
 }

@@ -40,11 +40,12 @@ final class DataServiceImpl {
     // MARK: - SSE Service
     
     private func subscribeOnEvents() {
-        sseTransportService.subscribeOnEvents()
+        sseTransportService.subscribeOnEvents()?
             .receive(on: DispatchQueue.global(qos: .utility))
-            .sink { completion in
+            .sink { [weak self] completion in
                 if case .failure = completion {
-                    print("🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴")
+                    self?.sseTransportService.cancelSubscription()
+                    self?.subscribeOnEvents()
                 }
             } receiveValue: { [weak self] event in
                 switch event.eventType {

@@ -3,6 +3,6 @@ import TFSChatTransport
 import Combine
 
 protocol SSETransportService {
-    func subscribeOnEvents() -> AnyPublisher<ChatEvent, Error>
+    func subscribeOnEvents() -> AnyPublisher<ChatEvent, Error>?
     func cancelSubscription()
 }
