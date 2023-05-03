@@ -2,46 +2,31 @@ import Foundation
 
 final class ServiceAssembly {
     
-    private let fileManagerService: FileManagerService = FileManagerServiceImpl(
-        logService: LogServiceImpl(name: "FileManagerService")
-    )
+    private let fileManagerService: FileManagerService = FileManagerServiceImpl()
+    private let coreDataService: CoreDataService = CoreDataServiceImpl()
+    private let chatTransportService: ChatTransportService = ChatTransportServiceImpl()
+    private let sseTransportService: SSETransportService = SSETransportServiceImpl()
     
-    let coreDataService: CoreDataService = CoreDataServiceImpl(
-        logService: LogServiceImpl(name: "CoreDataService")
-    )
-    
-    private let chatTransportService: ChatTransportService = ChatTransportServiceImpl(
-        logService: LogServiceImpl(name: "ChatTransportService")
-    )
-    
-    private let sseTransportService: SSETransportService = SSETransportServiceImpl(
-        logService: LogServiceImpl(name: "SSETransportService")
-    )
-    
-    func makeNetworkService(with logService: LogService = LogServiceImpl(name: "NetworkService")) -> NetworkService {
-        NetworkServiceImpl(fileManagerService: fileManagerService,
-                           logService: logService)
+    func makeNetworkService() -> NetworkService {
+        NetworkServiceImpl(fileManagerService: fileManagerService)
     }
     
-    func makeThemesService(with logService: LogService = LogServiceImpl(name: "ThemesService")) -> ThemesService {
-        ThemesServiceImpl(logService: logService)
+    func makeThemesService() -> ThemesService {
+        ThemesServiceImpl()
     }
     
-    func makeProfileService(with logService: LogService = LogServiceImpl(name: "ProfileService")) -> ProfileService {
+    func makeProfileService() -> ProfileService {
         ProfileServiceImpl(coreDataService: coreDataService,
-                           fileManagerService: fileManagerService,
-                           logService: logService)
+                           fileManagerService: fileManagerService)
     }
     
-    func makePhotoLoaderService(with logService: LogService = LogServiceImpl(name: "PhotoLoaderService")) -> PhotoLoaderService {
-        PhotoLoaderServiceImpl(networkService: makeNetworkService(),
-                               logService: logService)
+    func makePhotoLoaderService() -> PhotoLoaderService {
+        PhotoLoaderServiceImpl(networkService: makeNetworkService())
     }
     
-    func makeDataService(with logService: LogService = LogServiceImpl(name: "DataService")) -> DataService {
+    func makeDataService() -> DataService {
         DataServiceImpl(coreDataService: coreDataService,
                         chatTransportService: chatTransportService,
-                        sseTransportService: sseTransportService,
-                        logService: logService)
+                        sseTransportService: sseTransportService)
     }
 }
