@@ -2,13 +2,24 @@ import Foundation
 
 final class ServiceAssembly {
     
-    private let fileManagerService: FileManagerService = FileManagerServiceImpl()
-    private let coreDataService: CoreDataService = CoreDataServiceImpl()
-    private let chatTransportService: ChatTransportService = ChatTransportServiceImpl()
-    private let sseTransportService: SSETransportService = SSETransportServiceImpl()
+    func makeFileManagerService() -> FileManagerService {
+        FileManagerServiceImpl()
+    }
+    
+    func makeCoreDataService() -> CoreDataService {
+        CoreDataServiceImpl()
+    }
+    
+    func makeChatTransportService() -> ChatTransportService {
+        ChatTransportServiceImpl()
+    }
+    
+    func makeSSETransportService() -> SSETransportService {
+        SSETransportServiceImpl()
+    }
     
     func makeNetworkService() -> NetworkService {
-        NetworkServiceImpl(fileManagerService: fileManagerService)
+        NetworkServiceImpl(fileManagerService: makeFileManagerService())
     }
     
     func makeThemesService() -> ThemesService {
@@ -16,8 +27,8 @@ final class ServiceAssembly {
     }
     
     func makeProfileService() -> ProfileService {
-        ProfileServiceImpl(coreDataService: coreDataService,
-                           fileManagerService: fileManagerService)
+        ProfileServiceImpl(coreDataService: makeCoreDataService(),
+                           fileManagerService: makeFileManagerService())
     }
     
     func makePhotoLoaderService() -> PhotoLoaderService {
@@ -25,8 +36,8 @@ final class ServiceAssembly {
     }
     
     func makeDataService() -> DataService {
-        DataServiceImpl(coreDataService: coreDataService,
-                        chatTransportService: chatTransportService,
-                        sseTransportService: sseTransportService)
+        DataServiceImpl(coreDataService: makeCoreDataService(),
+                        chatTransportService: makeChatTransportService(),
+                        sseTransportService: makeSSETransportService())
     }
 }
