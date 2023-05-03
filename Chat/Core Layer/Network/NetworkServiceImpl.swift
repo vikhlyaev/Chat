@@ -20,15 +20,15 @@ extension NetworkServiceImpl: NetworkService {
                         let object = try JSONDecoder().decode(T.self, from: data)
                         completion(.success(object))
                     } catch {
-                        completion(.failure(NetworkError.parsingJsonError(error)))
+                        completion(.failure(NetworkServiceError.parsingJsonError(error)))
                     }
                 } else {
-                    completion(.failure(NetworkError.httpStatusCode(statusCode)))
+                    completion(.failure(NetworkServiceError.httpStatusCode(statusCode)))
                 }
             } else if let error = error {
-                completion(.failure(NetworkError.urlRequestError(error)))
+                completion(.failure(NetworkServiceError.urlRequestError(error)))
             } else {
-                completion(.failure(NetworkError.urlSessionError))
+                completion(.failure(NetworkServiceError.urlSessionError))
             }
         }).resume()
     }
@@ -59,15 +59,15 @@ extension NetworkServiceImpl: NetworkService {
                             }
                             completion(.success(data))
                         } catch {
-                            completion(.failure(NetworkError.invalidData))
+                            completion(.failure(NetworkServiceError.invalidData))
                         }
                     } else {
-                        completion(.failure(NetworkError.httpStatusCode(statusCode)))
+                        completion(.failure(NetworkServiceError.httpStatusCode(statusCode)))
                     }
                 } else if let error = error {
-                    completion(.failure(NetworkError.urlRequestError(error)))
+                    completion(.failure(NetworkServiceError.urlRequestError(error)))
                 } else {
-                    completion(.failure(NetworkError.urlSessionError))
+                    completion(.failure(NetworkServiceError.urlSessionError))
                 }
             }.resume()
         }
@@ -82,10 +82,10 @@ extension NetworkServiceImpl: NetworkService {
                         completion(.success(imagesTypes.contains(contentType)))
                     }
                 } else {
-                    completion(.failure(NetworkError.httpStatusCode(httpUrlResponse.statusCode)))
+                    completion(.failure(NetworkServiceError.httpStatusCode(httpUrlResponse.statusCode)))
                 }
             } else if let error = error {
-                completion(.failure(NetworkError.urlRequestError(error)))
+                completion(.failure(NetworkServiceError.urlRequestError(error)))
             }
         }.resume()
     }

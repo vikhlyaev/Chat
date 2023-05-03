@@ -1,6 +1,6 @@
 import Foundation
 
-enum NetworkError: Error {
+enum NetworkServiceError: Error {
     case httpStatusCode(Int)
     case urlRequestError(Error)
     case urlSessionError
