@@ -197,8 +197,11 @@ final class ChannelViewController: UIViewController {
 }
 
 extension ChannelViewController: ChannelViewInput {
-    func showErrorAlert() {
-        print("error")
+    func showErrorAlert(with text: String) {
+        let alert = UIAlertController(title: "Error", message: text, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .cancel)
+        alert.addAction(okAction)
+        present(alert, animated: true)
     }
     
     func updateTableView() {

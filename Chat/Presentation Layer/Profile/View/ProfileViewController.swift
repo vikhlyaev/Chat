@@ -294,17 +294,13 @@ extension ProfileViewController: ProfileViewInput {
         photoImageView.image = model.photo
     }
     
-    func showErrorAlert() {
-        let alert = UIAlertController(title: "Could not save profile", message: "Try again", preferredStyle: .alert)
+    func showErrorAlert(with text: String) {
+        let alert = UIAlertController(title: "Error", message: text, preferredStyle: .alert)
         let okAction = UIAlertAction(title: "OK", style: .cancel) { [weak self] _ in
             guard let self = self else { return }
             self.setEditing(false, animated: true)
         }
-        let tryAgainAction = UIAlertAction(title: "Try again", style: .default) { [weak self] _ in
-            self?.saveButtonTapped()
-        }
         alert.addAction(okAction)
-        alert.addAction(tryAgainAction)
         present(alert, animated: true)
     }
     

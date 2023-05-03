@@ -153,6 +153,13 @@ extension PhotoSelectionViewController: UICollectionViewDelegate {
 // MARK: - PhotoSelectionViewInput
 
 extension PhotoSelectionViewController: PhotoSelectionViewInput {
+    func showErrorAlert(with text: String) {
+        let alert = UIAlertController(title: "Error", message: text, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .cancel)
+        alert.addAction(okAction)
+        present(alert, animated: true)
+    }
+    
     func updatePhotos(_ photos: [PhotoModel]) {
         guard let photosCollectionViewDataSource else { return }
         var snapshot = photosCollectionViewDataSource.snapshot()

@@ -42,8 +42,8 @@ extension PhotoSelectionPresenter: PhotoSelectionViewOutput {
             case .success(let photos):
                 self?.photos.append(contentsOf: photos)
                 self?.didLoadPhoto(photos)
-            case .failure(let error):
-                print(error)
+            case .failure:
+                self?.viewInput?.showErrorAlert(with: "Failed to upload photo")
             }
         }
     }

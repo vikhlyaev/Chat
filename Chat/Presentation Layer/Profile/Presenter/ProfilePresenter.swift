@@ -27,8 +27,8 @@ final class ProfilePresenter: NSObject {
             case .success(let profileModel):
                 self?.profileModel = profileModel
                 self?.viewInput?.showProfile(with: profileModel)
-            case .failure(let error):
-                print(error)
+            case .failure:
+                self?.viewInput?.showErrorAlert(with: "Failed to load profile")
             }
         }
     }
@@ -49,7 +49,7 @@ extension ProfilePresenter: ProfileViewOutput {
                 self?.viewInput?.stopActivityIndicator()
                 return
             }
-            self?.viewInput?.showErrorAlert()
+            self?.viewInput?.showErrorAlert(with: "Failed to save profile")
             self?.viewInput?.stopActivityIndicator()
         }
     }
@@ -93,7 +93,7 @@ extension ProfilePresenter: PhotoSelectionDelegate {
             case .success(let photo):
                 self?.viewInput?.updatePhoto(photo)
             case .failure:
-                break
+                self?.viewInput?.showErrorAlert(with: "Failed to load photo")
             }
         }
     }

@@ -64,7 +64,7 @@ final class ChannelPresenter {
             case .success(let profile):
                 self?.profile = profile
             case .failure:
-                fatalError()
+                self?.viewInput?.showErrorAlert(with: "Failed to load profile")
             }
         }
     }
@@ -82,9 +82,8 @@ extension ChannelPresenter: ChannelViewOutput {
             switch result {
             case .success(let imageData):
                 completion(imageData)
-            case .failure(let error):
+            case .failure:
                 completion(nil)
-                print(error)
             }
         }
     }

@@ -1,6 +1,6 @@
 import Foundation
 
 protocol ChannelViewInput: AnyObject {
-    func showErrorAlert()
+    func showErrorAlert(with text: String)
     func updateTableView()
 }
