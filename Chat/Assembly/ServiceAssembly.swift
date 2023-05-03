@@ -10,10 +10,6 @@ final class ServiceAssembly {
         logService: LogServiceImpl(name: "CoreDataService")
     )
     
-    private let networkService: NetworkService = NetworkServiceImpl(
-        logService: LogServiceImpl(name: "NetworkService")
-    )
-    
     private let chatTransportService: ChatTransportService = ChatTransportServiceImpl(
         logService: LogServiceImpl(name: "ChatTransportService")
     )
@@ -21,6 +17,11 @@ final class ServiceAssembly {
     private let sseTransportService: SSETransportService = SSETransportServiceImpl(
         logService: LogServiceImpl(name: "SSETransportService")
     )
+    
+    func makeNetworkService(with logService: LogService = LogServiceImpl(name: "NetworkService")) -> NetworkService {
+        NetworkServiceImpl(fileManagerService: fileManagerService,
+                           logService: logService)
+    }
     
     func makeThemesService(with logService: LogService = LogServiceImpl(name: "ThemesService")) -> ThemesService {
         ThemesServiceImpl(logService: logService)
@@ -33,7 +34,7 @@ final class ServiceAssembly {
     }
     
     func makePhotoLoaderService(with logService: LogService = LogServiceImpl(name: "PhotoLoaderService")) -> PhotoLoaderService {
-        PhotoLoaderServiceImpl(networkService: networkService,
+        PhotoLoaderServiceImpl(networkService: makeNetworkService(),
                                logService: logService)
     }
     
