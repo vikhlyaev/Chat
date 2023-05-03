@@ -2,18 +2,11 @@ import Foundation
 import CoreData
 
 final class CoreDataServiceImpl {
-    
-    private var logService: LogService
-    
-    init(logService: LogService) {
-        self.logService = logService
-    }
-    
     private lazy var persistantContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "Chat")
         container.loadPersistentStores { [weak self] _, error in
             if let error = error as NSError? {
-                self?.logService.error("Failed to create persistant container")
+                fatalError("Failed to create persistant container")
             }
         }
         return container
@@ -30,11 +23,9 @@ extension CoreDataServiceImpl: CoreDataService {
     func fetchProfile() throws -> [ProfileManagedObject] {
         let fetchRequest = ProfileManagedObject.fetchRequest()
         do {
-            logService.success("Profile fetching successfully")
             return try viewContext.fetch(fetchRequest)
         } catch {
-            logService.error("Error fetching profile")
-            fatalError()
+            fatalError("Error fetching profile")
         }
     }
     
@@ -43,11 +34,9 @@ extension CoreDataServiceImpl: CoreDataService {
         let sortDescriptor = NSSortDescriptor(key: "lastActivity", ascending: false)
         fetchRequest.sortDescriptors = [sortDescriptor]
         do {
-            logService.success("Channels fetching successfully")
             return try viewContext.fetch(fetchRequest)
         } catch {
-            logService.error("Error fetching channels")
-            fatalError()
+            fatalError("Error fetching channels")
         }
     }
     
@@ -58,10 +47,8 @@ extension CoreDataServiceImpl: CoreDataService {
             let channelManagedObject = try viewContext.fetch(fetchRequest).first,
             let messagesManagedObjects = channelManagedObject.messages?.array as? [MessageManagedObject]
         else {
-            logService.error("Error fetching messages")
-            fatalError()
+            fatalError("Error fetching messages")
         }
-        logService.success("Messages fetching successfully")
         return messagesManagedObjects
     }
     
@@ -73,9 +60,8 @@ extension CoreDataServiceImpl: CoreDataService {
                 if backgroundContext.hasChanges {
                     try backgroundContext.save()
                 }
-                logService.success("Updating successfully")
             } catch {
-                logService.error("Updating error: \(error)")
+                fatalError("Data not updated")
             }
         }
     }
