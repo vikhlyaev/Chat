@@ -78,24 +78,24 @@ extension PhotoLoaderServiceImpl: PhotoLoaderService {
         }
     }
     
-//    func fetchPhotoData(by url: String, _ completion: @escaping (Result<Data, Error>) -> Void) {
-//        guard let url = URL(string: url) else {
-//            completion(.failure(PhotoLoaderError.incorrectUrl))
-//            return
-//        }
-//        let completionOnMainQueue: (Result<Data, Error>) -> Void = { result in
-//            DispatchQueue.main.async {
-//                completion(result)
-//            }
-//        }
-//        let request = URLRequest(url: url)
-//        networkService.download(with: request) { result in
-//            switch result {
-//            case .success(let photoData):
-//                completionOnMainQueue(.success(photoData))
-//            case .failure(let error):
-//                completionOnMainQueue(.failure(error))
-//            }
-//        }
-//    }
+    func fetchPhotoData(by url: String, _ completion: @escaping (Result<Data, Error>) -> Void) {
+        guard let url = URL(string: url) else {
+            completion(.failure(PhotoLoaderError.incorrectUrl))
+            return
+        }
+        let completionOnMainQueue: (Result<Data, Error>) -> Void = { result in
+            DispatchQueue.main.async {
+                completion(result)
+            }
+        }
+        let request = URLRequest(url: url)
+        networkService.download(with: request) { result in
+            switch result {
+            case .success(let photoData):
+                completionOnMainQueue(.success(photoData))
+            case .failure(let error):
+                completionOnMainQueue(.failure(error))
+            }
+        }
+    }
 }
