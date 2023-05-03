@@ -37,8 +37,3 @@ extension FileManagerServiceImpl: FileManagerService {
         return FileManager.default.fileExists(atPath: url.path)
     }
 }
-
-enum FileManagerServiceError: Error {
-    case badUrl
-    case badData
-}
