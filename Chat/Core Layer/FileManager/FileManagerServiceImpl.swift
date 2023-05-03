@@ -2,15 +2,9 @@ import Foundation
 
 final class FileManagerServiceImpl {
     private let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-    private let logService: LogService
-    
-    init(logService: LogService) {
-        self.logService = logService
-    }
     
     private func prepareUrl(for filename: String) throws -> URL {
         guard let url = documentDirectory?.appendingPathComponent(filename) else {
-            logService.error("Unable to create a URL")
             throw FileManagerServiceError.badUrl
         }
         return url
@@ -23,10 +17,8 @@ extension FileManagerServiceImpl: FileManagerService {
             let url = try prepareUrl(for: filename)
             let data = try Data(contentsOf: url)
             completion(.success(data))
-            logService.success("Data successfully read")
         } catch {
             completion(.failure(FileManagerServiceError.badData))
-            logService.error("Data not read. Error: \(error)")
         }
     }
     
@@ -35,10 +27,8 @@ extension FileManagerServiceImpl: FileManagerService {
             let url = try prepareUrl(for: filename)
             try data.write(to: url, options: .atomic)
             completion(nil)
-            logService.success("Data successfully write")
         } catch {
             completion(error)
-            logService.error("Data not write. Error: \(error)")
         }
     }
     
