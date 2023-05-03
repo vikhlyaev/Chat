@@ -25,7 +25,7 @@ extension CoreDataServiceImpl: CoreDataService {
         do {
             return try viewContext.fetch(fetchRequest)
         } catch {
-            fatalError("Error fetching profile")
+            throw CoreDataServiceError.notFetchingProfile
         }
     }
     
@@ -36,7 +36,7 @@ extension CoreDataServiceImpl: CoreDataService {
         do {
             return try viewContext.fetch(fetchRequest)
         } catch {
-            fatalError("Error fetching channels")
+            throw CoreDataServiceError.notFetchingChannels
         }
     }
     
@@ -47,7 +47,7 @@ extension CoreDataServiceImpl: CoreDataService {
             let channelManagedObject = try viewContext.fetch(fetchRequest).first,
             let messagesManagedObjects = channelManagedObject.messages?.array as? [MessageManagedObject]
         else {
-            fatalError("Error fetching messages")
+            throw CoreDataServiceError.notFetchingMessages
         }
         return messagesManagedObjects
     }
@@ -61,7 +61,7 @@ extension CoreDataServiceImpl: CoreDataService {
                     try backgroundContext.save()
                 }
             } catch {
-                fatalError("Data not updated")
+                throw CoreDataServiceError.dataNotUpdate
             }
         }
     }
