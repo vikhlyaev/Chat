@@ -257,6 +257,15 @@ extension ProfileViewController {
     @objc
     private func cancelButtonTapped() {
         setEditing(false, animated: true)
+        photoImageView.image = output.profileModel?.photo
+        guard
+            let nameCell = nameAndInformationTableView.visibleCells[0] as? ProfileEditCell,
+            let infoCell = nameAndInformationTableView.visibleCells[1] as? ProfileEditCell
+        else {
+            return
+        }
+        nameCell.textField.text = output.profileModel?.name
+        infoCell.textField.text = output.profileModel?.information
     }
 }
 
