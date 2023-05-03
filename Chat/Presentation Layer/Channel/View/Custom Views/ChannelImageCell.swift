@@ -70,15 +70,17 @@ final class ChannelImageCell: UITableViewCell {
     
     private func setupSentCell(with model: MessageModel) {
         timeLabel.textColor = .appBubbleTextReceived
-        photoImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8).isActive = true
-        photoImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8).isActive = false
+        let trailingConstraint = photoImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8)
+        trailingConstraint.priority = UILayoutPriority(999)
+        trailingConstraint.isActive = true
     }
     
     private func setupReceivedCell(with model: MessageModel) {
         timeLabel.textColor = .appBubbleTextReceived
         nameLabel.text = model.userName
-        photoImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8).isActive = false
-        photoImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8).isActive = true
+        let leadingConstraint = photoImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8)
+        leadingConstraint.priority = UILayoutPriority(1000)
+        leadingConstraint.isActive = true
     }
     
     func resetCell() {
@@ -117,6 +119,7 @@ extension ChannelImageCell {
             nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -14),
             
             photoImageView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4),
+//            photoImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
             photoImageView.widthAnchor.constraint(equalToConstant: 150),
             photoImageView.heightAnchor.constraint(equalToConstant: 150),
             
