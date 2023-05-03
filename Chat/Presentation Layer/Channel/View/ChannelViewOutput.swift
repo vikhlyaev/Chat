@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 
 protocol ChannelViewOutput {
     func viewIsReady()
@@ -8,6 +9,8 @@ protocol ChannelViewOutput {
     func didRequestUserId() -> String
     func didRequestNumberOfSections() -> Int
     func didRequestNumberOfRows(inSection section: Int) -> Int
-    func didRequestMessage(for indexPath: IndexPath) -> MessageModel
+    func didRequestMessage(for indexPath: IndexPath) -> (messages: MessageModel, isLink: Bool)
     func didRequestDate(inSection section: Int) -> Date
+    func didRequestImage(by imageUrl: String, completion: @escaping (Data?) -> Void)
+    func didOpenPhotoSelection()
 }

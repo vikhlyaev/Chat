@@ -15,8 +15,14 @@ final class ChannelViewController: UIViewController {
         tableView.separatorStyle = .none
         tableView.keyboardDismissMode = .onDrag
         tableView.transform = CGAffineTransform(rotationAngle: -(CGFloat)(Double.pi))
-        tableView.register(ChannelCell.self, forCellReuseIdentifier: CellType.cellSent.rawValue)
-        tableView.register(ChannelCell.self, forCellReuseIdentifier: CellType.cellReceived.rawValue)
+        tableView.register(ChannelCell.self,
+                           forCellReuseIdentifier: CellType.textSent.rawValue)
+        tableView.register(ChannelCell.self,
+                           forCellReuseIdentifier: CellType.textReceived.rawValue)
+        tableView.register(ChannelImageCell.self,
+                           forCellReuseIdentifier: CellType.imageSent.rawValue)
+        tableView.register(ChannelImageCell.self,
+                           forCellReuseIdentifier: CellType.imageReceived.rawValue)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
@@ -39,6 +45,15 @@ final class ChannelViewController: UIViewController {
         textView.layer.borderColor = UIColor.separator.cgColor
         textView.translatesAutoresizingMaskIntoConstraints = false
         return textView
+    }()
+    
+    private lazy var sendPhotoButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(systemName: "camera"), for: .normal)
+        button.addTarget(self, action: #selector(sendPhotoButtonTapped), for: .touchUpInside)
+        button.tintColor = .systemBlue
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
     
     private lazy var sendMessageButton: UIButton = {
@@ -107,6 +122,7 @@ final class ChannelViewController: UIViewController {
         view.addSubview(wrapperView)
         wrapperView.addSubview(textView)
         wrapperView.addSubview(sendMessageButton)
+        wrapperView.addSubview(sendPhotoButton)
     }
     
     private func setDelegates() {
@@ -173,6 +189,11 @@ final class ChannelViewController: UIViewController {
         textView.text = nil
         sendMessageButton.isEnabled = false
     }
+    
+    @objc
+    private func sendPhotoButtonTapped() {
+        output.didOpenPhotoSelection()
+    }
 }
 
 extension ChannelViewController: ChannelViewInput {
@@ -183,6 +204,20 @@ extension ChannelViewController: ChannelViewInput {
     func updateTableView() {
         DispatchQueue.main.async { [weak self] in
             self?.channelTableView.reloadData()
+        }
+    }
+}
+
+// MARK: - ChannelCellDelegate
+
+extension ChannelViewController: ChannelPhotoCellDelegate {
+    func didRecieveImage(by imageUrl: String, _ completion: @escaping (UIImage?) -> Void) {
+        output.didRequestImage(by: imageUrl) { imageData in
+            if let imageData {
+                if let image = UIImage(data: imageData) {
+                    completion(image)
+                }
+            }
         }
     }
 }
@@ -223,18 +258,42 @@ extension ChannelViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cellSent = tableView.dequeueReusableCell(withIdentifier: CellType.cellSent.rawValue, for: indexPath) as? ChannelCell,
-              let cellReceived = tableView.dequeueReusableCell(withIdentifier: CellType.cellReceived.rawValue, for: indexPath) as? ChannelCell
-        else { return UITableViewCell() }
-        let message = output.didRequestMessage(for: indexPath)
-        if message.id == output.didRequestUserId() {
-            cellSent.resetCell()
-            cellSent.configure(cellType: .cellSent, with: message)
-            return cellSent
+        guard
+            let cellTextSent = tableView.dequeueReusableCell(withIdentifier: CellType.textSent.rawValue,
+                                                             for: indexPath) as? ChannelCell,
+            let cellTextReceived = tableView.dequeueReusableCell(withIdentifier: CellType.textReceived.rawValue,
+                                                                 for: indexPath) as? ChannelCell,
+            let cellImageSent = tableView.dequeueReusableCell(withIdentifier: CellType.imageSent.rawValue,
+                                                              for: indexPath) as? ChannelImageCell,
+            let cellImageReceived = tableView.dequeueReusableCell(withIdentifier: CellType.imageSent.rawValue,
+                                                                  for: indexPath) as? ChannelImageCell
+        else {
+            return UITableViewCell()
+        }
+        
+        let (message, isLink) = output.didRequestMessage(for: indexPath)
+        if isLink {
+            if message.id == output.didRequestUserId() {
+                cellImageSent.delegate = self
+                cellImageSent.resetCell()
+                cellImageSent.configure(cellType: .imageSent, with: message)
+                return cellImageSent
+            } else {
+                cellImageReceived.delegate = self
+                cellImageReceived.resetCell()
+                cellImageReceived.configure(cellType: .imageReceived, with: message)
+                return cellImageReceived
+            }
         } else {
-            cellReceived.resetCell()
-            cellReceived.configure(cellType: .cellReceived, with: message)
-            return cellReceived
+            if message.id == output.didRequestUserId() {
+                cellTextSent.resetCell()
+                cellTextSent.configure(cellType: .textSent, with: message)
+                return cellTextSent
+            } else {
+                cellTextReceived.resetCell()
+                cellTextReceived.configure(cellType: .textReceived, with: message)
+                return cellTextReceived
+            }
         }
     }
 }
@@ -273,9 +332,14 @@ extension ChannelViewController {
             wrapperView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             wrapperView.heightAnchor.constraint(greaterThanOrEqualToConstant: 52),
             
+            sendPhotoButton.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor, constant: 14),
+            sendPhotoButton.bottomAnchor.constraint(equalTo: wrapperView.bottomAnchor, constant: -14),
+            sendPhotoButton.widthAnchor.constraint(equalToConstant: 26),
+            sendPhotoButton.heightAnchor.constraint(equalToConstant: 26),
+            
             textView.topAnchor.constraint(equalTo: wrapperView.topAnchor, constant: 8),
             textView.bottomAnchor.constraint(equalTo: wrapperView.bottomAnchor, constant: -8),
-            textView.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor, constant: 8),
+            textView.leadingAnchor.constraint(equalTo: sendPhotoButton.trailingAnchor, constant: 8),
             textView.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor, constant: -8),
             
             sendMessageButton.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor, constant: -14),
@@ -287,6 +351,8 @@ extension ChannelViewController {
 }
 
 enum CellType: String {
-    case cellSent
-    case cellReceived
+    case textSent
+    case textReceived
+    case imageSent
+    case imageReceived
 }
