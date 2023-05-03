@@ -22,6 +22,7 @@ final class ModuleAssembly {
         let presenter = ChannelPresenter(
             dataService: serviceAssembly.makeDataService(),
             profileService: serviceAssembly.makeProfileService(),
+            photoLoaderService: serviceAssembly.makePhotoLoaderService(),
             channel: channel)
         let vc = ChannelViewController(output: presenter)
         presenter.viewInput = vc
