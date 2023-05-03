@@ -54,25 +54,32 @@ final class ChannelCell: UITableViewCell {
         bubbleView.addSubview(timeLabel)
     }
     
+    private func setupSentCell(with model: MessageModel) {
+        bubbleView.backgroundColor = .appBubbleSent
+        bubbleView.arrowDirection = .right
+        messageLabel.textColor = .appBubbleTextSent
+        timeLabel.textColor = .appBubbleTextSent
+        bubbleView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4).isActive = true
+        bubbleView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8).isActive = true
+        bubbleView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8).isActive = false
+    }
+    
+    private func setupReceivedCell(with model: MessageModel) {
+        bubbleView.backgroundColor = .appBubbleReceived
+        bubbleView.arrowDirection = .left
+        messageLabel.textColor = .appBubbleTextReceived
+        timeLabel.textColor = .appBubbleTextReceived
+        nameLabel.text = model.userName
+        bubbleView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4).isActive = true
+        bubbleView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8).isActive = false
+        bubbleView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8).isActive = true
+    }
+    
     func configure(cellType: CellType, with model: MessageModel) {
         switch cellType {
-        case .cellSent:
-            bubbleView.backgroundColor = .appBubbleSent
-            bubbleView.arrowDirection = .right
-            messageLabel.textColor = .appBubbleTextSent
-            timeLabel.textColor = .appBubbleTextSent
-            bubbleView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4).isActive = true
-            bubbleView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8).isActive = true
-            bubbleView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8).isActive = false
-        case .cellReceived:
-            bubbleView.backgroundColor = .appBubbleReceived
-            bubbleView.arrowDirection = .left
-            messageLabel.textColor = .appBubbleTextReceived
-            timeLabel.textColor = .appBubbleTextReceived
-            nameLabel.text = model.userName
-            bubbleView.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4).isActive = true
-            bubbleView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8).isActive = false
-            bubbleView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8).isActive = true
+        case .textSent: setupSentCell(with: model)
+        case .textReceived: setupReceivedCell(with: model)
+        case .imageSent, .imageReceived: break
         }
         messageLabel.text = model.text
         timeLabel.text = model.date.onlyHoursAndMinutes()
@@ -95,8 +102,8 @@ extension ChannelCell {
         timeLabel.setContentCompressionResistancePriority(UILayoutPriority(1000), for: .horizontal)
         NSLayoutConstraint.activate([
             nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4),
-            nameLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 12),
-            nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
+            nameLabel.leadingAnchor.constraint(equalTo: bubbleView.leadingAnchor, constant: 14),
+            nameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -14),
             
             bubbleView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
             bubbleViewWidth,
@@ -107,7 +114,7 @@ extension ChannelCell {
             messageLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -7),
             
             timeLabel.bottomAnchor.constraint(equalTo: bubbleView.bottomAnchor, constant: -7),
-            timeLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -12)
+            timeLabel.trailingAnchor.constraint(equalTo: bubbleView.trailingAnchor, constant: -14)
         ])
     }
 }
