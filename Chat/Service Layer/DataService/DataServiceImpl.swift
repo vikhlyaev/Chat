@@ -9,7 +9,6 @@ final class DataServiceImpl {
     private let coreDataService: CoreDataService
     private let chatTransportService: ChatTransportService
     private let sseTransportService: SSETransportService
-    private let logService: LogService
     
     // MARK: - Storages
     
@@ -29,12 +28,10 @@ final class DataServiceImpl {
     
     init(coreDataService: CoreDataService,
          chatTransportService: ChatTransportService,
-         sseTransportService: SSETransportService,
-         logService: LogService) {
+         sseTransportService: SSETransportService) {
         self.coreDataService = coreDataService
         self.chatTransportService = chatTransportService
         self.sseTransportService = sseTransportService
-        self.logService = logService
         
         loadChannelsFromNetwork()
         subscribeOnEvents()
@@ -46,7 +43,9 @@ final class DataServiceImpl {
         sseTransportService.subscribeOnEvents()
             .receive(on: DispatchQueue.global(qos: .utility))
             .sink { completion in
-                print(completion)
+                if case .failure = completion {
+                    print("🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴")
+                }
             } receiveValue: { [weak self] event in
                 switch event.eventType {
                 case .add:
@@ -71,7 +70,7 @@ extension DataServiceImpl: DataService {
     
     // MARK: - CoreData methods
     
-    private func updateChannelsFromStorage() {
+    private func updateChannelsFromStorage() throws {
         do {
             let channelManagedObjects = try coreDataService.fetchChannels()
             let channels: [ChannelModel] = channelManagedObjects.compactMap { channelManagerObject in
@@ -90,12 +89,10 @@ extension DataServiceImpl: DataService {
                                     lastMessage: lastMessage,
                                     lastActivity: lastActivity)
             }
-            logService.success("Channels received")
             self.channels = channels
             self.channelsPublisher.send(self.channels)
         } catch {
-            logService.error("Channels not received")
-            fatalError()
+            throw DataServiceError.notReceivedChannels
         }
     }
     
@@ -107,7 +104,6 @@ extension DataServiceImpl: DataService {
             if let channelManagedObject = channelManagedObject {
                 channelManagedObject.lastMessage = channelModel.lastMessage
                 channelManagedObject.lastActivity = channelModel.lastActivity
-                logService.info("Channel updated")
             } else {
                 let channelManagedObject = ChannelManagedObject(context: context)
                 channelManagedObject.id = channelModel.id
@@ -116,7 +112,6 @@ extension DataServiceImpl: DataService {
                 channelManagedObject.lastMessage = channelModel.lastMessage
                 channelManagedObject.lastActivity = channelModel.lastActivity
                 channelManagedObject.messages = NSOrderedSet()
-                logService.info("Channel added")
             }
         }
     }
@@ -125,18 +120,12 @@ extension DataServiceImpl: DataService {
         coreDataService.update { context in
             let fetchRequest = ChannelManagedObject.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "id == %@", channelId as CVarArg)
-            guard
-                let channelManagedObject = try context.fetch(fetchRequest).first
-            else {
-                logService.error("The channel is not deleted from the database")
-                return
-            }
+            guard let channelManagedObject = try context.fetch(fetchRequest).first else { return }
             context.delete(channelManagedObject)
-            logService.info("The channel has been deleted from the database")
         }
     }
     
-    private func updateMessagesFromStorage(for channelId: String) {
+    private func updateMessagesFromStorage(for channelId: String) throws {
         messages = []
         do {
             let messageManagedObjects = try coreDataService.fetchMessages(for: channelId)
@@ -156,11 +145,10 @@ extension DataServiceImpl: DataService {
                                     userName: userName,
                                     date: date)
             }
-            logService.info("Messages received")
             self.messages = messages
             self.messagesPublisher.send(self.messages)
         } catch {
-            logService.error("Messages not received")
+            throw DataServiceError.notReceivedMessages
         }
     }
     
@@ -183,7 +171,6 @@ extension DataServiceImpl: DataService {
                 messageManagedObject.userName = messageModel.userName
                 messageManagedObject.date = messageModel.date
                 channelManagedObject.addToMessages(messageManagedObject)
-                logService.info("Messages added")
             }
         }
     }
@@ -193,11 +180,10 @@ extension DataServiceImpl: DataService {
     func loadChannelsFromNetwork() {
         chatTransportService.loadChannels()
             .sink { [weak self] _ in
-                self?.updateChannelsFromStorage()
+                try? self?.updateChannelsFromStorage()
             } receiveValue: { [weak self] channelModels in
                 channelModels.forEach { channelModel in
                     self?.saveChannelInStorage(with: channelModel)
-                    self?.logService.success("Channels loaded")
                 }
             }
             .store(in: &cancellables)
@@ -206,10 +192,9 @@ extension DataServiceImpl: DataService {
     func loadChannelFromNetwork(for channelId: String) {
         chatTransportService.loadChannel(with: channelId)
             .sink { [weak self] _ in
-                self?.updateChannelsFromStorage()
+                try? self?.updateChannelsFromStorage()
             } receiveValue: { [weak self] channelModel in
                 self?.saveChannelInStorage(with: channelModel)
-                self?.logService.success("Channel loaded")
             }
             .store(in: &cancellables)
 
@@ -222,7 +207,6 @@ extension DataServiceImpl: DataService {
             receiveValue: { [weak self] channelModel in
                 self?.saveChannelInStorage(with: channelModel)
                 completion(channelModel)
-                self?.logService.success("The channel is created and saved to the database")
             }
             .store(in: &cancellables)
     }
@@ -231,10 +215,7 @@ extension DataServiceImpl: DataService {
         chatTransportService.deleteChannel(with: channelId)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
-                switch completion {
-                case .finished:
-                    self?.logService.success("The channel is deleted on the server")
-                case .failure:
+                if case .failure = completion {
                     self?.deleteChannelFromStorage(with: channelId)
                 }
             }
@@ -245,7 +226,7 @@ extension DataServiceImpl: DataService {
     func loadMessagesFromNetwork(for channelId: String) {
         chatTransportService.loadMessages(for: channelId)
             .sink { [weak self] _ in
-                self?.updateMessagesFromStorage(for: channelId)
+                try? self?.updateMessagesFromStorage(for: channelId)
             } receiveValue: { [weak self] messageModels in
                 messageModels.forEach { messageModel in
                     self?.saveMessageModelInStorage(with: messageModel, in: channelId)
@@ -257,7 +238,7 @@ extension DataServiceImpl: DataService {
     func sendMessage(text: String, channelId: String, userId: String, userName: String) {
         chatTransportService.sendMessage(text: text, channelId: channelId, userId: userId, userName: userName)
             .sink { [weak self] _ in
-                self?.updateMessagesFromStorage(for: channelId)
+                try? self?.updateMessagesFromStorage(for: channelId)
                 self?.loadChannelFromNetwork(for: channelId)
             } receiveValue: { [weak self] newMessage in
                 self?.saveMessageModelInStorage(with: newMessage, in: channelId)
