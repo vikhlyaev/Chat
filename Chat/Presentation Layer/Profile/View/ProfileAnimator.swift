@@ -37,7 +37,7 @@ extension ProfileAnimator: UIViewControllerAnimatedTransitioning {
             UIView.animate(withDuration: duration) {
                 presentedView.transform = CGAffineTransform.identity
                 presentedView.alpha = 1
-                presentedView.backgroundColor = .systemBackground
+                presentedView.backgroundColor = .appBackground
             } completion: { finished in
                 transitionContext.completeTransition(finished)
             }
