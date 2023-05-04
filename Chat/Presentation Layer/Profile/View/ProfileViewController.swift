@@ -63,6 +63,8 @@ final class ProfileViewController: UIViewController {
         return button
     }()
     
+    private var particleAnimation: ParticleAnimation?
+    
     private let output: ProfileViewOutput
     
     // MARK: - Life Cycle
@@ -82,6 +84,17 @@ final class ProfileViewController: UIViewController {
         setupView()
         setConstraints()
         output.viewIsReady()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        guard let window = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first else { return }
+        particleAnimation = ParticleAnimation(on: window)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        particleAnimation = nil
     }
     
     // MARK: - Setup UI
@@ -129,7 +142,7 @@ final class ProfileViewController: UIViewController {
     @objc
     private func editButtonTapped() {
         output.didOpenProfileEdit(with: self)
-    }
+    }    
 }
 
 // MARK: - ProfileViewInput
