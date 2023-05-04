@@ -65,6 +65,16 @@ final class ProfileViewController: UIViewController {
     
     private var particleAnimation: ParticleAnimation?
     
+    private var isAnimatesEditButton = false {
+        didSet {
+            if isAnimatesEditButton {
+                stopEditButtonAnimation()
+            } else {
+                startEditButtonAnimation()
+            }
+        }
+    }
+    
     private let output: ProfileViewOutput
     
     // MARK: - Life Cycle
@@ -83,6 +93,7 @@ final class ProfileViewController: UIViewController {
         setupNavBar()
         setupView()
         setConstraints()
+        setupGestureRecognizers()
         output.viewIsReady()
     }
     
@@ -113,6 +124,59 @@ final class ProfileViewController: UIViewController {
         wrapperView.addSubview(nameLabel)
         wrapperView.addSubview(informationLabel)
         wrapperView.addSubview(editButton)
+    }
+    
+    private func setupGestureRecognizers() {
+        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressEditButton))
+        longPressRecognizer.cancelsTouchesInView = true
+        editButton.addGestureRecognizer(longPressRecognizer)
+    }
+    
+    private func startEditButtonAnimation() {
+        let rotate = CABasicAnimation(keyPath: "transform.rotation")
+        rotate.fromValue = -(CGFloat.pi / 180 * 18)
+        rotate.toValue = CGFloat.pi / 180 * 18
+        
+        let moveUpDown = CAKeyframeAnimation(keyPath: "position.y")
+        moveUpDown.values = [
+            editButton.layer.position.y,
+            editButton.layer.position.y - 5,
+            editButton.layer.position.y + 5,
+            editButton.layer.position.y
+        ]
+        moveUpDown.keyTimes = [0, 0.25, 0.75, 1]
+        
+        let moveLeftRight = CAKeyframeAnimation(keyPath: "position.x")
+        moveLeftRight.values = [
+            editButton.layer.position.x,
+            editButton.layer.position.x + 5,
+            editButton.layer.position.x - 5,
+            editButton.layer.position.x
+        ]
+        moveLeftRight.keyTimes = [0, 0.25, 0.75, 1]
+        
+        let animationGroup = CAAnimationGroup()
+        animationGroup.autoreverses = true
+        animationGroup.repeatCount = .infinity
+        animationGroup.duration = 0.3
+        animationGroup.animations = [moveUpDown, moveLeftRight, rotate]
+        
+        editButton.layer.add(animationGroup, forKey: "EditAnimation")
+    }
+    
+    private func stopEditButtonAnimation() {
+        UIView.animate(withDuration: 2, delay: 0, options: [.beginFromCurrentState]) {
+            self.editButton.layer.removeAllAnimations()
+        }
+    }
+    
+    @objc
+    private func longPressEditButton(_ longPressGestureRecognizer: UILongPressGestureRecognizer) {
+        if longPressGestureRecognizer.state == .ended {
+            isAnimatesEditButton = !isAnimatesEditButton
+        } else {
+            return
+        }
     }
     
     // MARK: - Add Photo methods
