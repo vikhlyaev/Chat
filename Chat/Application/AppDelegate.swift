@@ -14,6 +14,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let serviceAssembly = ServiceAssembly()
         let moduleAssembly = ModuleAssembly(serviceAssembly: serviceAssembly)
         
+        let themesService = serviceAssembly.makeThemesService()
+        window.overrideUserInterfaceStyle = themesService.currentTheme
+        
         let tabBarController = TabBarController(
             channelsCoordinator:
                 ChannelsCoordinator(
