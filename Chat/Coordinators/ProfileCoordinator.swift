@@ -28,4 +28,11 @@ extension ProfileCoordinator: ProfileModuleOutput {
         let window = UIApplication.shared.windows.filter { $0.isKeyWindow }.first
         window?.rootViewController?.present(vc, animated: true)
     }
+    
+    func moduleWantsToOpenProfileEdit(with transitioningDelegate: UIViewControllerTransitioningDelegate) {
+        let vc = moduleAssembly.makeProfileEditModule(with: transitioningDelegate)
+        vc.modalPresentationStyle = .custom
+        let window = UIApplication.shared.windows.filter { $0.isKeyWindow }.first
+        window?.rootViewController?.present(vc, animated: true)
+    }
 }

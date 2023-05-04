@@ -50,6 +50,15 @@ final class ModuleAssembly {
         return vc
     }
     
+    func makeProfileEditModule(with transitioningDelegate: UIViewControllerTransitioningDelegate) -> UIViewController {
+        let presenter = ProfileEditPresenter()
+        let vc = ProfileEditViewController(output: presenter)
+        presenter.viewInput = vc
+        let navigationController = UINavigationController(rootViewController: vc)
+        navigationController.transitioningDelegate = transitioningDelegate
+        return navigationController
+    }
+    
     func makePhotoSelectionModule(with delegate: PhotoSelectionDelegate) -> UIViewController {
         let presenter = PhotoSelectionPresenter(
             photoLoaderService: serviceAssembly.makePhotoLoaderService()
