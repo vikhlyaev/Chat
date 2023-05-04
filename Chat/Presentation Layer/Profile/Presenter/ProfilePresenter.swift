@@ -42,15 +42,12 @@ extension ProfilePresenter: ProfileViewOutput {
     }
     
     func didSaveProfile(_ profile: ProfileModel) {
-        viewInput?.startActivityIndicator()
         profileService.saveProfile(profile) { [weak self] error in
             guard error != nil else {
                 self?.viewInput?.showSuccessAlert()
-                self?.viewInput?.stopActivityIndicator()
                 return
             }
             self?.viewInput?.showErrorAlert(with: "Failed to save profile")
-            self?.viewInput?.stopActivityIndicator()
         }
     }
     
@@ -81,6 +78,10 @@ extension ProfilePresenter: ProfileViewOutput {
     
     func didLoadFromNetwork() {
         moduleOutput?.moduleWantsToOpenPhotoSelection(with: self)
+    }
+    
+    func didOpenProfileEdit(with transitioningDelegate: UIViewControllerTransitioningDelegate) {
+        moduleOutput?.moduleWantsToOpenProfileEdit(with: transitioningDelegate)
     }
 }
 

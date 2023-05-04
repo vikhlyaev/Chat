@@ -1,7 +1,6 @@
 import UIKit
 
 final class ProfileAnimator: NSObject {
-    
     enum TransitionMode {
         case present
         case dismiss
@@ -9,25 +8,15 @@ final class ProfileAnimator: NSObject {
     
     private let transitionMode: TransitionMode
     private let duration: CGFloat
-    private var circle: UIView?
     
     init(transitionMode: TransitionMode,
          duration: CGFloat) {
         self.transitionMode = transitionMode
         self.duration = duration
     }
-    
-    private func frameForCircle(
-        withViewCenter viewCenter: CGPoint,
-        viewSize: CGSize
-    ) -> CGRect {
-        let xLength = fmax(viewCenter.x, viewSize.width - viewCenter.x)
-        let yLength = fmax(viewCenter.y, viewSize.height - viewCenter.y)
-        let offsetVector = sqrt(xLength * xLength + yLength * yLength) * 2
-        let size = CGSize(width: offsetVector, height: offsetVector)
-        return CGRect(origin: .zero, size: size)
-    }
 }
+
+// MARK: - UIViewControllerAnimatedTransitioning
 
 extension ProfileAnimator: UIViewControllerAnimatedTransitioning {
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
@@ -42,21 +31,13 @@ extension ProfileAnimator: UIViewControllerAnimatedTransitioning {
                 transitionContext.completeTransition(false)
                 return
             }
-            
-            let circleFrame = frameForCircle(
-                withViewCenter: presentedView.center,
-                viewSize: presentedView.frame.size
-            )
-            circle = UIView(frame: circleFrame)
-            guard let circle else { return }
-            circle.layer.cornerRadius = circle.frame.height / 2
-            circle.center = presentedView.center
-            circle.backgroundColor
             presentedView.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
+            presentedView.alpha = 0
             containerView.addSubview(presentedView)
-            
             UIView.animate(withDuration: duration) {
                 presentedView.transform = CGAffineTransform.identity
+                presentedView.alpha = 1
+                presentedView.backgroundColor = .systemBackground
             } completion: { finished in
                 transitionContext.completeTransition(finished)
             }
@@ -65,11 +46,11 @@ extension ProfileAnimator: UIViewControllerAnimatedTransitioning {
                 transitionContext.completeTransition(false)
                 return
             }
-            
+            dismissedView.alpha = 1
             containerView.addSubview(dismissedView)
-            
             UIView.animate(withDuration: duration) {
                 dismissedView.transform = CGAffineTransform(scaleX: 0.001, y: 0.001)
+                dismissedView.alpha = 0
             } completion: { finished in
                 dismissedView.removeFromSuperview()
                 transitionContext.completeTransition(finished)

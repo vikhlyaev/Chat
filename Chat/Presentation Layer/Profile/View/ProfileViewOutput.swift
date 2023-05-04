@@ -1,4 +1,4 @@
-import Foundation
+import UIKit
 
 protocol ProfileViewOutput {
     var profileModel: ProfileModel? { get }
@@ -7,4 +7,5 @@ protocol ProfileViewOutput {
     func didTakePhoto()
     func didChooseFromGallery()
     func didLoadFromNetwork()
+    func didOpenProfileEdit(with transitioningDelegate: UIViewControllerTransitioningDelegate)
 }

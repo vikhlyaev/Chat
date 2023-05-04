@@ -3,21 +3,15 @@ import PhotosUI
 
 final class ProfileViewController: UIViewController {
     
-    // MARK: - Sections
-    
-    private enum TableViewSection: Int, CaseIterable {
-        case name, information
-        var title: String {
-            switch self {
-            case .name:
-                return "Name"
-            case .information:
-                return "Bio"
-            }
-        }
-    }
-    
     // MARK: - UI
+    
+    private lazy var wrapperView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .appSecondaryBackground
+        view.layer.cornerRadius = 10
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
     private lazy var photoImageView: UIImageView = {
         let imageView = UIImageView()
@@ -57,20 +51,17 @@ final class ProfileViewController: UIViewController {
         return label
     }()
     
-    private lazy var nameAndInformationTableView: UITableView = {
-        let tableView = UITableView(frame: .zero)
-        tableView.layer.borderWidth = 0.33
-        tableView.layer.borderColor = UIColor.separator.cgColor
-        tableView.bounces = false
-        tableView.allowsSelection = false
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
-        tableView.rowHeight = 44
-        tableView.isHidden = true
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        return tableView
+    private lazy var editButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.backgroundColor = .systemBlue
+        button.layer.cornerRadius = 14
+        button.setTitle("Edit Profile", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
+        button.titleLabel?.font = .systemFont(ofSize: 17, weight: .bold)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
-    
-    private lazy var activityIndicator = UIActivityIndicatorView(style: .medium)
     
     private let output: ProfileViewOutput
     
@@ -89,43 +80,32 @@ final class ProfileViewController: UIViewController {
         super.viewDidLoad()
         setupNavBar()
         setupView()
-        setupTableView()
-        setDelegates()
         setConstraints()
-        hideKeyboardByTapOnView()
         output.viewIsReady()
     }
     
     // MARK: - Setup UI
     
     private func setupNavBar() {
-        navigationItem.rightBarButtonItem = editButtonItem
-        title = "Profile"
+        navigationController?.navigationBar.prefersLargeTitles = true
+        title = "My profile"
+        navigationController?.tabBarItem.title = "Profile"
     }
     
     private func setupView() {
-        view.backgroundColor = .systemBackground
-        view.addSubview(photoImageView)
-        view.addSubview(addPhotoButton)
-        view.addSubview(nameLabel)
-        view.addSubview(informationLabel)
-        view.addSubview(nameAndInformationTableView)
-    }
-    
-    private func setupTableView() {
-        nameAndInformationTableView.registerReusableCell(cellType: ProfileEditCell.self)
-    }
-    
-    private func setDelegates() {
-        nameAndInformationTableView.dataSource = self
+        view.backgroundColor = .appBackground
+        view.addSubview(wrapperView)
+        wrapperView.addSubview(photoImageView)
+        wrapperView.addSubview(addPhotoButton)
+        wrapperView.addSubview(nameLabel)
+        wrapperView.addSubview(informationLabel)
+        wrapperView.addSubview(editButton)
     }
     
     // MARK: - Add Photo methods
     
     @objc
     private func addPhotoButtonTapped() {
-        setEditing(true, animated: true)
-        
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let takePhotoAction = UIAlertAction(title: "Take photo", style: .default) { [weak self] _ in
             self?.output.didTakePhoto()
@@ -144,128 +124,11 @@ final class ProfileViewController: UIViewController {
         present(alert, animated: true)
     }
     
-    // MARK: - Keyboard methods
-    
-    private func hideKeyboardByTapOnView() {
-        let tapScreen = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
-        tapScreen.cancelsTouchesInView = false
-        view.addGestureRecognizer(tapScreen)
-        
-        let swipeScreen = UISwipeGestureRecognizer(target: self, action: #selector(hideKeyboard))
-        swipeScreen.cancelsTouchesInView = false
-        view.addGestureRecognizer(swipeScreen)
-    }
+    // MARK: - Edit Button
     
     @objc
-    private func hideKeyboard() {
-        view.endEditing(true)
-    }
-    
-    // MARK: - TextField methods
-    
-    @objc
-    private func textFieldValueChanged(_ textField: UITextField) {
-        switch textField.tag {
-        case TableViewSection.name.rawValue:
-            nameLabel.text = textField.text
-        case TableViewSection.information.rawValue:
-            informationLabel.text = textField.text
-        default:
-            break
-        }
-    }
-}
-
-// MARK: - UITableViewDataSource
-
-extension ProfileViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        TableViewSection.allCases.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(cellType: ProfileEditCell.self)
-        let indexLastCellInSection = TableViewSection.allCases.count - 1
-        if indexPath.row == indexLastCellInSection {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
-        }
-        cell.textField.delegate = self
-        cell.textField.tag = indexPath.row
-        cell.configure(title: TableViewSection.allCases[indexPath.row].title, value: output.profileModel?[indexPath.row])
-        return cell
-    }
-}
-
-// MARK: - UITextFieldDelegate
-
-extension ProfileViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-    }
-    
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        textField.addTarget(self, action: #selector(textFieldValueChanged), for: .editingDidEnd)
-    }
-}
-
-// MARK: - Editing State
-
-extension ProfileViewController {
-    private func updateUI(editing: Bool) {
-        nameLabel.isHidden = editing
-        informationLabel.isHidden = editing
-        nameAndInformationTableView.isHidden = !editing
-        view.backgroundColor = editing ? .systemGray6 : .systemBackground
-    }
-    
-    private func updateNavBar(editing: Bool) {
-        if editing {
-            let cancelButton = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(cancelButtonTapped))
-            let saveButton = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(saveButtonTapped))
-            navigationItem.setLeftBarButton(cancelButton, animated: true)
-            navigationItem.setRightBarButton(saveButton, animated: true)
-        } else {
-            navigationItem.leftBarButtonItem = nil
-            navigationItem.setRightBarButton(editButtonItem, animated: true)
-        }
-    }
-    
-    override func setEditing(_ editing: Bool, animated: Bool) {
-        super.setEditing(editing, animated: animated)
-        updateNavBar(editing: editing)
-        updateUI(editing: editing)
-        if let cell = nameAndInformationTableView.visibleCells.first as? ProfileEditCell, editing {
-            cell.textField.becomeFirstResponder()
-        }
-    }
-    
-    @objc
-    private func saveButtonTapped() {
-        view.endEditing(true)
-        let activityIndicatorBarButton = UIBarButtonItem(customView: activityIndicator)
-        navigationItem.setRightBarButton(activityIndicatorBarButton, animated: true)
-        output.didSaveProfile(
-            ProfileModel(
-                name: nameLabel.text,
-                information: informationLabel.text,
-                photo: photoImageView.image
-            )
-        )
-        setEditing(false, animated: true)
-    }
-    
-    @objc
-    private func cancelButtonTapped() {
-        setEditing(false, animated: true)
-        photoImageView.image = output.profileModel?.photo
-        guard
-            let nameCell = nameAndInformationTableView.visibleCells[0] as? ProfileEditCell,
-            let infoCell = nameAndInformationTableView.visibleCells[1] as? ProfileEditCell
-        else {
-            return
-        }
-        nameCell.textField.text = output.profileModel?.name
-        infoCell.textField.text = output.profileModel?.information
+    private func editButtonTapped() {
+        output.didOpenProfileEdit(with: self)
     }
 }
 
@@ -274,14 +137,6 @@ extension ProfileViewController {
 extension ProfileViewController: ProfileViewInput {
     func showController(_ controller: UIViewController) {
         present(controller, animated: true)
-    }
-    
-    func startActivityIndicator() {
-        activityIndicator.startAnimating()
-    }
-    
-    func stopActivityIndicator() {
-        activityIndicator.stopAnimating()
     }
     
     func updatePhoto(_ photo: UIImage) {
@@ -312,31 +167,52 @@ extension ProfileViewController: ProfileViewInput {
     }
 }
 
+// MARK: - UIViewControllerTransitioningDelegate
+
+extension ProfileViewController: UIViewControllerTransitioningDelegate {
+    func animationController(forPresented presented: UIViewController,
+                             presenting: UIViewController,
+                             source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        ProfileAnimator(transitionMode: .present,
+                        duration: 1)
+    }
+    
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        ProfileAnimator(transitionMode: .dismiss,
+                        duration: 1)
+    }
+}
+
 // MARK: - Setting Constraints
 
 extension ProfileViewController {
     private func setConstraints() {
         NSLayoutConstraint.activate([
-            photoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
-            photoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            wrapperView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15),
+            wrapperView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            wrapperView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            
+            photoImageView.topAnchor.constraint(equalTo: wrapperView.topAnchor, constant: 32),
+            photoImageView.centerXAnchor.constraint(equalTo: wrapperView.centerXAnchor),
             photoImageView.widthAnchor.constraint(equalToConstant: 150),
             photoImageView.heightAnchor.constraint(equalToConstant: 150),
             
             addPhotoButton.topAnchor.constraint(equalTo: photoImageView.bottomAnchor, constant: 24),
-            addPhotoButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            addPhotoButton.centerXAnchor.constraint(equalTo: wrapperView.centerXAnchor),
             
             nameLabel.topAnchor.constraint(equalTo: addPhotoButton.bottomAnchor, constant: 24),
-            nameLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            nameLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            nameLabel.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor, constant: 16),
+            nameLabel.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor, constant: -16),
             
             informationLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 10),
-            informationLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            informationLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            
-            nameAndInformationTableView.topAnchor.constraint(equalTo: addPhotoButton.bottomAnchor, constant: 24),
-            nameAndInformationTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            nameAndInformationTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            nameAndInformationTableView.heightAnchor.constraint(equalToConstant: 90)
+            informationLabel.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor, constant: 16),
+            informationLabel.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor, constant: -16),
+          
+            editButton.topAnchor.constraint(equalTo: informationLabel.bottomAnchor, constant: 24),
+            editButton.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor, constant: 16),
+            editButton.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor, constant: -16),
+            editButton.bottomAnchor.constraint(equalTo: wrapperView.bottomAnchor, constant: -16),
+            editButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
 }
