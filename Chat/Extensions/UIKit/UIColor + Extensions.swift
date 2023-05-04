@@ -30,4 +30,18 @@ extension UIColor {
             UIColor.white
         }
     }
+    static var appBackground: UIColor {
+        return UIColor { (traits) -> UIColor in
+            return traits.userInterfaceStyle == .light ?
+                .systemGray6 :
+                .black
+        }
+    }
+    static var appSecondaryBackground: UIColor {
+        return UIColor { (traits) -> UIColor in
+            return traits.userInterfaceStyle == .light ?
+                .white :
+                .systemGray6
+        }
+    }
 }
