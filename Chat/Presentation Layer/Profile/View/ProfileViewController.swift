@@ -17,7 +17,7 @@ final class ProfileViewController: UIViewController {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 75
+        imageView.layer.cornerRadius = 64
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
@@ -271,8 +271,8 @@ extension ProfileViewController {
             
             photoImageView.topAnchor.constraint(equalTo: wrapperView.topAnchor, constant: 32),
             photoImageView.centerXAnchor.constraint(equalTo: wrapperView.centerXAnchor),
-            photoImageView.widthAnchor.constraint(equalToConstant: 150),
-            photoImageView.heightAnchor.constraint(equalToConstant: 150),
+            photoImageView.widthAnchor.constraint(equalToConstant: 128),
+            photoImageView.heightAnchor.constraint(equalToConstant: 128),
             
             addPhotoButton.topAnchor.constraint(equalTo: photoImageView.bottomAnchor, constant: 24),
             addPhotoButton.centerXAnchor.constraint(equalTo: wrapperView.centerXAnchor),
