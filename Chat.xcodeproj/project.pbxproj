@@ -52,6 +52,9 @@
 		0A72EC8A2A02EB43000AED23 /* ProfileEditPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A72EC892A02EB43000AED23 /* ProfileEditPresenter.swift */; };
 		0A72EC8E2A037FF3000AED23 /* ProfileAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A72EC8D2A037FF3000AED23 /* ProfileAnimator.swift */; };
 		0A72EC962A03D35C000AED23 /* ParticleAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A72EC952A03D35C000AED23 /* ParticleAnimation.swift */; };
+		0A751AAC2A04B51C003A11B2 /* PhotoAddingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A751AAB2A04B51C003A11B2 /* PhotoAddingService.swift */; };
+		0A751AAE2A04B53C003A11B2 /* PhotoAddingServiceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A751AAD2A04B53C003A11B2 /* PhotoAddingServiceImpl.swift */; };
+		0A751AB12A04B5F0003A11B2 /* PhotoAddingServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A751AB02A04B5F0003A11B2 /* PhotoAddingServiceDelegate.swift */; };
 		0A80C74229E7DBAE00C96E8C /* ChatService + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A80C74129E7DBAE00C96E8C /* ChatService + Extensions.swift */; };
 		0A856FE429FAFA3700F46AFC /* ProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A856FE229FAFA3700F46AFC /* ProfileService.swift */; };
 		0A856FE529FAFA3700F46AFC /* ProfileServiceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A856FE329FAFA3700F46AFC /* ProfileServiceImpl.swift */; };
@@ -151,6 +154,9 @@
 		0A72EC892A02EB43000AED23 /* ProfileEditPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditPresenter.swift; sourceTree = "<group>"; };
 		0A72EC8D2A037FF3000AED23 /* ProfileAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileAnimator.swift; sourceTree = "<group>"; };
 		0A72EC952A03D35C000AED23 /* ParticleAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleAnimation.swift; sourceTree = "<group>"; };
+		0A751AAB2A04B51C003A11B2 /* PhotoAddingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAddingService.swift; sourceTree = "<group>"; };
+		0A751AAD2A04B53C003A11B2 /* PhotoAddingServiceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAddingServiceImpl.swift; sourceTree = "<group>"; };
+		0A751AB02A04B5F0003A11B2 /* PhotoAddingServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAddingServiceDelegate.swift; sourceTree = "<group>"; };
 		0A80C74129E7DBAE00C96E8C /* ChatService + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatService + Extensions.swift"; sourceTree = "<group>"; };
 		0A856FE229FAFA3700F46AFC /* ProfileService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileService.swift; sourceTree = "<group>"; };
 		0A856FE329FAFA3700F46AFC /* ProfileServiceImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileServiceImpl.swift; sourceTree = "<group>"; };
@@ -263,6 +269,7 @@
 				0A59D0D329FC37FA008FD2C6 /* PhotoLoaderService */,
 				0A856FE629FAFA4200F46AFC /* ThemesService */,
 				0A856FE129FAFA3700F46AFC /* ProfileService */,
+				0A751AAF2A04B540003A11B2 /* PhotoAddingService */,
 			);
 			path = "Service Layer";
 			sourceTree = "<group>";
@@ -428,6 +435,16 @@
 				0A72EC952A03D35C000AED23 /* ParticleAnimation.swift */,
 			);
 			path = ParticleAnimation;
+			sourceTree = "<group>";
+		};
+		0A751AAF2A04B540003A11B2 /* PhotoAddingService */ = {
+			isa = PBXGroup;
+			children = (
+				0A751AAB2A04B51C003A11B2 /* PhotoAddingService.swift */,
+				0A751AAD2A04B53C003A11B2 /* PhotoAddingServiceImpl.swift */,
+				0A751AB02A04B5F0003A11B2 /* PhotoAddingServiceDelegate.swift */,
+			);
+			path = PhotoAddingService;
 			sourceTree = "<group>";
 		};
 		0A80C74029E7DB5500C96E8C /* TFSChatTransport */ = {
@@ -922,6 +939,7 @@
 				0A47FB6E29FAB53A00D4736F /* CoreDataService.swift in Sources */,
 				0A72EC962A03D35C000AED23 /* ParticleAnimation.swift in Sources */,
 				0A59D0D729FC3842008FD2C6 /* PhotoLoaderServiceImpl.swift in Sources */,
+				0A751AAC2A04B51C003A11B2 /* PhotoAddingService.swift in Sources */,
 				0ACD164C29FFB9D400F32CAC /* SettingsCoordinator.swift in Sources */,
 				0A85700029FBE4E700F46AFC /* ThemesButton.swift in Sources */,
 				0A47FB7829FABACF00D4736F /* ServiceAssembly.swift in Sources */,
@@ -934,6 +952,7 @@
 				0A59D0CF29FC1510008FD2C6 /* NetworkServiceImpl.swift in Sources */,
 				0AEAF81129FE78FF00B6024F /* ChannelPresenter.swift in Sources */,
 				0A85700229FBE4E700F46AFC /* ThemesView.swift in Sources */,
+				0A751AB12A04B5F0003A11B2 /* PhotoAddingServiceDelegate.swift in Sources */,
 				0AC2F8E829DFC2C100A6F320 /* BubbleView.swift in Sources */,
 				0ACD165229FFF7ED00F32CAC /* SSETransportServiceImpl.swift in Sources */,
 				0A85700329FBE4E700F46AFC /* SettingsViewController.swift in Sources */,
@@ -946,6 +965,7 @@
 				0A47FB7029FAB53A00D4736F /* FileManagerServiceImpl.swift in Sources */,
 				0A4D605529DB3EAA00585535 /* ProfileViewController.swift in Sources */,
 				0ACD160F29FEF45C00F32CAC /* ProfileModuleOutput.swift in Sources */,
+				0A751AAE2A04B53C003A11B2 /* PhotoAddingServiceImpl.swift in Sources */,
 				0A59D0C929FBF31E008FD2C6 /* PhotoSelectionCell.swift in Sources */,
 				0A856FEC29FB9BE100F46AFC /* ProfilePresenter.swift in Sources */,
 			);
