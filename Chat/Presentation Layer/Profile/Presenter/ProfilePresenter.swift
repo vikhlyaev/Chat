@@ -2,12 +2,12 @@ import Foundation
 import PhotosUI
 
 final class ProfilePresenter: NSObject {
-    weak var viewInput: ProfileViewInput?
     private let profileService: ProfileService
     private let photoLoaderService: PhotoLoaderService
     private var photoAddingService: PhotoAddingService
     private var profileModel: ProfileModel?
     weak var moduleOutput: ProfileModuleOutput?
+    weak var viewInput: ProfileViewInput?
     
     init(profileService: ProfileService,
          photoLoaderService: PhotoLoaderService,
@@ -53,7 +53,8 @@ extension ProfilePresenter: ProfileViewOutput {
     }
     
     func didOpenProfileEdit(with transitioningDelegate: UIViewControllerTransitioningDelegate) {
-        moduleOutput?.moduleWantsToOpenProfileEdit(with: transitioningDelegate)
+        guard let profileModel else { return }
+        moduleOutput?.moduleWantsToOpenProfileEdit(with: profileModel, andTransitioningDelegate: transitioningDelegate)
     }
 }
 
