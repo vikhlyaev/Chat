@@ -134,7 +134,11 @@ final class ProfileEditViewController: UIViewController {
             self?.output.didChooseFromGallery()
         }
         let loadFromNetworkAction = UIAlertAction(title: "Load from network", style: .default) { [weak self] _ in
-            self?.output.didLoadFromNetwork()
+            self?.dismiss(animated: false) {
+                self?.saveButtonTapped()
+                self?.output.didLoadFromNetwork()
+            }
+            
         }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         alert.addAction(takePhotoAction)
