@@ -172,7 +172,7 @@ final class ProfileViewController: UIViewController {
     
     @objc
     private func longPressEditButton(_ longPressGestureRecognizer: UILongPressGestureRecognizer) {
-        if longPressGestureRecognizer.state == .ended {
+        if longPressGestureRecognizer.state == .began {
             isAnimatesEditButton = !isAnimatesEditButton
         } else {
             return
@@ -212,10 +212,6 @@ final class ProfileViewController: UIViewController {
 // MARK: - ProfileViewInput
 
 extension ProfileViewController: ProfileViewInput {
-    func showController(_ controller: UIViewController) {
-        present(controller, animated: true)
-    }
-    
     func updatePhoto(_ photo: UIImage) {
         photoImageView.image = photo
     }
@@ -236,11 +232,8 @@ extension ProfileViewController: ProfileViewInput {
         present(alert, animated: true)
     }
     
-    func showSuccessAlert() {
-        let alert = UIAlertController(title: "Success", message: "You are breathtaking", preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "OK", style: .cancel)
-        alert.addAction(okAction)
-        present(alert, animated: true)
+    func showViewController(_ viewController: UIViewController) {
+        present(viewController, animated: true)
     }
 }
 
