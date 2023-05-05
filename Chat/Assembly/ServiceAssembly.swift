@@ -40,4 +40,8 @@ final class ServiceAssembly {
                         chatTransportService: makeChatTransportService(),
                         sseTransportService: makeSSETransportService())
     }
+    
+    func makePhotoAddingService() -> PhotoAddingService {
+        PhotoAddingServiceImpl()
+    }
 }

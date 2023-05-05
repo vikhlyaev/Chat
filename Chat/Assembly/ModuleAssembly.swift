@@ -43,6 +43,7 @@ final class ModuleAssembly {
         let presenter = ProfilePresenter(
             profileService: serviceAssembly.makeProfileService(),
             photoLoaderService: serviceAssembly.makePhotoLoaderService(),
+            photoAddingService: serviceAssembly.makePhotoAddingService(),
             moduleOutput: moduleOutput
         )
         let vc = ProfileViewController(output: presenter)
@@ -51,7 +52,9 @@ final class ModuleAssembly {
     }
     
     func makeProfileEditModule(with transitioningDelegate: UIViewControllerTransitioningDelegate) -> UIViewController {
-        let presenter = ProfileEditPresenter()
+        let presenter = ProfileEditPresenter(
+            profileService: serviceAssembly.makeProfileService()
+        )
         let vc = ProfileEditViewController(output: presenter)
         presenter.viewInput = vc
         let navigationController = UINavigationController(rootViewController: vc)
@@ -61,9 +64,10 @@ final class ModuleAssembly {
     
     func makePhotoSelectionModule(with delegate: PhotoSelectionDelegate) -> UIViewController {
         let presenter = PhotoSelectionPresenter(
-            photoLoaderService: serviceAssembly.makePhotoLoaderService()
+            photoLoaderService: serviceAssembly.makePhotoLoaderService(),
+            delegate: delegate
         )
-        let vc = PhotoSelectionViewController(output: presenter, delegate: delegate)
+        let vc = PhotoSelectionViewController(output: presenter)
         let navigationController = UINavigationController(rootViewController: vc)
         presenter.viewInput = vc
         return navigationController
