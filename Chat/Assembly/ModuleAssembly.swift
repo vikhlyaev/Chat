@@ -51,9 +51,19 @@ final class ModuleAssembly {
         return vc
     }
     
-    func makeProfileEditModule(with transitioningDelegate: UIViewControllerTransitioningDelegate) -> UIViewController {
+    func makeProfileEditModule(
+        with profileModel: ProfileModel,
+        moduleOutput: ProfileEditModuleOutput,
+        transitioningDelegate: UIViewControllerTransitioningDelegate,
+        delegate: ProfileEditDelegate
+    ) -> UIViewController {
         let presenter = ProfileEditPresenter(
-            profileService: serviceAssembly.makeProfileService()
+            profileModel: profileModel,
+            profileService: serviceAssembly.makeProfileService(),
+            photoLoaderService: serviceAssembly.makePhotoLoaderService(),
+            photoAddingService: serviceAssembly.makePhotoAddingService(),
+            moduleOutput: moduleOutput,
+            delegate: delegate
         )
         let vc = ProfileEditViewController(output: presenter)
         presenter.viewInput = vc

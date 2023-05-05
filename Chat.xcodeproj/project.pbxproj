@@ -55,6 +55,8 @@
 		0A751AAC2A04B51C003A11B2 /* PhotoAddingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A751AAB2A04B51C003A11B2 /* PhotoAddingService.swift */; };
 		0A751AAE2A04B53C003A11B2 /* PhotoAddingServiceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A751AAD2A04B53C003A11B2 /* PhotoAddingServiceImpl.swift */; };
 		0A751AB12A04B5F0003A11B2 /* PhotoAddingServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A751AB02A04B5F0003A11B2 /* PhotoAddingServiceDelegate.swift */; };
+		0A751AB32A04E5E8003A11B2 /* ProfileEditModuleOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A751AB22A04E5E8003A11B2 /* ProfileEditModuleOutput.swift */; };
+		0A751AB52A05000C003A11B2 /* ProfileEditDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A751AB42A05000C003A11B2 /* ProfileEditDelegate.swift */; };
 		0A80C74229E7DBAE00C96E8C /* ChatService + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A80C74129E7DBAE00C96E8C /* ChatService + Extensions.swift */; };
 		0A856FE429FAFA3700F46AFC /* ProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A856FE229FAFA3700F46AFC /* ProfileService.swift */; };
 		0A856FE529FAFA3700F46AFC /* ProfileServiceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A856FE329FAFA3700F46AFC /* ProfileServiceImpl.swift */; };
@@ -157,6 +159,8 @@
 		0A751AAB2A04B51C003A11B2 /* PhotoAddingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAddingService.swift; sourceTree = "<group>"; };
 		0A751AAD2A04B53C003A11B2 /* PhotoAddingServiceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAddingServiceImpl.swift; sourceTree = "<group>"; };
 		0A751AB02A04B5F0003A11B2 /* PhotoAddingServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAddingServiceDelegate.swift; sourceTree = "<group>"; };
+		0A751AB22A04E5E8003A11B2 /* ProfileEditModuleOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditModuleOutput.swift; sourceTree = "<group>"; };
+		0A751AB42A05000C003A11B2 /* ProfileEditDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditDelegate.swift; sourceTree = "<group>"; };
 		0A80C74129E7DBAE00C96E8C /* ChatService + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatService + Extensions.swift"; sourceTree = "<group>"; };
 		0A856FE229FAFA3700F46AFC /* ProfileService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileService.swift; sourceTree = "<group>"; };
 		0A856FE329FAFA3700F46AFC /* ProfileServiceImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileServiceImpl.swift; sourceTree = "<group>"; };
@@ -406,6 +410,7 @@
 			children = (
 				0A72EC8B2A02EB48000AED23 /* View */,
 				0A72EC8C2A02EB4F000AED23 /* Presenter */,
+				0A751AB22A04E5E8003A11B2 /* ProfileEditModuleOutput.swift */,
 			);
 			path = ProfileEdit;
 			sourceTree = "<group>";
@@ -417,6 +422,7 @@
 				0A72EC832A02EB29000AED23 /* ProfileEditViewController.swift */,
 				0A72EC852A02EB32000AED23 /* ProfileEditViewOutput.swift */,
 				0A72EC872A02EB3A000AED23 /* ProfileEditViewInput.swift */,
+				0A751AB42A05000C003A11B2 /* ProfileEditDelegate.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -896,6 +902,7 @@
 				0A9009772A01054800C8DDB6 /* ChannelImageCell.swift in Sources */,
 				0A3ED4AD2A026E5000EDCA2F /* ProfileServiceError.swift in Sources */,
 				0A85700429FBE4E700F46AFC /* SettingsViewInput.swift in Sources */,
+				0A751AB52A05000C003A11B2 /* ProfileEditDelegate.swift in Sources */,
 				0A72EC862A02EB32000AED23 /* ProfileEditViewOutput.swift in Sources */,
 				0AF3176829A0D667005417A5 /* AppDelegate.swift in Sources */,
 				0A856FF029FB9BFE00F46AFC /* ProfileViewOutput.swift in Sources */,
@@ -943,6 +950,7 @@
 				0ACD164C29FFB9D400F32CAC /* SettingsCoordinator.swift in Sources */,
 				0A85700029FBE4E700F46AFC /* ThemesButton.swift in Sources */,
 				0A47FB7829FABACF00D4736F /* ServiceAssembly.swift in Sources */,
+				0A751AB32A04E5E8003A11B2 /* ProfileEditModuleOutput.swift in Sources */,
 				0A3ED4A92A026C8D00EDCA2F /* FileManagerServiceError.swift in Sources */,
 				0AB6B5BA29C1E5CD00361A2C /* CustomNavBar.swift in Sources */,
 				0ACD165029FFF7E400F32CAC /* SSETransportService.swift in Sources */,

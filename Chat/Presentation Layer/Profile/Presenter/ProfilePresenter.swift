@@ -54,7 +54,15 @@ extension ProfilePresenter: ProfileViewOutput {
     
     func didOpenProfileEdit(with transitioningDelegate: UIViewControllerTransitioningDelegate) {
         guard let profileModel else { return }
-        moduleOutput?.moduleWantsToOpenProfileEdit(with: profileModel, andTransitioningDelegate: transitioningDelegate)
+        moduleOutput?.moduleWantsToOpenProfileEdit(with: profileModel, transitioningDelegate: transitioningDelegate, delegate: self)
+    }
+}
+
+// MARK: - ProfileEditDelegate
+
+extension ProfilePresenter: ProfileEditDelegate {
+    func didUpdateProfile() {
+        loadProfile()
     }
 }
 

@@ -22,15 +22,24 @@ final class ProfileCoordinator {
     }
 }
 
-extension ProfileCoordinator: ProfileModuleOutput {
+extension ProfileCoordinator: ProfileModuleOutput, ProfileEditModuleOutput {
     func moduleWantsToOpenPhotoSelection(with delegate: PhotoSelectionDelegate) {
         let vc = moduleAssembly.makePhotoSelectionModule(with: delegate)
         let window = UIApplication.shared.windows.filter { $0.isKeyWindow }.first
         window?.rootViewController?.present(vc, animated: true)
     }
     
-    func moduleWantsToOpenProfileEdit(with transitioningDelegate: UIViewControllerTransitioningDelegate) {
-        let vc = moduleAssembly.makeProfileEditModule(with: transitioningDelegate)
+    func moduleWantsToOpenProfileEdit(
+        with profileModel: ProfileModel,
+        transitioningDelegate: UIViewControllerTransitioningDelegate,
+        delegate: ProfileEditDelegate
+    ) {
+        let vc = moduleAssembly.makeProfileEditModule(
+            with: profileModel,
+            moduleOutput: self,
+            transitioningDelegate: transitioningDelegate,
+            delegate: delegate
+        )
         vc.modalPresentationStyle = .custom
         let window = UIApplication.shared.windows.filter { $0.isKeyWindow }.first
         window?.rootViewController?.present(vc, animated: true)
