@@ -20,15 +20,12 @@ final class PhotoSelectionViewController: UIViewController {
     }()
     
     private var photosCollectionViewDataSource: UICollectionViewDiffableDataSource<Int, PhotoModel>?
-    
     private let output: PhotoSelectionViewOutput
-    weak var delegate: PhotoSelectionDelegate?
     
     // MARK: - Life Cycle
     
-    init(output: PhotoSelectionViewOutput, delegate: PhotoSelectionDelegate?) {
+    init(output: PhotoSelectionViewOutput) {
         self.output = output
-        self.delegate = delegate
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -138,7 +135,7 @@ extension PhotoSelectionViewController: UICollectionViewDelegate {
         guard let currentPhotoModel = photosCollectionViewDataSource?.snapshot().itemIdentifiers[indexPath.item] else {
             return
         }
-        delegate?.didSelectPhotoModel(with: currentPhotoModel)
+        output.didSelectPhotoModel(with: currentPhotoModel)
         dismiss(animated: true)
     }
     

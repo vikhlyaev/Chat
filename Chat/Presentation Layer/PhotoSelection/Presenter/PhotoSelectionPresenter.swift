@@ -2,15 +2,15 @@ import UIKit
 import Combine
 
 final class PhotoSelectionPresenter {
-    
     private let photoLoaderService: PhotoLoaderService
-    
     weak var viewInput: PhotoSelectionViewInput?
+    weak var delegate: PhotoSelectionDelegate?
     
     private var photos: [PhotoModel] = []
     
-    init(photoLoaderService: PhotoLoaderService) {
+    init(photoLoaderService: PhotoLoaderService, delegate: PhotoSelectionDelegate) {
         self.photoLoaderService = photoLoaderService
+        self.delegate = delegate
     }
     
     private func didLoadPhoto(_ photos: [PhotoModel]) {
@@ -21,6 +21,10 @@ final class PhotoSelectionPresenter {
 // MARK: - PhotoSelectionViewOutput
 
 extension PhotoSelectionPresenter: PhotoSelectionViewOutput {
+    func didSelectPhotoModel(with photoModel: PhotoModel) {
+        delegate?.didSelectPhotoModel(with: photoModel)
+    }
+    
     var photosCount: Int {
         photos.count
     }
