@@ -13,23 +13,9 @@ final class ProfileViewController: UIViewController {
         return view
     }()
     
-    private lazy var photoImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 64
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
-    }()
-    
-    private lazy var addPhotoButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Add Photo", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 17)
-        button.addTarget(self, action: #selector(addPhotoButtonTapped), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
+    private lazy var photoAddingView = PhotoAddingView(photoWidth: 128) { [weak self] in
+        self?.output.didOpenPhotoAddingAlertSheet()
+    }
     
     private lazy var nameLabel: UILabel = {
         let label = UILabel()
@@ -119,8 +105,7 @@ final class ProfileViewController: UIViewController {
     private func setupView() {
         view.backgroundColor = .appBackground
         view.addSubview(wrapperView)
-        wrapperView.addSubview(photoImageView)
-        wrapperView.addSubview(addPhotoButton)
+        wrapperView.addSubview(photoAddingView)
         wrapperView.addSubview(nameLabel)
         wrapperView.addSubview(informationLabel)
         wrapperView.addSubview(editButton)
@@ -179,28 +164,6 @@ final class ProfileViewController: UIViewController {
         }
     }
     
-    // MARK: - Add Photo methods
-    
-    @objc
-    private func addPhotoButtonTapped() {
-        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let takePhotoAction = UIAlertAction(title: "Take photo", style: .default) { [weak self] _ in
-            self?.output.didTakePhoto()
-        }
-        let chooseFromGalleryAction = UIAlertAction(title: "Choose from gallery", style: .default) { [weak self] _ in
-            self?.output.didChooseFromGallery()
-        }
-        let loadFromNetworkAction = UIAlertAction(title: "Load from network", style: .default) { [weak self] _ in
-            self?.output.didLoadFromNetwork()
-        }
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
-        alert.addAction(takePhotoAction)
-        alert.addAction(chooseFromGalleryAction)
-        alert.addAction(loadFromNetworkAction)
-        alert.addAction(cancelAction)
-        present(alert, animated: true)
-    }
-    
     // MARK: - Edit Button
     
     @objc
@@ -213,13 +176,13 @@ final class ProfileViewController: UIViewController {
 
 extension ProfileViewController: ProfileViewInput {
     func updatePhoto(_ photo: UIImage) {
-        photoImageView.image = photo
+        photoAddingView.setPhoto(photo)
     }
     
     func showProfile(with model: ProfileModel) {
         nameLabel.text = model.name
         informationLabel.text = model.information
-        photoImageView.image = model.photo
+        photoAddingView.setPhoto(model.photo)
     }
     
     func showErrorAlert(with text: String) {
@@ -262,15 +225,11 @@ extension ProfileViewController {
             wrapperView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             wrapperView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             
-            photoImageView.topAnchor.constraint(equalTo: wrapperView.topAnchor, constant: 32),
-            photoImageView.centerXAnchor.constraint(equalTo: wrapperView.centerXAnchor),
-            photoImageView.widthAnchor.constraint(equalToConstant: 128),
-            photoImageView.heightAnchor.constraint(equalToConstant: 128),
+            photoAddingView.topAnchor.constraint(equalTo: wrapperView.topAnchor, constant: 32),
+            photoAddingView.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor),
+            photoAddingView.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor),
             
-            addPhotoButton.topAnchor.constraint(equalTo: photoImageView.bottomAnchor, constant: 24),
-            addPhotoButton.centerXAnchor.constraint(equalTo: wrapperView.centerXAnchor),
-            
-            nameLabel.topAnchor.constraint(equalTo: addPhotoButton.bottomAnchor, constant: 24),
+            nameLabel.topAnchor.constraint(equalTo: photoAddingView.bottomAnchor, constant: 24),
             nameLabel.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor, constant: 16),
             nameLabel.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor, constant: -16),
             

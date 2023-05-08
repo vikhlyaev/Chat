@@ -5,6 +5,7 @@ final class ProfilePresenter: NSObject {
     private let profileService: ProfileService
     private let photoLoaderService: PhotoLoaderService
     private var photoAddingService: PhotoAddingService
+    private let alertCreatorService: AlertCreatorService
     private var profileModel: ProfileModel?
     weak var moduleOutput: ProfileModuleOutput?
     weak var viewInput: ProfileViewInput?
@@ -12,10 +13,12 @@ final class ProfilePresenter: NSObject {
     init(profileService: ProfileService,
          photoLoaderService: PhotoLoaderService,
          photoAddingService: PhotoAddingService,
+         alertCreatorService: AlertCreatorService,
          moduleOutput: ProfileModuleOutput?) {
         self.profileService = profileService
         self.photoLoaderService = photoLoaderService
         self.photoAddingService = photoAddingService
+        self.alertCreatorService = alertCreatorService
         self.moduleOutput = moduleOutput
     }
     
@@ -35,21 +38,27 @@ final class ProfilePresenter: NSObject {
 // MARK: - ProfileViewOutput
 
 extension ProfilePresenter: ProfileViewOutput {
+    func didOpenPhotoAddingAlertSheet() {
+        guard let viewInput else { return }
+        viewInput.showViewController(
+            alertCreatorService.makePhotoAddingAlertSheet(
+                takePhotoAction: { [weak self] in
+                    self?.photoAddingService.didTakePhoto()
+                },
+                chooseFromGalleryAction: { [weak self] in
+                    self?.photoAddingService.didChooseFromGallery()
+                },
+                loadFromNetworkAction: { [weak self] in
+                    guard let self else { return }
+                    self.moduleOutput?.moduleWantsToOpenPhotoSelection(with: self)
+                }
+            )
+        )
+    }
+    
     func viewIsReady() {
         photoAddingService.delegate = self
         loadProfile()
-    }
-    
-    func didTakePhoto() {
-        photoAddingService.didTakePhoto()
-    }
-    
-    func didChooseFromGallery() {
-        photoAddingService.didChooseFromGallery()
-    }
-    
-    func didLoadFromNetwork() {
-        moduleOutput?.moduleWantsToOpenPhotoSelection(with: self)
     }
     
     func didOpenProfileEdit(with transitioningDelegate: UIViewControllerTransitioningDelegate) {
