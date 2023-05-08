@@ -27,8 +27,10 @@ final class ServiceAssembly {
     }
     
     func makeProfileService() -> ProfileService {
-        ProfileServiceImpl(coreDataService: makeCoreDataService(),
-                           fileManagerService: makeFileManagerService())
+        ProfileServiceImpl(
+            coreDataService: makeCoreDataService(),
+            fileManagerService: makeFileManagerService()
+        )
     }
     
     func makePhotoLoaderService() -> PhotoLoaderService {
@@ -36,9 +38,11 @@ final class ServiceAssembly {
     }
     
     func makeDataService() -> DataService {
-        DataServiceImpl(coreDataService: makeCoreDataService(),
-                        chatTransportService: makeChatTransportService(),
-                        sseTransportService: makeSSETransportService())
+        DataServiceImpl(
+            coreDataService: makeCoreDataService(),
+            chatTransportService: makeChatTransportService(),
+            sseTransportService: makeSSETransportService()
+        )
     }
     
     func makePhotoAddingService() -> PhotoAddingService {
