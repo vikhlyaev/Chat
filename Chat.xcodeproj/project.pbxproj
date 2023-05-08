@@ -57,6 +57,9 @@
 		0A751AB12A04B5F0003A11B2 /* PhotoAddingServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A751AB02A04B5F0003A11B2 /* PhotoAddingServiceDelegate.swift */; };
 		0A751AB32A04E5E8003A11B2 /* ProfileEditModuleOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A751AB22A04E5E8003A11B2 /* ProfileEditModuleOutput.swift */; };
 		0A751AB52A05000C003A11B2 /* ProfileEditDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A751AB42A05000C003A11B2 /* ProfileEditDelegate.swift */; };
+		0A751AB82A050B7E003A11B2 /* PhotoAddingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A751AB72A050B7E003A11B2 /* PhotoAddingView.swift */; };
+		0A751AC12A06380A003A11B2 /* AlertActionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A751AC02A06380A003A11B2 /* AlertActionDelegate.swift */; };
+		0A751AC32A064264003A11B2 /* AlertViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A751AC22A064264003A11B2 /* AlertViewModel.swift */; };
 		0A80C74229E7DBAE00C96E8C /* ChatService + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A80C74129E7DBAE00C96E8C /* ChatService + Extensions.swift */; };
 		0A856FE429FAFA3700F46AFC /* ProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A856FE229FAFA3700F46AFC /* ProfileService.swift */; };
 		0A856FE529FAFA3700F46AFC /* ProfileServiceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A856FE329FAFA3700F46AFC /* ProfileServiceImpl.swift */; };
@@ -108,6 +111,8 @@
 		0AF3177129A0D66A005417A5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0AF3177029A0D66A005417A5 /* Assets.xcassets */; };
 		0AF3177429A0D66A005417A5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0AF3177229A0D66A005417A5 /* LaunchScreen.storyboard */; };
 		0AFE033429DB438400672330 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 0AFE033329DB438400672330 /* .swiftlint.yml */; };
+		0AFEF0512A08F4FF00A06F85 /* AlertCreatorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFEF0502A08F4FF00A06F85 /* AlertCreatorService.swift */; };
+		0AFEF0532A08F50900A06F85 /* AlertCreatorServiceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFEF0522A08F50900A06F85 /* AlertCreatorServiceImpl.swift */; };
 		7624291884D577B0DE7F4EF7 /* Pods_Chat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F66F2529A7C67C5C2B0AAAF5 /* Pods_Chat.framework */; };
 /* End PBXBuildFile section */
 
@@ -161,6 +166,9 @@
 		0A751AB02A04B5F0003A11B2 /* PhotoAddingServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAddingServiceDelegate.swift; sourceTree = "<group>"; };
 		0A751AB22A04E5E8003A11B2 /* ProfileEditModuleOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditModuleOutput.swift; sourceTree = "<group>"; };
 		0A751AB42A05000C003A11B2 /* ProfileEditDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditDelegate.swift; sourceTree = "<group>"; };
+		0A751AB72A050B7E003A11B2 /* PhotoAddingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAddingView.swift; sourceTree = "<group>"; };
+		0A751AC02A06380A003A11B2 /* AlertActionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertActionDelegate.swift; sourceTree = "<group>"; };
+		0A751AC22A064264003A11B2 /* AlertViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertViewModel.swift; sourceTree = "<group>"; };
 		0A80C74129E7DBAE00C96E8C /* ChatService + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatService + Extensions.swift"; sourceTree = "<group>"; };
 		0A856FE229FAFA3700F46AFC /* ProfileService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileService.swift; sourceTree = "<group>"; };
 		0A856FE329FAFA3700F46AFC /* ProfileServiceImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileServiceImpl.swift; sourceTree = "<group>"; };
@@ -215,6 +223,8 @@
 		0AF3177529A0D66A005417A5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0AF3178F29A3C1BB005417A5 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		0AFE033329DB438400672330 /* .swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
+		0AFEF0502A08F4FF00A06F85 /* AlertCreatorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertCreatorService.swift; sourceTree = "<group>"; };
+		0AFEF0522A08F50900A06F85 /* AlertCreatorServiceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertCreatorServiceImpl.swift; sourceTree = "<group>"; };
 		B27474786F61F84813DEE01F /* Pods-Chat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Chat.release.xcconfig"; path = "Target Support Files/Pods-Chat/Pods-Chat.release.xcconfig"; sourceTree = "<group>"; };
 		EB1789F950297800B2B86C60 /* Pods-Chat.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Chat.debug.xcconfig"; path = "Target Support Files/Pods-Chat/Pods-Chat.debug.xcconfig"; sourceTree = "<group>"; };
 		F66F2529A7C67C5C2B0AAAF5 /* Pods_Chat.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Chat.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -267,6 +277,7 @@
 		0A47FB6429FAB46800D4736F /* Service Layer */ = {
 			isa = PBXGroup;
 			children = (
+				0AFEF0542A08F50D00A06F85 /* AlertCreatorService */,
 				0A8550082A003E7A00944138 /* SSETransportService */,
 				0AEAF80429FD648800B6024F /* DataService */,
 				0AEAF7FF29FD645200B6024F /* ChatService */,
@@ -381,6 +392,7 @@
 				0ADAD7F729E7F36B0093D25E /* MessageModel.swift */,
 				0ABA25BA29DF0DAC00BEC0DB /* SortedMessage.swift */,
 				0A59D0CA29FC135F008FD2C6 /* PhotoResult.swift */,
+				0A751AC22A064264003A11B2 /* AlertViewModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -435,14 +447,6 @@
 			path = Presenter;
 			sourceTree = "<group>";
 		};
-		0A72EC942A03D305000AED23 /* ParticleAnimation */ = {
-			isa = PBXGroup;
-			children = (
-				0A72EC952A03D35C000AED23 /* ParticleAnimation.swift */,
-			);
-			path = ParticleAnimation;
-			sourceTree = "<group>";
-		};
 		0A751AAF2A04B540003A11B2 /* PhotoAddingService */ = {
 			isa = PBXGroup;
 			children = (
@@ -451,6 +455,15 @@
 				0A751AB02A04B5F0003A11B2 /* PhotoAddingServiceDelegate.swift */,
 			);
 			path = PhotoAddingService;
+			sourceTree = "<group>";
+		};
+		0A751AB62A050B32003A11B2 /* Common Views */ = {
+			isa = PBXGroup;
+			children = (
+				0A72EC952A03D35C000AED23 /* ParticleAnimation.swift */,
+				0A751AB72A050B7E003A11B2 /* PhotoAddingView.swift */,
+			);
+			path = "Common Views";
 			sourceTree = "<group>";
 		};
 		0A80C74029E7DB5500C96E8C /* TFSChatTransport */ = {
@@ -540,7 +553,7 @@
 		0AA2EBCA29FD51FF008D0B57 /* Presentation Layer */ = {
 			isa = PBXGroup;
 			children = (
-				0A72EC942A03D305000AED23 /* ParticleAnimation */,
+				0A751AB62A050B32003A11B2 /* Common Views */,
 				0A59D0BB29FBEBA2008FD2C6 /* PhotoSelection */,
 				0A72EC822A02EB0D000AED23 /* ProfileEdit */,
 				0A63C5D929A900CD0000173B /* Profile */,
@@ -727,6 +740,16 @@
 			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		0AFEF0542A08F50D00A06F85 /* AlertCreatorService */ = {
+			isa = PBXGroup;
+			children = (
+				0A751AC02A06380A003A11B2 /* AlertActionDelegate.swift */,
+				0AFEF0502A08F4FF00A06F85 /* AlertCreatorService.swift */,
+				0AFEF0522A08F50900A06F85 /* AlertCreatorServiceImpl.swift */,
+			);
+			path = AlertCreatorService;
+			sourceTree = "<group>";
+		};
 		C81EA66786004A5B0FC4B826 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -889,6 +912,7 @@
 				0AEAF81829FE794A00B6024F /* ChannelViewOutput.swift in Sources */,
 				0A47FB6F29FAB53A00D4736F /* CoreDataServiceImpl.swift in Sources */,
 				0A856FFF29FBE4E700F46AFC /* SettingsViewOutput.swift in Sources */,
+				0A751AC32A064264003A11B2 /* AlertViewModel.swift in Sources */,
 				0A9009792A011BF900C8DDB6 /* DataServiceDelegate.swift in Sources */,
 				0A9F45B129D74FF400BB7A4A /* UITextField + Extensions.swift in Sources */,
 				0A59D0C129FBEBCC008FD2C6 /* PhotoSelectionViewOutput.swift in Sources */,
@@ -922,6 +946,7 @@
 				0ACD164A29FFB9C900F32CAC /* ProfileCoordinator.swift in Sources */,
 				0A47FB7129FAB53A00D4736F /* FileManagerService.swift in Sources */,
 				0A85700129FBE4E700F46AFC /* ThemesViewDelegate.swift in Sources */,
+				0AFEF0512A08F4FF00A06F85 /* AlertCreatorService.swift in Sources */,
 				0A59D0BF29FBEBC3008FD2C6 /* PhotoSelectionPresenter.swift in Sources */,
 				0AEAF80329FD645200B6024F /* ChatTransportService.swift in Sources */,
 				0A41D39B29E6D75500FE0A0F /* Chat.xcdatamodeld in Sources */,
@@ -929,6 +954,7 @@
 				0A03CD5F29B988EE00B9CC8E /* Date + Extensions.swift in Sources */,
 				0A47FB6729FAB50400D4736F /* UITableView + Extensions.swift in Sources */,
 				0A85700529FBE4E700F46AFC /* SettingsPresenter.swift in Sources */,
+				0A751AC12A06380A003A11B2 /* AlertActionDelegate.swift in Sources */,
 				0ADB6DEF29EAEFE700EBE31F /* ChannelsListDataSource.swift in Sources */,
 				0ACD164E29FFD60700F32CAC /* ChannelsListModuleOutput.swift in Sources */,
 				0A5184C82A019D6A00055B61 /* ChannelPhotoCellDelegate.swift in Sources */,
@@ -964,6 +990,7 @@
 				0AC2F8E829DFC2C100A6F320 /* BubbleView.swift in Sources */,
 				0ACD165229FFF7ED00F32CAC /* SSETransportServiceImpl.swift in Sources */,
 				0A85700329FBE4E700F46AFC /* SettingsViewController.swift in Sources */,
+				0A751AB82A050B7E003A11B2 /* PhotoAddingView.swift in Sources */,
 				0AEAF81629FE794200B6024F /* ChannelViewInput.swift in Sources */,
 				0A03CD5B29B984A500B9CC8E /* UIColor + Extensions.swift in Sources */,
 				0A856FEA29FAFA4200F46AFC /* ThemesServiceImpl.swift in Sources */,
@@ -971,6 +998,7 @@
 				0AEAF80229FD645200B6024F /* ChatTransportServiceImpl.swift in Sources */,
 				0ADAD7F829E7F36B0093D25E /* MessageModel.swift in Sources */,
 				0A47FB7029FAB53A00D4736F /* FileManagerServiceImpl.swift in Sources */,
+				0AFEF0532A08F50900A06F85 /* AlertCreatorServiceImpl.swift in Sources */,
 				0A4D605529DB3EAA00585535 /* ProfileViewController.swift in Sources */,
 				0ACD160F29FEF45C00F32CAC /* ProfileModuleOutput.swift in Sources */,
 				0A751AAE2A04B53C003A11B2 /* PhotoAddingServiceImpl.swift in Sources */,

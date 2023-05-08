@@ -44,4 +44,8 @@ final class ServiceAssembly {
     func makePhotoAddingService() -> PhotoAddingService {
         PhotoAddingServiceImpl()
     }
+    
+    func makeAlertCreaterService() -> AlertCreatorService {
+        AlertCreatorServiceImpl()
+    }
 }
