@@ -44,8 +44,10 @@ final class DataServiceImpl {
             .receive(on: DispatchQueue.global(qos: .utility))
             .sink { [weak self] completion in
                 if case .failure = completion {
-                    self?.sseTransportService.cancelSubscription()
-                    self?.subscribeOnEvents()
+                    DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 3) {
+                        self?.sseTransportService.cancelSubscription()
+                        self?.subscribeOnEvents()
+                    }
                 }
             } receiveValue: { [weak self] event in
                 switch event.eventType {
