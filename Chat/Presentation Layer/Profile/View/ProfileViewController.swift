@@ -125,16 +125,24 @@ extension ProfileViewController: ProfileViewInput {
 // MARK: - UIViewControllerTransitioningDelegate
 
 extension ProfileViewController: UIViewControllerTransitioningDelegate {
-    func animationController(forPresented presented: UIViewController,
-                             presenting: UIViewController,
-                             source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        ProfileAnimator(transitionMode: .present,
-                        duration: 1)
+    func animationController(
+        forPresented presented: UIViewController,
+        presenting: UIViewController,
+        source: UIViewController
+    ) -> UIViewControllerAnimatedTransitioning? {
+        ProfileAnimator(
+            transitionMode: .present,
+            duration: 1
+        )
     }
     
-    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        ProfileAnimator(transitionMode: .dismiss,
-                        duration: 1)
+    func animationController(
+        forDismissed dismissed: UIViewController
+    ) -> UIViewControllerAnimatedTransitioning? {
+        ProfileAnimator(
+            transitionMode: .dismiss,
+            duration: 1
+        )
     }
 }
 
