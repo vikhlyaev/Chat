@@ -37,30 +37,13 @@ final class ProfileViewController: UIViewController {
         return label
     }()
     
-    private lazy var editButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.backgroundColor = .systemBlue
-        button.layer.cornerRadius = 14
-        button.setTitle("Edit Profile", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
-        button.titleLabel?.font = .systemFont(ofSize: 17, weight: .bold)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    private var particleAnimation: ParticleAnimation?
-    
-    private var isAnimatesEditButton = false {
-        didSet {
-            if isAnimatesEditButton {
-                stopEditButtonAnimation()
-            } else {
-                startEditButtonAnimation()
-            }
-        }
+    private lazy var profileEditButton = ProfileEditButton(type: .system, andTitle: "Edit Profile") { [weak self] in
+        guard let self else { return }
+        self.output.didOpenProfileEdit(with: self)
     }
     
+    private var particleAnimation: ParticleAnimation?
+
     private let output: ProfileViewOutput
     
     // MARK: - Life Cycle
@@ -79,7 +62,6 @@ final class ProfileViewController: UIViewController {
         setupNavBar()
         setupView()
         setConstraints()
-        setupGestureRecognizers()
         output.viewIsReady()
     }
     
@@ -108,68 +90,8 @@ final class ProfileViewController: UIViewController {
         wrapperView.addSubview(photoAddingView)
         wrapperView.addSubview(nameLabel)
         wrapperView.addSubview(informationLabel)
-        wrapperView.addSubview(editButton)
+        wrapperView.addSubview(profileEditButton)
     }
-    
-    private func setupGestureRecognizers() {
-        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressEditButton))
-        longPressRecognizer.cancelsTouchesInView = true
-        editButton.addGestureRecognizer(longPressRecognizer)
-    }
-    
-    private func startEditButtonAnimation() {
-        let rotate = CABasicAnimation(keyPath: "transform.rotation")
-        rotate.fromValue = -(CGFloat.pi / 180 * 18)
-        rotate.toValue = CGFloat.pi / 180 * 18
-        
-        let moveUpDown = CAKeyframeAnimation(keyPath: "position.y")
-        moveUpDown.values = [
-            editButton.layer.position.y,
-            editButton.layer.position.y - 5,
-            editButton.layer.position.y + 5,
-            editButton.layer.position.y
-        ]
-        moveUpDown.keyTimes = [0, 0.25, 0.75, 1]
-        
-        let moveLeftRight = CAKeyframeAnimation(keyPath: "position.x")
-        moveLeftRight.values = [
-            editButton.layer.position.x,
-            editButton.layer.position.x + 5,
-            editButton.layer.position.x - 5,
-            editButton.layer.position.x
-        ]
-        moveLeftRight.keyTimes = [0, 0.25, 0.75, 1]
-        
-        let animationGroup = CAAnimationGroup()
-        animationGroup.autoreverses = true
-        animationGroup.repeatCount = .infinity
-        animationGroup.duration = 0.3
-        animationGroup.animations = [moveUpDown, moveLeftRight, rotate]
-        
-        editButton.layer.add(animationGroup, forKey: "EditAnimation")
-    }
-    
-    private func stopEditButtonAnimation() {
-        UIView.animate(withDuration: 2, delay: 0, options: [.beginFromCurrentState]) {
-            self.editButton.layer.removeAllAnimations()
-        }
-    }
-    
-    @objc
-    private func longPressEditButton(_ longPressGestureRecognizer: UILongPressGestureRecognizer) {
-        if longPressGestureRecognizer.state == .began {
-            isAnimatesEditButton = !isAnimatesEditButton
-        } else {
-            return
-        }
-    }
-    
-    // MARK: - Edit Button
-    
-    @objc
-    private func editButtonTapped() {
-        output.didOpenProfileEdit(with: self)
-    }    
 }
 
 // MARK: - ProfileViewInput
@@ -237,11 +159,11 @@ extension ProfileViewController {
             informationLabel.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor, constant: 16),
             informationLabel.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor, constant: -16),
           
-            editButton.topAnchor.constraint(equalTo: informationLabel.bottomAnchor, constant: 24),
-            editButton.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor, constant: 16),
-            editButton.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor, constant: -16),
-            editButton.bottomAnchor.constraint(equalTo: wrapperView.bottomAnchor, constant: -16),
-            editButton.heightAnchor.constraint(equalToConstant: 50)
+            profileEditButton.topAnchor.constraint(equalTo: informationLabel.bottomAnchor, constant: 24),
+            profileEditButton.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor, constant: 16),
+            profileEditButton.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor, constant: -16),
+            profileEditButton.bottomAnchor.constraint(equalTo: wrapperView.bottomAnchor, constant: -16),
+            profileEditButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
 }

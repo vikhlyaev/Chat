@@ -113,6 +113,7 @@
 		0AFE033429DB438400672330 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 0AFE033329DB438400672330 /* .swiftlint.yml */; };
 		0AFEF0512A08F4FF00A06F85 /* AlertCreatorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFEF0502A08F4FF00A06F85 /* AlertCreatorService.swift */; };
 		0AFEF0532A08F50900A06F85 /* AlertCreatorServiceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFEF0522A08F50900A06F85 /* AlertCreatorServiceImpl.swift */; };
+		0AFEF0562A09212700A06F85 /* ProfileEditButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFEF0552A09212700A06F85 /* ProfileEditButton.swift */; };
 		7624291884D577B0DE7F4EF7 /* Pods_Chat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F66F2529A7C67C5C2B0AAAF5 /* Pods_Chat.framework */; };
 /* End PBXBuildFile section */
 
@@ -225,6 +226,7 @@
 		0AFE033329DB438400672330 /* .swiftlint.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		0AFEF0502A08F4FF00A06F85 /* AlertCreatorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertCreatorService.swift; sourceTree = "<group>"; };
 		0AFEF0522A08F50900A06F85 /* AlertCreatorServiceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertCreatorServiceImpl.swift; sourceTree = "<group>"; };
+		0AFEF0552A09212700A06F85 /* ProfileEditButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditButton.swift; sourceTree = "<group>"; };
 		B27474786F61F84813DEE01F /* Pods-Chat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Chat.release.xcconfig"; path = "Target Support Files/Pods-Chat/Pods-Chat.release.xcconfig"; sourceTree = "<group>"; };
 		EB1789F950297800B2B86C60 /* Pods-Chat.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Chat.debug.xcconfig"; path = "Target Support Files/Pods-Chat/Pods-Chat.debug.xcconfig"; sourceTree = "<group>"; };
 		F66F2529A7C67C5C2B0AAAF5 /* Pods_Chat.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Chat.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -509,6 +511,7 @@
 				0A856FED29FB9BF400F46AFC /* ProfileViewInput.swift */,
 				0A856FEF29FB9BFE00F46AFC /* ProfileViewOutput.swift */,
 				0A72EC8D2A037FF3000AED23 /* ProfileAnimator.swift */,
+				0AFEF0552A09212700A06F85 /* ProfileEditButton.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -962,6 +965,7 @@
 				0AA2EBD129FD5518008D0B57 /* ChannelsListViewOutput.swift in Sources */,
 				0A3ED4AB2A026CC000EDCA2F /* CoreDataServiceError.swift in Sources */,
 				0A714C0329DB4B7A007D76C5 /* TabBarController.swift in Sources */,
+				0AFEF0562A09212700A06F85 /* ProfileEditButton.swift in Sources */,
 				0A3ED4AF2A02730000EDCA2F /* DataServiceError.swift in Sources */,
 				0A03CD7029B99BBE00B9CC8E /* ChannelViewController.swift in Sources */,
 				0AEAF80729FD648800B6024F /* DataService.swift in Sources */,
