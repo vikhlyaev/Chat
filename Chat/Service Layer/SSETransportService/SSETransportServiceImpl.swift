@@ -10,12 +10,7 @@ final class SSETransportServiceImpl {
     }
     
     private var sseService: SSEService?
-    
     private var cancellables = Set<AnyCancellable>()
-    
-    init() {
-        self.sseService = SSEService(host: SSEServiceSettings.ip, port: SSEServiceSettings.port)
-    }
 }
 
 extension SSETransportServiceImpl: SSETransportService {
@@ -25,7 +20,7 @@ extension SSETransportServiceImpl: SSETransportService {
     }
     
     func cancelSubscription() {
-        sseService = nil
         sseService?.cancelSubscription()
+        sseService = nil
     }
 }
