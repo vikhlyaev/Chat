@@ -42,15 +42,11 @@ final class ParticleAnimation {
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapGestureRecognizerAction))
         tapRecognizer.cancelsTouchesInView = false
         
-        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(panGestureRecognizerAction))
-        longPressRecognizer.cancelsTouchesInView = false
-        
         let panRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panGestureRecognizerAction))
         panRecognizer.cancelsTouchesInView = false
 
         guard let window else { return }
         window.addGestureRecognizer(tapRecognizer)
-        window.addGestureRecognizer(longPressRecognizer)
         window.addGestureRecognizer(panRecognizer)
     }
     
