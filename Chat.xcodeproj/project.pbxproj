@@ -58,7 +58,6 @@
 		0A751AB32A04E5E8003A11B2 /* ProfileEditModuleOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A751AB22A04E5E8003A11B2 /* ProfileEditModuleOutput.swift */; };
 		0A751AB52A05000C003A11B2 /* ProfileEditDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A751AB42A05000C003A11B2 /* ProfileEditDelegate.swift */; };
 		0A751AB82A050B7E003A11B2 /* PhotoAddingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A751AB72A050B7E003A11B2 /* PhotoAddingView.swift */; };
-		0A751AC12A06380A003A11B2 /* AlertActionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A751AC02A06380A003A11B2 /* AlertActionDelegate.swift */; };
 		0A751AC32A064264003A11B2 /* AlertViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A751AC22A064264003A11B2 /* AlertViewModel.swift */; };
 		0A80C74229E7DBAE00C96E8C /* ChatService + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A80C74129E7DBAE00C96E8C /* ChatService + Extensions.swift */; };
 		0A856FE429FAFA3700F46AFC /* ProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A856FE229FAFA3700F46AFC /* ProfileService.swift */; };
@@ -168,7 +167,6 @@
 		0A751AB22A04E5E8003A11B2 /* ProfileEditModuleOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditModuleOutput.swift; sourceTree = "<group>"; };
 		0A751AB42A05000C003A11B2 /* ProfileEditDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditDelegate.swift; sourceTree = "<group>"; };
 		0A751AB72A050B7E003A11B2 /* PhotoAddingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAddingView.swift; sourceTree = "<group>"; };
-		0A751AC02A06380A003A11B2 /* AlertActionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertActionDelegate.swift; sourceTree = "<group>"; };
 		0A751AC22A064264003A11B2 /* AlertViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertViewModel.swift; sourceTree = "<group>"; };
 		0A80C74129E7DBAE00C96E8C /* ChatService + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatService + Extensions.swift"; sourceTree = "<group>"; };
 		0A856FE229FAFA3700F46AFC /* ProfileService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileService.swift; sourceTree = "<group>"; };
@@ -746,7 +744,6 @@
 		0AFEF0542A08F50D00A06F85 /* AlertCreatorService */ = {
 			isa = PBXGroup;
 			children = (
-				0A751AC02A06380A003A11B2 /* AlertActionDelegate.swift */,
 				0AFEF0502A08F4FF00A06F85 /* AlertCreatorService.swift */,
 				0AFEF0522A08F50900A06F85 /* AlertCreatorServiceImpl.swift */,
 			);
@@ -957,7 +954,6 @@
 				0A03CD5F29B988EE00B9CC8E /* Date + Extensions.swift in Sources */,
 				0A47FB6729FAB50400D4736F /* UITableView + Extensions.swift in Sources */,
 				0A85700529FBE4E700F46AFC /* SettingsPresenter.swift in Sources */,
-				0A751AC12A06380A003A11B2 /* AlertActionDelegate.swift in Sources */,
 				0ADB6DEF29EAEFE700EBE31F /* ChannelsListDataSource.swift in Sources */,
 				0ACD164E29FFD60700F32CAC /* ChannelsListModuleOutput.swift in Sources */,
 				0A5184C82A019D6A00055B61 /* ChannelPhotoCellDelegate.swift in Sources */,

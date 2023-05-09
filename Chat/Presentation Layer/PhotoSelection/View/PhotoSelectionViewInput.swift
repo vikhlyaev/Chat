@@ -1,6 +1,6 @@
-import Foundation
+import UIKit
 
 protocol PhotoSelectionViewInput: AnyObject {
     func updatePhotos(_ photos: [PhotoModel])
-    func showErrorAlert(with text: String)
+    func showAlert(_ alert: UIViewController)
 }

@@ -2,8 +2,6 @@ import UIKit
 
 final class AlertCreatorServiceImpl: AlertCreatorService {
     
-    weak var delegate: AlertActionDelegate?
-    
     func makeAlert(with alertModel: AlertViewModel) -> UIViewController {
         let vc = UIAlertController(
             title: alertModel.title,
@@ -11,24 +9,20 @@ final class AlertCreatorServiceImpl: AlertCreatorService {
             preferredStyle: alertModel.style
         )
         
-        if alertModel.enableOkAction {
-            let okAction = UIAlertAction(
-                title: alertModel.okActionTitle,
-                style: alertModel.okActionStyle
-            ) { _ in
-                self.delegate?.okAction()
-            }
-            vc.addAction(okAction)
-        }
+        let firstAction = UIAlertAction(
+            title: alertModel.firstAction.title,
+            style: alertModel.firstAction.style,
+            handler: alertModel.firstAction.completion
+        )
         
-        if alertModel.enableCancelAction {
-            let cancelAction = UIAlertAction(
-                title: alertModel.cancelActionTitle,
-                style: alertModel.cancelActionStyle
-            ) { _ in
-                self.delegate?.cancelAction()
-            }
-            vc.addAction(cancelAction)
+        vc.addAction(firstAction)
+        
+        if let secondAction = alertModel.secondAction {
+            vc.addAction(UIAlertAction(
+                title: secondAction.title,
+                style: secondAction.style,
+                handler: secondAction.completion
+            ))
         }
         
         return vc

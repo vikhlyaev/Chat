@@ -3,13 +3,19 @@ import Combine
 
 final class PhotoSelectionPresenter {
     private let photoLoaderService: PhotoLoaderService
+    private let alertCreatorService: AlertCreatorService
     weak var viewInput: PhotoSelectionViewInput?
     weak var delegate: PhotoSelectionDelegate?
     
     private var photos: [PhotoModel] = []
     
-    init(photoLoaderService: PhotoLoaderService, delegate: PhotoSelectionDelegate) {
+    init(
+        photoLoaderService: PhotoLoaderService,
+        alertCreatorService: AlertCreatorService,
+        delegate: PhotoSelectionDelegate
+    ) {
         self.photoLoaderService = photoLoaderService
+        self.alertCreatorService = alertCreatorService
         self.delegate = delegate
     }
     
@@ -31,12 +37,23 @@ extension PhotoSelectionPresenter: PhotoSelectionViewOutput {
     
     func loadPhoto() {
         photoLoaderService.fetchPhotosNextPage { [weak self] result in
+            guard let self else { return }
             switch result {
             case .success(let photos):
-                self?.photos.append(contentsOf: photos)
-                self?.didLoadPhoto(photos)
+                self.photos.append(contentsOf: photos)
+                self.didLoadPhoto(photos)
             case .failure:
-                self?.viewInput?.showErrorAlert(with: "Failed to upload photo")
+                let alert = self.alertCreatorService.makeAlert(
+                    with: AlertViewModel(
+                        title: "Error",
+                        message: "Unable to upload a profile photo",
+                        firstAction: AlertViewModel.AlertAction(
+                            title: "OK",
+                            style: .cancel
+                        )
+                    )
+                )
+                self.viewInput?.showAlert(alert)
             }
         }
     }

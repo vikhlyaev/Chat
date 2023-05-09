@@ -1,33 +1,36 @@
 import UIKit
 
 struct AlertViewModel {
+    
+    struct AlertAction {
+        let title: String
+        let style: UIAlertAction.Style
+        var completion: ((UIAlertAction) -> Void)?
+        
+        init(title: String, style: UIAlertAction.Style, completion: ((UIAlertAction) -> Void)? = nil) {
+            self.title = title
+            self.style = style
+            self.completion = completion
+        }
+    }
+    
     let title: String
     let message: String
     let style: UIAlertController.Style
-    let enableOkAction: Bool
-    let okActionTitle: String
-    let okActionStyle: UIAlertAction.Style
-    let enableCancelAction: Bool
-    let cancelActionTitle: String
-    let cancelActionStyle: UIAlertAction.Style
+    let firstAction: AlertAction
+    var secondAction: AlertAction?
     
-    init(title: String,
-         message: String,
-         style: UIAlertController.Style = .alert,
-         enableOkAction: Bool,
-         okActionTitle: String,
-         okActionStyle: UIAlertAction.Style,
-         enableCancelAction: Bool = false,
-         cancelActionTitle: String = "",
-         cancelActionStyle: UIAlertAction.Style = .cancel) {
+    init(
+        title: String,
+        message: String,
+        style: UIAlertController.Style = .alert,
+        firstAction: AlertAction,
+        secondAction: AlertAction? = nil
+    ) {
         self.title = title
         self.message = message
         self.style = style
-        self.enableOkAction = enableOkAction
-        self.okActionTitle = okActionTitle
-        self.okActionStyle = okActionStyle
-        self.enableCancelAction = enableCancelAction
-        self.cancelActionTitle = cancelActionTitle
-        self.cancelActionStyle = cancelActionStyle
+        self.firstAction = firstAction
+        self.secondAction = secondAction
     }
 }

@@ -161,24 +161,11 @@ extension ProfileEditViewController: ProfileEditViewInput {
         photoAddingView.setPhoto(photo)
     }
     
-    func showViewController(_ viewController: UIViewController) {
-        present(viewController, animated: true)
+    func showController(_ controller: UIViewController) {
+        present(controller, animated: true)
     }
     
-    func showErrorAlert(with text: String) {
-        let alert = UIAlertController(title: "Error", message: text, preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "OK", style: .cancel) { [weak self] _ in
-            guard let self = self else { return }
-            self.setEditing(false, animated: true)
-        }
-        alert.addAction(okAction)
-        present(alert, animated: true)
-    }
-    
-    func showSuccessAlert() {
-        let alert = UIAlertController(title: "Success", message: "You are breathtaking", preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "OK", style: .cancel)
-        alert.addAction(okAction)
+    func showAlert(_ alert: UIViewController) {
         present(alert, animated: true)
     }
 }

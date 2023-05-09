@@ -92,7 +92,7 @@ extension ProfilePresenter: ProfileEditDelegate {
 // MARK: - PhotoAddingServiceDelegate
 
 extension ProfilePresenter: PhotoAddingServiceDelegate {
-    func showViewController(_ viewController: UIViewController) {
+    func showController(_ viewController: UIViewController) {
         viewInput?.showViewController(viewController)
     }
     

@@ -1,12 +1,14 @@
 import UIKit
 
 final class ProfileEditPresenter {
+    
     var profileModel: ProfileModel?
+    private var tempProfileModel: ProfileModel?
     
     private let profileService: ProfileService
     private let photoLoaderService: PhotoLoaderService
     private var photoAddingService: PhotoAddingService
-    private let alertCreatorService: AlertCreatorService
+    private var alertCreatorService: AlertCreatorService
     
     weak var moduleOutput: ProfileEditModuleOutput?
     weak var delegate: ProfileEditDelegate?
@@ -29,22 +31,62 @@ final class ProfileEditPresenter {
         self.moduleOutput = moduleOutput
         self.delegate = delegate
     }
+    
+    private func setDelegates() {
+        photoAddingService.delegate = self
+    }
 }
 
 extension ProfileEditPresenter: ProfileEditViewOutput {
     func viewIsReady() {
-        photoAddingService.delegate = self
-        guard let profileModel, let photo = profileModel.photo else { return }
+        setDelegates()
+        
+        guard
+            let profileModel,
+            let photo = profileModel.photo
+        else { return }
         viewInput?.updatePhoto(photo)
     }
     
     func didSaveProfile(_ profile: ProfileModel) {
+        tempProfileModel = profile
         profileService.saveProfile(profile) { [weak self] error in
-            guard error != nil else {
-                self?.viewInput?.showSuccessAlert()
-                return
+            guard let self else { return }
+            if error != nil {
+                let alert = self.alertCreatorService.makeAlert(
+                    with: AlertViewModel(
+                        title: "Could not save profile",
+                        message: "Try again",
+                        firstAction: AlertViewModel.AlertAction(
+                            title: "Try Again",
+                            style: .default,
+                            completion: { [weak self] _ in
+                                guard let tempProfileModel = self?.tempProfileModel else { return }
+                                self?.didSaveProfile(tempProfileModel)
+                            }
+                        ),
+                        secondAction: AlertViewModel.AlertAction(
+                            title: "OK",
+                            style: .cancel
+                        )
+                    )
+                )
+                self.viewInput?.showController(alert)
+            } else {
+                let alert = self.alertCreatorService.makeAlert(
+                    with: AlertViewModel(
+                        title: "Success",
+                        message: "You are breathtaking",
+                        firstAction: AlertViewModel.AlertAction(
+                            title: "OK",
+                            style: .cancel
+                        )
+                    )
+                )
+                self.tempProfileModel = nil
+                self.profileModel = profile
+                self.viewInput?.showController(alert)
             }
-            self?.viewInput?.showErrorAlert(with: "Failed to save profile")
         }
         delegate?.didUpdateProfile()
     }
@@ -57,8 +99,8 @@ extension ProfileEditPresenter: ProfileEditViewOutput {
 // MARK: - PhotoAddingServiceDelegate
 
 extension ProfileEditPresenter: PhotoAddingServiceDelegate {
-    func showViewController(_ viewController: UIViewController) {
-        viewInput?.showViewController(viewController)
+    func showController(_ viewController: UIViewController) {
+        viewInput?.showController(viewController)
     }
     
     func updatePhoto(_ photo: UIImage) {
@@ -66,8 +108,19 @@ extension ProfileEditPresenter: PhotoAddingServiceDelegate {
         profileModel?.photo = photo
         guard let profileModel else { return }
         profileService.saveProfile(profileModel) { [weak self] error in
+            guard let self else { return }
             if error != nil {
-                self?.viewInput?.showErrorAlert(with: "Failed to save profile")
+                let alert = self.alertCreatorService.makeAlert(
+                    with: AlertViewModel(
+                        title: "Error",
+                        message: "Failed to save profile",
+                        firstAction: AlertViewModel.AlertAction(
+                            title: "OK",
+                            style: .cancel
+                        )
+                    )
+                )
+                self.viewInput?.showController(alert)
             }
         }
     }
@@ -82,7 +135,8 @@ extension ProfileEditPresenter: PhotoSelectionDelegate {
             case .success(let photo):
                 self?.updatePhoto(photo)
             case .failure:
-                self?.viewInput?.showErrorAlert(with: "Failed to load photo")
+                print("1")
+//                self?.viewInput?.showErrorAlert(with: "Failed to load photo")
             }
         }
     }

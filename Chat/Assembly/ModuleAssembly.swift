@@ -23,6 +23,7 @@ final class ModuleAssembly {
             dataService: serviceAssembly.makeDataService(),
             profileService: serviceAssembly.makeProfileService(),
             photoLoaderService: serviceAssembly.makePhotoLoaderService(),
+            alertCreatorService: serviceAssembly.makeAlertCreaterService(),
             moduleOutput: moduleOutput,
             channel: channel)
         let vc = ChannelViewController(output: presenter)
@@ -77,6 +78,7 @@ final class ModuleAssembly {
     func makePhotoSelectionModule(with delegate: PhotoSelectionDelegate) -> UIViewController {
         let presenter = PhotoSelectionPresenter(
             photoLoaderService: serviceAssembly.makePhotoLoaderService(),
+            alertCreatorService: serviceAssembly.makeAlertCreaterService(),
             delegate: delegate
         )
         let vc = PhotoSelectionViewController(output: presenter)

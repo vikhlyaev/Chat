@@ -21,7 +21,7 @@ extension PhotoAddingServiceImpl: PhotoAddingService {
         imagePicker.cameraCaptureMode = .photo
         imagePicker.cameraDevice = .front
         DispatchQueue.main.async { [weak self] in
-            self?.delegate?.showViewController(imagePicker)
+            self?.delegate?.showController(imagePicker)
         }
     }
     
@@ -30,7 +30,7 @@ extension PhotoAddingServiceImpl: PhotoAddingService {
         let picker = PHPickerViewController(configuration: configuration)
         picker.delegate = self
         DispatchQueue.main.async { [weak self] in
-            self?.delegate?.showViewController(picker)
+            self?.delegate?.showController(picker)
         }
     }
 }

@@ -14,6 +14,7 @@ final class ChannelPresenter {
     private let dataService: DataService
     private let profileService: ProfileService
     private let photoLoaderService: PhotoLoaderService
+    private let alertCreatorService: AlertCreatorService
     
     weak var moduleOutput: ChannelModuleOutput?
     
@@ -31,11 +32,13 @@ final class ChannelPresenter {
     init(dataService: DataService,
          profileService: ProfileService,
          photoLoaderService: PhotoLoaderService,
+         alertCreatorService: AlertCreatorService,
          moduleOutput: ChannelModuleOutput?,
          channel: ChannelModel) {
         self.dataService = dataService
         self.profileService = profileService
         self.photoLoaderService = photoLoaderService
+        self.alertCreatorService = alertCreatorService
         self.moduleOutput = moduleOutput
         self.channel = channel
         loadProfile()
@@ -60,11 +63,22 @@ final class ChannelPresenter {
     
     private func loadProfile() {
         profileService.loadProfile { [weak self] result in
+            guard let self else { return }
             switch result {
             case .success(let profile):
-                self?.profile = profile
+                self.profile = profile
             case .failure:
-                self?.viewInput?.showErrorAlert(with: "Failed to load profile")
+                let alert = self.alertCreatorService.makeAlert(
+                    with: AlertViewModel(
+                        title: "Error",
+                        message: "Failed to load profile",
+                        firstAction: AlertViewModel.AlertAction(
+                            title: "OK",
+                            style: .cancel
+                        )
+                    )
+                )
+                self.viewInput?.showAlert(alert)
             }
         }
     }
