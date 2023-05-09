@@ -50,22 +50,8 @@ extension ProfileEditPresenter: ProfileEditViewOutput {
         delegate?.didUpdateProfile()
     }
     
-    func didOpenPhotoAddingAlertSheet() {
-        guard let viewInput else { return }
-        viewInput.showViewController(
-            alertCreatorService.makePhotoAddingAlertSheet(
-                takePhotoAction: { [weak self] in
-                    self?.photoAddingService.didTakePhoto()
-                },
-                chooseFromGalleryAction: { [weak self] in
-                    self?.photoAddingService.didChooseFromGallery()
-                },
-                loadFromNetworkAction: { [weak self] in
-                    guard let self else { return }
-                    self.moduleOutput?.moduleWantsToOpenPhotoSelection(withDelegate: self)
-                }
-            )
-        )
+    func didUpdatePhoto() {
+        delegate?.didUpdatePhoto()
     }
 }
 

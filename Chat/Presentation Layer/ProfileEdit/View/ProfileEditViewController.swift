@@ -19,7 +19,10 @@ final class ProfileEditViewController: UIViewController {
     // MARK: - UI
 
     private lazy var photoAddingView = PhotoAddingView(photoWidth: 150) { [weak self] in
-        self?.output.didOpenPhotoAddingAlertSheet()
+        self?.dismiss(animated: true) { [weak self] in
+            self?.saveProfile()
+            self?.output.didUpdatePhoto()
+        }
     }
     
     private lazy var nameAndInformationTableView: UITableView = {
@@ -105,16 +108,13 @@ final class ProfileEditViewController: UIViewController {
     private func hideKeyboard() {
         view.endEditing(true)
     }
-
-    @objc
-    private func saveButtonTapped() {
+    
+    private func saveProfile() {
         guard
             let name = (nameAndInformationTableView.visibleCells[0] as? ProfileEditCell)?.textField.text,
             let info = (nameAndInformationTableView.visibleCells[1] as? ProfileEditCell)?.textField.text
-        else {
-            return
-        }
-        
+        else { return }
+
         output.didSaveProfile(
             ProfileModel(
                 name: name,
@@ -122,6 +122,11 @@ final class ProfileEditViewController: UIViewController {
                 photo: photoAddingView.getPhoto()
             )
         )
+    }
+
+    @objc
+    private func saveButtonTapped() {
+        saveProfile()
     }
 
     @objc
@@ -143,18 +148,9 @@ final class ProfileEditViewController: UIViewController {
         if indexPath.row == indexLastCellInSection {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
         }
-        cell.textField.delegate = self
         cell.textField.tag = indexPath.row
         cell.configure(title: TableViewSection.allCases[indexPath.row].title, value: output.profileModel?[indexPath.row])
         return cell
-    }
- }
-
-// MARK: - UITextFieldDelegate
-
- extension ProfileEditViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
     }
  }
 

@@ -83,6 +83,10 @@ extension ProfilePresenter: ProfileEditDelegate {
     func didUpdateProfile() {
         loadProfile()
     }
+    
+    func didUpdatePhoto() {
+        didOpenPhotoAddingAlertSheet()
+    }
 }
 
 // MARK: - PhotoAddingServiceDelegate
