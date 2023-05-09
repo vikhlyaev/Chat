@@ -46,7 +46,6 @@ extension ProfileEditPresenter: ProfileEditViewOutput {
             }
             self?.viewInput?.showErrorAlert(with: "Failed to save profile")
         }
-        
         delegate?.didUpdateProfile()
     }
     
