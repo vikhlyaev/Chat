@@ -36,6 +36,16 @@ final class ProfileEditViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
+    
+    private lazy var cancelButton = UIBarButtonItem(title: "Cancel",
+                                               style: .plain,
+                                               target: self,
+                                               action: #selector(cancelButtonTapped))
+    
+    private lazy var saveButton = UIBarButtonItem(title: "Save",
+                                                  style: .plain,
+                                                  target: self,
+                                                  action: #selector(saveButtonTapped))
 
     private lazy var activityIndicator = UIActivityIndicatorView(style: .medium)
     
@@ -65,14 +75,6 @@ final class ProfileEditViewController: UIViewController {
     // MARK: - Setup UI
     
     private func setupNavBar() {
-        let cancelButton = UIBarButtonItem(title: "Cancel",
-                                           style: .plain,
-                                           target: self,
-                                           action: #selector(cancelButtonTapped))
-        let saveButton = UIBarButtonItem(title: "Save",
-                                         style: .plain,
-                                         target: self,
-                                         action: #selector(saveButtonTapped))
         navigationItem.setLeftBarButton(cancelButton, animated: true)
         navigationItem.setRightBarButton(saveButton, animated: true)
         title = "Edit Profile"
@@ -126,6 +128,7 @@ final class ProfileEditViewController: UIViewController {
 
     @objc
     private func saveButtonTapped() {
+        
         saveProfile()
     }
 
@@ -167,6 +170,16 @@ extension ProfileEditViewController: ProfileEditViewInput {
     
     func showAlert(_ alert: UIViewController) {
         present(alert, animated: true)
+    }
+    
+    func startActivityIndicator() {
+        activityIndicator.startAnimating()
+        navigationItem.setRightBarButton(UIBarButtonItem(customView: activityIndicator), animated: true)
+    }
+    
+    func stopActivityIndicator() {
+        activityIndicator.stopAnimating()
+        navigationItem.setRightBarButton(saveButton, animated: true)
     }
 }
 

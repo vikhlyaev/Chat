@@ -50,6 +50,7 @@ extension ProfileEditPresenter: ProfileEditViewOutput {
     
     func didSaveProfile(_ profile: ProfileModel) {
         tempProfileModel = profile
+        viewInput?.startActivityIndicator()
         profileService.saveProfile(profile) { [weak self] error in
             guard let self else { return }
             if error != nil {
@@ -71,6 +72,7 @@ extension ProfileEditPresenter: ProfileEditViewOutput {
                         )
                     )
                 )
+                self.viewInput?.stopActivityIndicator()
                 self.viewInput?.showController(alert)
             } else {
                 let alert = self.alertCreatorService.makeAlert(
@@ -85,6 +87,7 @@ extension ProfileEditPresenter: ProfileEditViewOutput {
                 )
                 self.tempProfileModel = nil
                 self.profileModel = profile
+                self.viewInput?.stopActivityIndicator()
                 self.viewInput?.showController(alert)
             }
         }

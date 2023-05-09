@@ -62,6 +62,10 @@ final class PhotoSelectionViewController: UIViewController {
         activityIndicator.startAnimating()
     }
     
+    private func stopActivityIndicator() {
+        activityIndicator.stopAnimating()
+    }
+    
     private func setupCollectionView() {
         photosCollectionView.register(
             PhotoSelectionCell.self,
@@ -174,7 +178,7 @@ extension PhotoSelectionViewController: PhotoSelectionViewInput {
         var snapshot = photosCollectionViewDataSource.snapshot()
         snapshot.appendItems(photos, toSection: 0)
         photosCollectionViewDataSource.apply(snapshot, animatingDifferences: false)
-        activityIndicator.stopAnimating()
+        stopActivityIndicator()
     }
 }
 
