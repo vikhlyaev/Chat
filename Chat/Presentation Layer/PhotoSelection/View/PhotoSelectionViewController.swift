@@ -6,7 +6,10 @@ final class PhotoSelectionViewController: UIViewController {
     
     private lazy var photosCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        let collectionView = UICollectionView(
+            frame: .zero,
+            collectionViewLayout: layout
+        )
         collectionView.allowsMultipleSelection = false
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
@@ -20,6 +23,7 @@ final class PhotoSelectionViewController: UIViewController {
     }()
     
     private var photosCollectionViewDataSource: UICollectionViewDiffableDataSource<Int, PhotoModel>?
+    
     private let output: PhotoSelectionViewOutput
     
     // MARK: - Life Cycle
@@ -37,9 +41,10 @@ final class PhotoSelectionViewController: UIViewController {
         super.viewDidLoad()
         setupView()
         setConstraints()
+        startActivityIndicator()
+        setupCollectionView()
         setupDiffableDataSource()
         setupInitialSnapshot()
-        setupCollectionView()
         setDelegates()
         setupNavBar()
         output.viewIsReady()
@@ -51,26 +56,34 @@ final class PhotoSelectionViewController: UIViewController {
         view.backgroundColor = .systemBackground
         view.addSubview(photosCollectionView)
         view.addSubview(activityIndicator)
-        
+    }
+    
+    private func startActivityIndicator() {
         activityIndicator.startAnimating()
+    }
+    
+    private func setupCollectionView() {
+        photosCollectionView.register(
+            PhotoSelectionCell.self,
+            forCellWithReuseIdentifier: PhotoSelectionCell.reuseIdentifier
+        )
     }
     
     private func setupDiffableDataSource() {
         photosCollectionViewDataSource = UICollectionViewDiffableDataSource<Int, PhotoModel>(
             collectionView: photosCollectionView,
             cellProvider: { collectionView, indexPath, itemIdentifier in
-                let cell = collectionView.dequeueReusableCell(cellType: PhotoSelectionCell.self, for: indexPath)
+                let cell = collectionView.dequeueReusableCell(
+                    cellType: PhotoSelectionCell.self,
+                    for: indexPath
+                )
                 cell.delegate = self
                 cell.resetCell()
                 cell.configure(with: itemIdentifier)
                 return cell
             })
     }
-    
-    private func setupCollectionView() {
-        photosCollectionView.register(PhotoSelectionCell.self, forCellWithReuseIdentifier: PhotoSelectionCell.reuseIdentifier)
-    }
-    
+
     private func setupInitialSnapshot() {
         var shapshot = NSDiffableDataSourceSnapshot<Int, PhotoModel>()
         shapshot.appendSections([0])
@@ -84,10 +97,12 @@ final class PhotoSelectionViewController: UIViewController {
     
     private func setupNavBar() {
         title = "Select photo"
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel",
-                                                           style: .done,
-                                                           target: self,
-                                                           action: #selector(cancelButtonTapped))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            title: "Cancel",
+            style: .done,
+            target: self,
+            action: #selector(cancelButtonTapped)
+        )
     }
     
     @objc
