@@ -33,16 +33,16 @@ final class PhotoAddingView: UIView {
     }()
     
     private let photoWidth: CGFloat
-    private let completion: () -> Void
+    private let addPhotoButtonAction: () -> Void
     
     // MARK: - Init
     
     init(
         photoWidth: CGFloat,
-        completion: @escaping () -> Void
+        addPhotoButtonAction: @escaping () -> Void
     ) {
         self.photoWidth = photoWidth
-        self.completion = completion
+        self.addPhotoButtonAction = addPhotoButtonAction
         super.init(frame: .zero)
         
         setupView()
@@ -72,7 +72,7 @@ final class PhotoAddingView: UIView {
     
     @objc
     private func addPhotoButtonTapped() {
-        completion()
+        addPhotoButtonAction()
     }
     
     func setPhoto(_ photo: UIImage?) {
