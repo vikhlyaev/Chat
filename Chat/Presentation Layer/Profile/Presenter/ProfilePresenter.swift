@@ -6,7 +6,9 @@ final class ProfilePresenter: NSObject {
     private let photoLoaderService: PhotoLoaderService
     private var photoAddingService: PhotoAddingService
     private let alertCreatorService: AlertCreatorService
+    
     private var profileModel: ProfileModel?
+    
     weak var moduleOutput: ProfileModuleOutput?
     weak var viewInput: ProfileViewInput?
     
@@ -20,6 +22,10 @@ final class ProfilePresenter: NSObject {
         self.photoAddingService = photoAddingService
         self.alertCreatorService = alertCreatorService
         self.moduleOutput = moduleOutput
+    }
+    
+    private func setDelegates() {
+        photoAddingService.delegate = self
     }
     
     private func loadProfile() {
@@ -38,6 +44,11 @@ final class ProfilePresenter: NSObject {
 // MARK: - ProfileViewOutput
 
 extension ProfilePresenter: ProfileViewOutput {
+    func viewIsReady() {
+        setDelegates()
+        loadProfile()
+    }
+    
     func didOpenPhotoAddingAlertSheet() {
         guard let viewInput else { return }
         viewInput.showViewController(
@@ -50,20 +61,19 @@ extension ProfilePresenter: ProfileViewOutput {
                 },
                 loadFromNetworkAction: { [weak self] in
                     guard let self else { return }
-                    self.moduleOutput?.moduleWantsToOpenPhotoSelection(with: self)
+                    self.moduleOutput?.moduleWantsToOpenPhotoSelection(withDelegate: self)
                 }
             )
         )
     }
     
-    func viewIsReady() {
-        photoAddingService.delegate = self
-        loadProfile()
-    }
-    
     func didOpenProfileEdit(with transitioningDelegate: UIViewControllerTransitioningDelegate) {
         guard let profileModel else { return }
-        moduleOutput?.moduleWantsToOpenProfileEdit(with: profileModel, transitioningDelegate: transitioningDelegate, delegate: self)
+        moduleOutput?.moduleWantsToOpenProfileEdit(
+            with: profileModel,
+            transitioningDelegate: transitioningDelegate,
+            delegate: self
+        )
     }
 }
 
