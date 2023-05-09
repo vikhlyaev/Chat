@@ -2,9 +2,12 @@ import UIKit
 
 final class ProfileEditPresenter {
     var profileModel: ProfileModel?
+    
     private let profileService: ProfileService
     private let photoLoaderService: PhotoLoaderService
     private var photoAddingService: PhotoAddingService
+    private let alertCreatorService: AlertCreatorService
+    
     weak var moduleOutput: ProfileEditModuleOutput?
     weak var delegate: ProfileEditDelegate?
     weak var viewInput: ProfileEditViewInput?
@@ -14,6 +17,7 @@ final class ProfileEditPresenter {
         profileService: ProfileService,
         photoLoaderService: PhotoLoaderService,
         photoAddingService: PhotoAddingService,
+        alertCreatorService: AlertCreatorService,
         moduleOutput: ProfileEditModuleOutput?,
         delegate: ProfileEditDelegate
     ) {
@@ -21,6 +25,7 @@ final class ProfileEditPresenter {
         self.profileService = profileService
         self.photoLoaderService = photoLoaderService
         self.photoAddingService = photoAddingService
+        self.alertCreatorService = alertCreatorService
         self.moduleOutput = moduleOutput
         self.delegate = delegate
     }
@@ -45,16 +50,22 @@ extension ProfileEditPresenter: ProfileEditViewOutput {
         delegate?.didUpdateProfile()
     }
     
-    func didTakePhoto() {
-        photoAddingService.didTakePhoto()
-    }
-    
-    func didChooseFromGallery() {
-        photoAddingService.didChooseFromGallery()
-    }
-    
-    func didLoadFromNetwork() {
-        moduleOutput?.moduleWantsToOpenPhotoSelection(with: self)
+    func didOpenPhotoAddingAlertSheet() {
+        guard let viewInput else { return }
+        viewInput.showViewController(
+            alertCreatorService.makePhotoAddingAlertSheet(
+                takePhotoAction: { [weak self] in
+                    self?.photoAddingService.didTakePhoto()
+                },
+                chooseFromGalleryAction: { [weak self] in
+                    self?.photoAddingService.didChooseFromGallery()
+                },
+                loadFromNetworkAction: { [weak self] in
+                    guard let self else { return }
+                    self.moduleOutput?.moduleWantsToOpenPhotoSelection(withDelegate: self)
+                }
+            )
+        )
     }
 }
 

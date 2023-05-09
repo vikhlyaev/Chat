@@ -18,24 +18,9 @@ final class ProfileEditViewController: UIViewController {
     
     // MARK: - UI
 
-    private lazy var photoImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 75
-        imageView.backgroundColor = .red
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
-    }()
-    
-    private lazy var addPhotoButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Add Photo", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 17)
-        button.addTarget(self, action: #selector(addPhotoButtonTapped), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
+    private lazy var photoAddingView = PhotoAddingView(photoWidth: 150) { [weak self] in
+        self?.output.didOpenPhotoAddingAlertSheet()
+    }
     
     private lazy var nameAndInformationTableView: UITableView = {
         let tableView = UITableView(frame: .zero)
@@ -92,8 +77,7 @@ final class ProfileEditViewController: UIViewController {
     
     private func setupView() {
         view.backgroundColor = .appBackground
-        view.addSubview(photoImageView)
-        view.addSubview(addPhotoButton)
+        view.addSubview(photoAddingView)
         view.addSubview(nameAndInformationTableView)
     }
     
@@ -121,32 +105,6 @@ final class ProfileEditViewController: UIViewController {
     private func hideKeyboard() {
         view.endEditing(true)
     }
-    
-    // MARK: - Add Photo methods
-    
-    @objc
-    private func addPhotoButtonTapped() {
-        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let takePhotoAction = UIAlertAction(title: "Take photo", style: .default) { [weak self] _ in
-            self?.output.didTakePhoto()
-        }
-        let chooseFromGalleryAction = UIAlertAction(title: "Choose from gallery", style: .default) { [weak self] _ in
-            self?.output.didChooseFromGallery()
-        }
-        let loadFromNetworkAction = UIAlertAction(title: "Load from network", style: .default) { [weak self] _ in
-            self?.dismiss(animated: false) {
-                self?.saveButtonTapped()
-                self?.output.didLoadFromNetwork()
-            }
-            
-        }
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
-        alert.addAction(takePhotoAction)
-        alert.addAction(chooseFromGalleryAction)
-        alert.addAction(loadFromNetworkAction)
-        alert.addAction(cancelAction)
-        present(alert, animated: true)
-    }
 
     @objc
     private func saveButtonTapped() {
@@ -161,7 +119,7 @@ final class ProfileEditViewController: UIViewController {
             ProfileModel(
                 name: name,
                 information: info,
-                photo: photoImageView.image
+                photo: photoAddingView.getPhoto()
             )
         )
     }
@@ -204,7 +162,7 @@ final class ProfileEditViewController: UIViewController {
 
 extension ProfileEditViewController: ProfileEditViewInput {
     func updatePhoto(_ photo: UIImage) {
-        photoImageView.image = photo
+        photoAddingView.setPhoto(photo)
     }
     
     func showViewController(_ viewController: UIViewController) {
@@ -234,15 +192,11 @@ extension ProfileEditViewController: ProfileEditViewInput {
 extension ProfileEditViewController {
     private func setConstraints() {
         NSLayoutConstraint.activate([
-            photoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32),
-            photoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            photoImageView.widthAnchor.constraint(equalToConstant: 150),
-            photoImageView.heightAnchor.constraint(equalToConstant: 150),
+            photoAddingView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32),
+            photoAddingView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            photoAddingView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             
-            addPhotoButton.topAnchor.constraint(equalTo: photoImageView.bottomAnchor, constant: 24),
-            addPhotoButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            
-            nameAndInformationTableView.topAnchor.constraint(equalTo: addPhotoButton.bottomAnchor, constant: 24),
+            nameAndInformationTableView.topAnchor.constraint(equalTo: photoAddingView.bottomAnchor, constant: 24),
             nameAndInformationTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             nameAndInformationTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             nameAndInformationTableView.heightAnchor.constraint(equalToConstant: 90)

@@ -78,6 +78,10 @@ final class PhotoAddingView: UIView {
     func setPhoto(_ photo: UIImage?) {
         photoImageView.image = photo
     }
+    
+    func getPhoto() -> UIImage? {
+        photoImageView.image
+    }
 }
 
 // MARK: - Settings Constraints

@@ -63,6 +63,7 @@ final class ModuleAssembly {
             profileService: serviceAssembly.makeProfileService(),
             photoLoaderService: serviceAssembly.makePhotoLoaderService(),
             photoAddingService: serviceAssembly.makePhotoAddingService(),
+            alertCreatorService: serviceAssembly.makeAlertCreaterService(),
             moduleOutput: moduleOutput,
             delegate: delegate
         )

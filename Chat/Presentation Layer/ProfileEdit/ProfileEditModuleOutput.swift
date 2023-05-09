@@ -1,5 +1,5 @@
 import UIKit
 
 protocol ProfileEditModuleOutput: AnyObject {
-    func moduleWantsToOpenPhotoSelection(with delegate: PhotoSelectionDelegate)
+    func moduleWantsToOpenPhotoSelection(withDelegate delegate: PhotoSelectionDelegate)
 }

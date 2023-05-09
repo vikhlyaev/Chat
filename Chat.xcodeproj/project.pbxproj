@@ -283,10 +283,10 @@
 				0A8550082A003E7A00944138 /* SSETransportService */,
 				0AEAF80429FD648800B6024F /* DataService */,
 				0AEAF7FF29FD645200B6024F /* ChatService */,
-				0A59D0D329FC37FA008FD2C6 /* PhotoLoaderService */,
 				0A856FE629FAFA4200F46AFC /* ThemesService */,
 				0A856FE129FAFA3700F46AFC /* ProfileService */,
 				0A751AAF2A04B540003A11B2 /* PhotoAddingService */,
+				0A59D0D329FC37FA008FD2C6 /* PhotoLoaderService */,
 			);
 			path = "Service Layer";
 			sourceTree = "<group>";
