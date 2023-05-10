@@ -15,7 +15,6 @@
 		0A03CD7229B99C1300B9CC8E /* ChannelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A03CD7129B99C1300B9CC8E /* ChannelCell.swift */; };
 		0A03CD7629B9DA0C00B9CC8E /* Array + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A03CD7529B9DA0C00B9CC8E /* Array + Extensions.swift */; };
 		0A2377A42A0BDF4B00B8B2AD /* ChatUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2377A32A0BDF4B00B8B2AD /* ChatUITests.swift */; };
-		0A2377A62A0BDF4B00B8B2AD /* ChatUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2377A52A0BDF4B00B8B2AD /* ChatUITestsLaunchTests.swift */; };
 		0A2377C02A0BF7B000B8B2AD /* FileManagerServiceMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2377BF2A0BF7B000B8B2AD /* FileManagerServiceMock.swift */; };
 		0A2377C22A0BFC9800B8B2AD /* FileManagerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2377C12A0BFC9800B8B2AD /* FileManagerService.swift */; };
 		0A2377C52A0C077800B8B2AD /* PhotoLoaderServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2377C42A0C077800B8B2AD /* PhotoLoaderServiceTests.swift */; };
@@ -152,7 +151,6 @@
 		0A2377802A0BDC1800B8B2AD /* UnitTestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = UnitTestPlan.xctestplan; sourceTree = "<group>"; };
 		0A2377A12A0BDF4B00B8B2AD /* ChatUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChatUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A2377A32A0BDF4B00B8B2AD /* ChatUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUITests.swift; sourceTree = "<group>"; };
-		0A2377A52A0BDF4B00B8B2AD /* ChatUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		0A2377B02A0BDF5700B8B2AD /* ChatUnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChatUnitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A2377B92A0BE02A00B8B2AD /* UITestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = UITestPlan.xctestplan; sourceTree = "<group>"; };
 		0A2377BF2A0BF7B000B8B2AD /* FileManagerServiceMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManagerServiceMock.swift; sourceTree = "<group>"; };
@@ -319,7 +317,6 @@
 			isa = PBXGroup;
 			children = (
 				0A2377A32A0BDF4B00B8B2AD /* ChatUITests.swift */,
-				0A2377A52A0BDF4B00B8B2AD /* ChatUITestsLaunchTests.swift */,
 			);
 			path = ChatUITests;
 			sourceTree = "<group>";
@@ -1097,7 +1094,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0A2377A62A0BDF4B00B8B2AD /* ChatUITestsLaunchTests.swift in Sources */,
 				0A2377A42A0BDF4B00B8B2AD /* ChatUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
