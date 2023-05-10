@@ -72,21 +72,4 @@ extension NetworkServiceImpl: NetworkService {
             }.resume()
         }
     }
-    
-    func checkImageContentType(with request: URLRequest, _ completion: @escaping (Result<Bool, Error>) -> Void) {
-        session.dataTask(with: request) { _, response, error in
-            if let response, let httpUrlResponse = (response as? HTTPURLResponse) {
-                if 200 ..< 300 ~= httpUrlResponse.statusCode {
-                    if let contentType = httpUrlResponse.value(forHTTPHeaderField: "Content-Type") {
-                        let imagesTypes = ["image/jpeg", "image/png", "image/svg+xml"]
-                        completion(.success(imagesTypes.contains(contentType)))
-                    }
-                } else {
-                    completion(.failure(NetworkServiceError.httpStatusCode(httpUrlResponse.statusCode)))
-                }
-            } else if let error {
-                completion(.failure(NetworkServiceError.urlRequestError(error)))
-            }
-        }.resume()
-    }
 }
