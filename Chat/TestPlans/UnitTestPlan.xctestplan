@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "3FECB25D-8B5D-49DD-9756-3D6867E8C8B9",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Chat.xcodeproj",
+      "identifier" : "0A2377AF2A0BDF5700B8B2AD",
+      "name" : "ChatUnitTests"
+    },
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Chat.xcodeproj",
+        "identifier" : "0A2377AF2A0BDF5700B8B2AD",
+        "name" : "ChatUnitTests"
+      }
+    }
+  ],
+  "version" : 1
+}

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeVersion = "1410"
-   version = "1.3">
+   version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
@@ -28,7 +28,38 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
       codeCoverageEnabled = "YES">
+      <TestPlans>
+         <TestPlanReference
+            reference = "container:Chat/TestPlans/UITestPlan.xctestplan"
+            default = "YES">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:Chat/TestPlans/UnitTestPlan.xctestplan">
+         </TestPlanReference>
+      </TestPlans>
       <Testables>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "0A2377AF2A0BDF5700B8B2AD"
+               BuildableName = "ChatUnitTests.xctest"
+               BlueprintName = "ChatUnitTests"
+               ReferencedContainer = "container:Chat.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "0A2377A02A0BDF4B00B8B2AD"
+               BuildableName = "ChatUITests.xctest"
+               BlueprintName = "ChatUITests"
+               ReferencedContainer = "container:Chat.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
