@@ -9,6 +9,15 @@
     }
   ],
   "defaultOptions" : {
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:Chat.xcodeproj",
+          "identifier" : "0AF3176329A0D667005417A5",
+          "name" : "Chat"
+        }
+      ]
+    },
     "targetForVariableExpansion" : {
       "containerPath" : "container:Chat.xcodeproj",
       "identifier" : "0A2377A02A0BDF4B00B8B2AD",
