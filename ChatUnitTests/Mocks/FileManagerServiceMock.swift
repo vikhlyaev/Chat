@@ -2,7 +2,6 @@ import Foundation
 @testable import Chat
 
 final class FileManagerServiceMock: FileManagerService {
-    
     var invokedRead = false
     var invokedReadCount = 0
     var invokedReadParameters: (filename: String, Void)?

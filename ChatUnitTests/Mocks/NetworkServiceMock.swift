@@ -2,6 +2,7 @@ import Foundation
 @testable import Chat
 
 final class NetworkServiceMock: NetworkService {
+
     var invokedFetch = false
     var invokedFetchCount = 0
     var invokedFetchParameters: (request: URLRequest, Void)?
@@ -14,7 +15,7 @@ final class NetworkServiceMock: NetworkService {
         invokedFetchParameters = (request, ())
         invokedFetchParametersList.append((request, ()))
         if let result = stubbedFetchCompletionResult {
-            completion(result.0 as! Result<T, any Error>)
+            completion(result.0 as! Result<T, Error>)
         }
     }
 

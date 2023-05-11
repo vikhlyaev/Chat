@@ -3,7 +3,6 @@ import CoreData
 @testable import Chat
 
 final class CoreDataServiceMock: CoreDataService {
-
     var invokedFetchProfile = false
     var invokedFetchProfileCount = 0
     var stubbedFetchProfileError: Error?
