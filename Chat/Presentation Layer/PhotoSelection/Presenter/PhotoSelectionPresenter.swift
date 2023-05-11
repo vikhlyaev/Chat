@@ -46,7 +46,7 @@ extension PhotoSelectionPresenter: PhotoSelectionViewOutput {
                 let alert = self.alertCreatorService.makeAlert(
                     with: AlertViewModel(
                         title: "Error",
-                        message: "Unable to upload a profile photo",
+                        message: "Unable to upload images",
                         firstAction: AlertViewModel.AlertAction(
                             title: "OK",
                             style: .cancel
