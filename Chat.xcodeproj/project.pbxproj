@@ -325,8 +325,8 @@
 			isa = PBXGroup;
 			children = (
 				0A2377BE2A0BF78D00B8B2AD /* Mocks */,
-				0A2377BD2A0BE59500B8B2AD /* Core Layer */,
 				0A2377C62A0C077D00B8B2AD /* Service Layer */,
+				0A2377BD2A0BE59500B8B2AD /* Core Layer */,
 			);
 			path = ChatUnitTests;
 			sourceTree = "<group>";
