@@ -4,6 +4,7 @@ import UIKit
 final class PhotoLoaderServiceImpl {
     
     private let networkService: NetworkService
+    private let fileManagerService: FileManagerService
     
     private let baseUrl = URL(string: "https://pixabay.com/api/")
     private let searchKeyword = "mountains"
@@ -11,8 +12,9 @@ final class PhotoLoaderServiceImpl {
     
     private let backgroundQueue = DispatchQueue(label: "PhotoLoaderService", qos: .userInitiated)
     
-    init(networkService: NetworkService) {
+    init(networkService: NetworkService, fileManagerService: FileManagerService) {
         self.networkService = networkService
+        self.fileManagerService = fileManagerService
     }
     
     private func makeHTTPRequest(with keyword: String, for page: Int) throws -> URLRequest {
@@ -34,7 +36,7 @@ final class PhotoLoaderServiceImpl {
 
 // MARK: - PhotoLoaderService
 
-extension PhotoLoaderServiceImpl: PhotoLoaderService {
+extension PhotoLoaderServiceImpl: PhotoLoaderService {    
     func fetchPhotosNextPage(_ completion: @escaping (Result<[PhotoModel], Error>) -> Void) {
         let completionOnMainQueue: (Result<[PhotoModel], Error>) -> Void = { result in
             DispatchQueue.main.async {
@@ -65,16 +67,39 @@ extension PhotoLoaderServiceImpl: PhotoLoaderService {
             }
         }
         let request = URLRequest(url: url)
-        networkService.download(with: request) { result in
-            switch result {
-            case .success(let photoData):
-                if let photo = UIImage(data: photoData) {
-                    completionOnMainQueue(.success(photo))
-                } else {
-                    completionOnMainQueue(.failure(PhotoLoaderError.incorrectData))
+        
+        guard let filename = request.url?.lastPathComponent else { return }
+        
+        if fileManagerService.fileExist(at: filename) {
+            fileManagerService.read(by: filename) { result in
+                switch result {
+                case .success(let cachedPhotoData):
+                    if let cachedImage = UIImage(data: cachedPhotoData) {
+                        completion(.success(cachedImage))
+                    } else {
+                        completion(.failure(PhotoLoaderError.incorrectData))
+                    }
+                case .failure(let error):
+                    completion(.failure(error))
                 }
-            case .failure(let error):
-                completionOnMainQueue(.failure(error))
+            }
+        } else {
+            networkService.download(with: request) { [weak self] result in
+                switch result {
+                case .success(let photoData):
+                    self?.fileManagerService.write(photoData, with: filename) { error in
+                        if let error {
+                            completion(.failure(error))
+                        }
+                    }
+                    if let photo = UIImage(data: photoData) {
+                        completionOnMainQueue(.success(photo))
+                    } else {
+                        completionOnMainQueue(.failure(PhotoLoaderError.incorrectData))
+                    }
+                case .failure(let error):
+                    completionOnMainQueue(.failure(error))
+                }
             }
         }
     }

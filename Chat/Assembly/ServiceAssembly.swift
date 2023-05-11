@@ -19,7 +19,7 @@ final class ServiceAssembly {
     }
     
     func makeNetworkService() -> NetworkService {
-        NetworkServiceImpl(fileManagerService: makeFileManagerService())
+        NetworkServiceImpl()
     }
     
     func makeThemesService() -> ThemesService {
@@ -34,7 +34,10 @@ final class ServiceAssembly {
     }
     
     func makePhotoLoaderService() -> PhotoLoaderService {
-        PhotoLoaderServiceImpl(networkService: makeNetworkService())
+        PhotoLoaderServiceImpl(
+            networkService: makeNetworkService(),
+            fileManagerService: makeFileManagerService()
+        )
     }
     
     func makeDataService() -> DataService {
