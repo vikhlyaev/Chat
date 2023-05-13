@@ -10,6 +10,7 @@ A training project that was developed as part of training at Tinkoff Fintech.
 - MVP + SOA
 - Combine
 - UI layout with code
-- URLSession
+- URLSession + SSE
 - CoreData + UserDefaults
 - Cocoapods
+- Fastlane
