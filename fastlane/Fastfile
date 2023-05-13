@@ -1,0 +1,4 @@
+desc "Custom build for testing"
+lane :custom_build_for_testing do
+  scan
+end
