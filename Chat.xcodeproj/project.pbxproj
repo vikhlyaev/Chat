@@ -16,7 +16,6 @@
 		0A03CD7629B9DA0C00B9CC8E /* Array + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A03CD7529B9DA0C00B9CC8E /* Array + Extensions.swift */; };
 		0A2377A42A0BDF4B00B8B2AD /* ChatUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2377A32A0BDF4B00B8B2AD /* ChatUITests.swift */; };
 		0A2377C02A0BF7B000B8B2AD /* FileManagerServiceMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2377BF2A0BF7B000B8B2AD /* FileManagerServiceMock.swift */; };
-		0A2377C22A0BFC9800B8B2AD /* FileManagerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2377C12A0BFC9800B8B2AD /* FileManagerService.swift */; };
 		0A2377C52A0C077800B8B2AD /* PhotoLoaderServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2377C42A0C077800B8B2AD /* PhotoLoaderServiceTests.swift */; };
 		0A2377C92A0C07F600B8B2AD /* NetworkServiceMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2377C82A0C07F600B8B2AD /* NetworkServiceMock.swift */; };
 		0A2377CB2A0C14C900B8B2AD /* CoreDataServiceMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2377CA2A0C14C900B8B2AD /* CoreDataServiceMock.swift */; };
@@ -154,7 +153,6 @@
 		0A2377B02A0BDF5700B8B2AD /* ChatUnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ChatUnitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A2377B92A0BE02A00B8B2AD /* UITestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = UITestPlan.xctestplan; sourceTree = "<group>"; };
 		0A2377BF2A0BF7B000B8B2AD /* FileManagerServiceMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManagerServiceMock.swift; sourceTree = "<group>"; };
-		0A2377C12A0BFC9800B8B2AD /* FileManagerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManagerService.swift; sourceTree = "<group>"; };
 		0A2377C42A0C077800B8B2AD /* PhotoLoaderServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLoaderServiceTests.swift; sourceTree = "<group>"; };
 		0A2377C82A0C07F600B8B2AD /* NetworkServiceMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkServiceMock.swift; sourceTree = "<group>"; };
 		0A2377CA2A0C14C900B8B2AD /* CoreDataServiceMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataServiceMock.swift; sourceTree = "<group>"; };
@@ -196,6 +194,7 @@
 		0A72EC892A02EB43000AED23 /* ProfileEditPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditPresenter.swift; sourceTree = "<group>"; };
 		0A72EC8D2A037FF3000AED23 /* ProfileAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileAnimator.swift; sourceTree = "<group>"; };
 		0A72EC952A03D35C000AED23 /* ParticleAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleAnimation.swift; sourceTree = "<group>"; };
+		0A73A6D82A0FCD9A00C5B768 /* AllTestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTestPlan.xctestplan; sourceTree = "<group>"; };
 		0A751AAB2A04B51C003A11B2 /* PhotoAddingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAddingService.swift; sourceTree = "<group>"; };
 		0A751AAD2A04B53C003A11B2 /* PhotoAddingServiceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAddingServiceImpl.swift; sourceTree = "<group>"; };
 		0A751AB02A04B5F0003A11B2 /* PhotoAddingServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAddingServiceDelegate.swift; sourceTree = "<group>"; };
@@ -326,17 +325,8 @@
 			children = (
 				0A2377BE2A0BF78D00B8B2AD /* Mocks */,
 				0A2377C62A0C077D00B8B2AD /* Service Layer */,
-				0A2377BD2A0BE59500B8B2AD /* Core Layer */,
 			);
 			path = ChatUnitTests;
-			sourceTree = "<group>";
-		};
-		0A2377BD2A0BE59500B8B2AD /* Core Layer */ = {
-			isa = PBXGroup;
-			children = (
-				0A2377C32A0C066B00B8B2AD /* FileManager */,
-			);
-			path = "Core Layer";
 			sourceTree = "<group>";
 		};
 		0A2377BE2A0BF78D00B8B2AD /* Mocks */ = {
@@ -347,14 +337,6 @@
 				0A2377CA2A0C14C900B8B2AD /* CoreDataServiceMock.swift */,
 			);
 			path = Mocks;
-			sourceTree = "<group>";
-		};
-		0A2377C32A0C066B00B8B2AD /* FileManager */ = {
-			isa = PBXGroup;
-			children = (
-				0A2377C12A0BFC9800B8B2AD /* FileManagerService.swift */,
-			);
-			path = FileManager;
 			sourceTree = "<group>";
 		};
 		0A2377C62A0C077D00B8B2AD /* Service Layer */ = {
@@ -507,6 +489,7 @@
 			children = (
 				0A2377802A0BDC1800B8B2AD /* UnitTestPlan.xctestplan */,
 				0A2377B92A0BE02A00B8B2AD /* UITestPlan.xctestplan */,
+				0A73A6D82A0FCD9A00C5B768 /* AllTestPlan.xctestplan */,
 			);
 			path = TestPlans;
 			sourceTree = "<group>";
@@ -1107,7 +1090,6 @@
 				0A2377CE2A0C152600B8B2AD /* ProfileServiceTests.swift in Sources */,
 				0A2377C02A0BF7B000B8B2AD /* FileManagerServiceMock.swift in Sources */,
 				0A2377CB2A0C14C900B8B2AD /* CoreDataServiceMock.swift in Sources */,
-				0A2377C22A0BFC9800B8B2AD /* FileManagerService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

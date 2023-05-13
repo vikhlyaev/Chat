@@ -30,11 +30,14 @@
       codeCoverageEnabled = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:Chat/TestPlans/UITestPlan.xctestplan"
-            default = "YES">
+            reference = "container:Chat/TestPlans/UITestPlan.xctestplan">
          </TestPlanReference>
          <TestPlanReference
             reference = "container:Chat/TestPlans/UnitTestPlan.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:Chat/TestPlans/AllTestPlan.xctestplan"
+            default = "YES">
          </TestPlanReference>
       </TestPlans>
       <Testables>
