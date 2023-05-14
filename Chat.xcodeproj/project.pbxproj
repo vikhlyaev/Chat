@@ -195,6 +195,7 @@
 		0A72EC8D2A037FF3000AED23 /* ProfileAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileAnimator.swift; sourceTree = "<group>"; };
 		0A72EC952A03D35C000AED23 /* ParticleAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleAnimation.swift; sourceTree = "<group>"; };
 		0A73A6D82A0FCD9A00C5B768 /* AllTestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTestPlan.xctestplan; sourceTree = "<group>"; };
+		0A73A6D92A10C32300C5B768 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		0A751AAB2A04B51C003A11B2 /* PhotoAddingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAddingService.swift; sourceTree = "<group>"; };
 		0A751AAD2A04B53C003A11B2 /* PhotoAddingServiceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAddingServiceImpl.swift; sourceTree = "<group>"; };
 		0A751AB02A04B5F0003A11B2 /* PhotoAddingServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAddingServiceDelegate.swift; sourceTree = "<group>"; };
@@ -792,6 +793,7 @@
 		0AF3175B29A0D667005417A5 = {
 			isa = PBXGroup;
 			children = (
+				0A73A6D92A10C32300C5B768 /* Secrets.xcconfig */,
 				0AF3176629A0D667005417A5 /* Chat */,
 				0A2377A22A0BDF4B00B8B2AD /* ChatUITests */,
 				0A2377B12A0BDF5700B8B2AD /* ChatUnitTests */,
@@ -1319,6 +1321,7 @@
 		};
 		0AF3177629A0D66A005417A5 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0A73A6D92A10C32300C5B768 /* Secrets.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1379,6 +1382,7 @@
 		};
 		0AF3177729A0D66A005417A5 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0A73A6D92A10C32300C5B768 /* Secrets.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;

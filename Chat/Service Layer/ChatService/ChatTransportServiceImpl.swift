@@ -3,17 +3,16 @@ import TFSChatTransport
 import Combine
 
 final class ChatTransportServiceImpl {
-    
-    private struct ChatServiceSettings {
-        static let ip = "167.235.86.234"
-        static let port = 8080
-    }
-    
     private let chatService: ChatService
     private var cancellables = Set<AnyCancellable>()
+    private let host = Bundle.main.object(forInfoDictionaryKey: "Chat Service IP") as? String
+    private let port = Bundle.main.object(forInfoDictionaryKey: "Chat Service Port") as? String
     
     init() {
-        self.chatService = ChatService(host: ChatServiceSettings.ip, port: ChatServiceSettings.port)
+        self.chatService = ChatService(
+            host: host ?? "",
+            port: Int(port ?? "") ?? 80
+        )
     }
 }
 
