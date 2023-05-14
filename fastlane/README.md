@@ -21,6 +21,22 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Custom build for testing
 
+### custom_run_tests
+
+```sh
+[bundle exec] fastlane custom_run_tests
+```
+
+Custom run tests
+
+### custom_build_and_test
+
+```sh
+[bundle exec] fastlane custom_build_and_test
+```
+
+Custom build and test
+
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.
