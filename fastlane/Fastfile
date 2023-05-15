@@ -1,6 +1,7 @@
 desc "Swiftlint"
 lane :lint do
   swiftlint(
+    executable: "Pods/SwiftLint/swiftlint",
     mode: :lint,
     strict: true,
     config_file: '.swiftlint.yml'
