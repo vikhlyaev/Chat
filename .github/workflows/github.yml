@@ -13,3 +13,8 @@
             bundler-cache: true
         - name: Build and test
           run: bundle exec fastlane custom_build_and_test
+        - name: Discord notification
+          uses: sarisia/actions-status-discord@v1
+          if: always()
+          with:
+            webhook: ${{ secrets.DISCORD }}
