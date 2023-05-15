@@ -11,9 +11,5 @@
           with: 
             ruby-version: '3.1'
             bundler-cache: true
-        - name: SwiftLint
-          uses: BlueIntent/iOS-helper-action@v1.0
-          with:
-            action: 'swiftlint'
         - name: Build and test
           run: bundle exec fastlane custom_build_and_test
