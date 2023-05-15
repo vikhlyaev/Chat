@@ -26,7 +26,6 @@ opt_in_rules:
   - explicit_init
   - force_unwrapping
   - operator_usage_whitespace
-  - anyobject_protocol
   - array_init
   - block_based_kvo
 #  - closure_body_length
@@ -51,7 +50,7 @@ type_body_length:
 nesting:
   type_level:
     warning: 3
-  statement_level:
+  function_level:
     warning: 5
 
 identifier_name:
