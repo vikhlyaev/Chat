@@ -1,6 +1,6 @@
 # Chat
 
-Github Action Badge
+[![CI](https://github.com/TFS-iOS/chat-app-vikhlyaev/actions/workflows/github.yml/badge.svg?branch=hw-13)](https://github.com/TFS-iOS/chat-app-vikhlyaev/actions/workflows/github.yml)
 
 A training project that was developed as part of training at Tinkoff Fintech.
 
