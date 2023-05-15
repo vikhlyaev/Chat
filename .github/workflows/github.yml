@@ -12,8 +12,8 @@
             ruby-version: '3.1'
             bundler-cache: true
         - name: SwiftLint
-          uses: norio-nomura/action-swiftlint@3.2.1
+          uses: raphaelbussa/swiftlint-action@main
           with:
-            args: --strict
+            subcommand: lint --strict
         - name: Build and test
           run: bundle exec fastlane custom_build_and_test
