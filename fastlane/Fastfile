@@ -1,7 +1,10 @@
 desc "Custom build for testing"
 lane :custom_build_for_testing do
   cocoapods(clean_install: true)
-  scan(build_for_testing: true)
+  scan(
+    clean: true,
+    build_for_testing: true
+  )
 end
 
 desc "Custom run tests"
