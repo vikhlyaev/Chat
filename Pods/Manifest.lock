@@ -1,0 +1,16 @@
+PODS:
+  - TFSChatTransport (3.1.0)
+
+DEPENDENCIES:
+  - TFSChatTransport
+
+SPEC REPOS:
+  trunk:
+    - TFSChatTransport
+
+SPEC CHECKSUMS:
+  TFSChatTransport: bc49159a7d95dd50a8db108f69e390cfddae92a1
+
+PODFILE CHECKSUM: f4f16be9a528a6ea23ab6c9fa10e502bb9974161
+
+COCOAPODS: 1.10.2
