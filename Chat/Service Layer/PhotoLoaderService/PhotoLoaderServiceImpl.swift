@@ -70,8 +70,9 @@ extension PhotoLoaderServiceImpl: PhotoLoaderService {
             case .success(let photoData):
                 if let photo = UIImage(data: photoData) {
                     completionOnMainQueue(.success(photo))
+                } else {
+                    completionOnMainQueue(.failure(PhotoLoaderError.incorrectData))
                 }
-                completionOnMainQueue(.failure(PhotoLoaderError.incorrectData))
             case .failure(let error):
                 completionOnMainQueue(.failure(error))
             }
