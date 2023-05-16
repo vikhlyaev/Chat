@@ -1,6 +1,6 @@
 import Foundation
 
-final class ServiceAssembly {
+final class ServiceAssemblyImpl: ServiceAssembly {
     
     func makeFileManagerService() -> FileManagerService {
         FileManagerServiceImpl()
@@ -55,4 +55,5 @@ final class ServiceAssembly {
     func makeAlertCreaterService() -> AlertCreatorService {
         AlertCreatorServiceImpl()
     }
+    
 }

@@ -1,13 +1,16 @@
 import UIKit
 
-final class ModuleAssembly {
-    
+final class ModuleAssemblyImpl {
     private let serviceAssembly: ServiceAssembly
-
+    
     init(serviceAssembly: ServiceAssembly) {
         self.serviceAssembly = serviceAssembly
     }
-    
+}
+
+// MARK: - ModuleAssembly
+
+extension ModuleAssemblyImpl: ModuleAssembly {
     func makeChannelsListModule(moduleOutput: ChannelsListModuleOutput) -> UIViewController {
         let presenter = ChannelsListPresenter(
             dataService: serviceAssembly.makeDataService(),
@@ -86,5 +89,4 @@ final class ModuleAssembly {
         presenter.viewInput = vc
         return navigationController
     }
-
 }
