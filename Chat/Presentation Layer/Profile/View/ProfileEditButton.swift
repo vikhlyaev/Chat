@@ -38,41 +38,60 @@ final class ProfileEditButton: UIButton {
     }
     
     private func startEditButtonAnimation() {
-        let rotate = CABasicAnimation(keyPath: "transform.rotation")
-        rotate.fromValue = -(CGFloat.pi / 180 * 18)
-        rotate.toValue = CGFloat.pi / 180 * 18
+        let rotateAnimation = CABasicAnimation(keyPath: "transform.rotation")
+        rotateAnimation.fromValue = -(CGFloat.pi / 180 * 18)
+        rotateAnimation.toValue = CGFloat.pi / 180 * 18
         
-        let moveUpDown = CAKeyframeAnimation(keyPath: "position.y")
-        moveUpDown.values = [
+        let moveUpDownAnimation = CAKeyframeAnimation(keyPath: "position.y")
+        moveUpDownAnimation.values = [
             layer.position.y,
             layer.position.y - 5,
             layer.position.y + 5,
             layer.position.y
         ]
-        moveUpDown.keyTimes = [0, 0.25, 0.75, 1]
+        moveUpDownAnimation.keyTimes = [0, 0.25, 0.75, 1]
         
-        let moveLeftRight = CAKeyframeAnimation(keyPath: "position.x")
-        moveLeftRight.values = [
+        let moveLeftRightAnimation = CAKeyframeAnimation(keyPath: "position.x")
+        moveLeftRightAnimation.values = [
             layer.position.x,
             layer.position.x + 5,
             layer.position.x - 5,
             layer.position.x
         ]
-        moveLeftRight.keyTimes = [0, 0.25, 0.75, 1]
+        moveLeftRightAnimation.keyTimes = [0, 0.25, 0.75, 1]
         
         let animationGroup = CAAnimationGroup()
         animationGroup.autoreverses = true
         animationGroup.repeatCount = .infinity
         animationGroup.duration = 0.3
-        animationGroup.animations = [moveUpDown, moveLeftRight, rotate]
+        animationGroup.animations = [moveUpDownAnimation, moveLeftRightAnimation, rotateAnimation]
         
-        layer.add(animationGroup, forKey: "EditAnimation")
+        layer.add(animationGroup, forKey: "StartEditAnimation")
     }
     
     private func stopEditButtonAnimation() {
-        UIView.animate(withDuration: 2, delay: 0, options: [.beginFromCurrentState]) {
-            self.layer.removeAllAnimations()
-        }
+        guard let presentationLayer = layer.presentation() else { return }
+        layer.removeAllAnimations()
+        
+        let rotateAnimation = CAKeyframeAnimation()
+        rotateAnimation.keyPath = "transform.rotation"
+        rotateAnimation.values = [presentationLayer.value(forKeyPath: "transform.rotation.z") ?? 0, 0]
+        rotateAnimation.keyTimes = [0, 1]
+        
+        let moveAnimation = CAKeyframeAnimation()
+        moveAnimation.keyPath = "position"
+        moveAnimation.values = [
+            presentationLayer.position,
+            center
+        ]
+        moveAnimation.keyTimes = [0, 1]
+        
+        let animationGroup = CAAnimationGroup()
+        animationGroup.animations = [rotateAnimation, moveAnimation]
+        animationGroup.duration = 0.3
+        animationGroup.fillMode = .both
+        
+        layer.add(animationGroup, forKey: "StopEditAnimation")
     }
     
     @objc
