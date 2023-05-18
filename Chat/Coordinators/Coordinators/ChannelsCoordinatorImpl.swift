@@ -1,6 +1,6 @@
 import UIKit
 
-final class ChannelsCoordinator {
+final class ChannelsCoordinatorImpl {
     let navigationController: UINavigationController
     private let moduleAssembly: ModuleAssembly
     
@@ -13,7 +13,7 @@ final class ChannelsCoordinator {
 
 // MARK: - Coordinator
 
-extension ChannelsCoordinator: Coordinator {
+extension ChannelsCoordinatorImpl: Coordinator {
     func start() {
         let vc = moduleAssembly.makeChannelsListModule(moduleOutput: self)
         vc.tabBarItem = UITabBarItem(
@@ -27,7 +27,7 @@ extension ChannelsCoordinator: Coordinator {
 
 // MARK: - ChannelsListModuleOutput
 
-extension ChannelsCoordinator: ChannelsListModuleOutput {
+extension ChannelsCoordinatorImpl: ChannelsListModuleOutput {
     func moduleWantsToOpenChannel(with channel: ChannelModel) {
         let vc = moduleAssembly.makeChannelModule(with: channel, and: self)
         navigationController.pushViewController(vc, animated: true)
@@ -36,7 +36,7 @@ extension ChannelsCoordinator: ChannelsListModuleOutput {
 
 // MARK: - ChannelModuleOutput
 
-extension ChannelsCoordinator: ChannelModuleOutput {
+extension ChannelsCoordinatorImpl: ChannelModuleOutput {
     func moduleWantsToOpenPhotoSelection(with delegate: PhotoSelectionDelegate) {
         let vc = moduleAssembly.makePhotoSelectionModule(with: delegate)
         let window = UIApplication.shared.windows.filter { $0.isKeyWindow }.first

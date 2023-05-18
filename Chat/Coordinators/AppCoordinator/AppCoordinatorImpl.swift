@@ -7,17 +7,17 @@ final class AppCoordinatorImpl {
     
     private lazy var tabBarController = TabBarController(
         channelsCoordinator:
-            ChannelsCoordinator(
+            ChannelsCoordinatorImpl(
                 navigationController: UINavigationController(),
                 moduleAssembly: moduleAssembly
             ),
         settingsCoordinator:
-            SettingsCoordinator(
+            SettingsCoordinatorImpl(
                 navigationController: UINavigationController(),
                 moduleAssembly: moduleAssembly
             ),
         profileCoordinator:
-            ProfileCoordinator(
+            ProfileCoordinatorImpl(
                 navigationController: UINavigationController(),
                 moduleAssembly: moduleAssembly
             )

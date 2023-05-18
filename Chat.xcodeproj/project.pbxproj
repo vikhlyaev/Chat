@@ -99,9 +99,9 @@
 		0ACD160C29FEEC8A00F32CAC /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD160B29FEEC8A00F32CAC /* AppCoordinator.swift */; };
 		0ACD160F29FEF45C00F32CAC /* ProfileModuleOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD160E29FEF45C00F32CAC /* ProfileModuleOutput.swift */; };
 		0ACD164629FFA3F100F32CAC /* ModuleAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD164529FFA3F100F32CAC /* ModuleAssembly.swift */; };
-		0ACD164829FFB9B800F32CAC /* ChannelsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD164729FFB9B800F32CAC /* ChannelsCoordinator.swift */; };
-		0ACD164A29FFB9C900F32CAC /* ProfileCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD164929FFB9C900F32CAC /* ProfileCoordinator.swift */; };
-		0ACD164C29FFB9D400F32CAC /* SettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD164B29FFB9D400F32CAC /* SettingsCoordinator.swift */; };
+		0ACD164829FFB9B800F32CAC /* ChannelsCoordinatorImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD164729FFB9B800F32CAC /* ChannelsCoordinatorImpl.swift */; };
+		0ACD164A29FFB9C900F32CAC /* ProfileCoordinatorImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD164929FFB9C900F32CAC /* ProfileCoordinatorImpl.swift */; };
+		0ACD164C29FFB9D400F32CAC /* SettingsCoordinatorImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD164B29FFB9D400F32CAC /* SettingsCoordinatorImpl.swift */; };
 		0ACD164E29FFD60700F32CAC /* ChannelsListModuleOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD164D29FFD60700F32CAC /* ChannelsListModuleOutput.swift */; };
 		0ACD165029FFF7E400F32CAC /* SSETransportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD164F29FFF7E400F32CAC /* SSETransportService.swift */; };
 		0ACD165229FFF7ED00F32CAC /* SSETransportServiceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD165129FFF7ED00F32CAC /* SSETransportServiceImpl.swift */; };
@@ -242,9 +242,9 @@
 		0ACD160B29FEEC8A00F32CAC /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		0ACD160E29FEF45C00F32CAC /* ProfileModuleOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileModuleOutput.swift; sourceTree = "<group>"; };
 		0ACD164529FFA3F100F32CAC /* ModuleAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleAssembly.swift; sourceTree = "<group>"; };
-		0ACD164729FFB9B800F32CAC /* ChannelsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsCoordinator.swift; sourceTree = "<group>"; };
-		0ACD164929FFB9C900F32CAC /* ProfileCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCoordinator.swift; sourceTree = "<group>"; };
-		0ACD164B29FFB9D400F32CAC /* SettingsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCoordinator.swift; sourceTree = "<group>"; };
+		0ACD164729FFB9B800F32CAC /* ChannelsCoordinatorImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsCoordinatorImpl.swift; sourceTree = "<group>"; };
+		0ACD164929FFB9C900F32CAC /* ProfileCoordinatorImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCoordinatorImpl.swift; sourceTree = "<group>"; };
+		0ACD164B29FFB9D400F32CAC /* SettingsCoordinatorImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCoordinatorImpl.swift; sourceTree = "<group>"; };
 		0ACD164D29FFD60700F32CAC /* ChannelsListModuleOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsListModuleOutput.swift; sourceTree = "<group>"; };
 		0ACD164F29FFF7E400F32CAC /* SSETransportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSETransportService.swift; sourceTree = "<group>"; };
 		0ACD165129FFF7ED00F32CAC /* SSETransportServiceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSETransportServiceImpl.swift; sourceTree = "<group>"; };
@@ -589,10 +589,10 @@
 		0A76FECD2A161D6700A5A700 /* Coordinators */ = {
 			isa = PBXGroup;
 			children = (
-				0ACD164729FFB9B800F32CAC /* ChannelsCoordinator.swift */,
-				0ACD164B29FFB9D400F32CAC /* SettingsCoordinator.swift */,
-				0ACD164929FFB9C900F32CAC /* ProfileCoordinator.swift */,
 				0A76FECB2A161D2800A5A700 /* Coordinator.swift */,
+				0ACD164729FFB9B800F32CAC /* ChannelsCoordinatorImpl.swift */,
+				0ACD164B29FFB9D400F32CAC /* SettingsCoordinatorImpl.swift */,
+				0ACD164929FFB9C900F32CAC /* ProfileCoordinatorImpl.swift */,
 			);
 			path = Coordinators;
 			sourceTree = "<group>";
@@ -1188,8 +1188,8 @@
 				0AEAF80829FD648800B6024F /* DataServiceImpl.swift in Sources */,
 				0A41D71B29C97FE600F7987D /* ProfileEditCell.swift in Sources */,
 				0AB6B5D629C25B4100361A2C /* ChannelHeader.swift in Sources */,
-				0ACD164829FFB9B800F32CAC /* ChannelsCoordinator.swift in Sources */,
-				0ACD164A29FFB9C900F32CAC /* ProfileCoordinator.swift in Sources */,
+				0ACD164829FFB9B800F32CAC /* ChannelsCoordinatorImpl.swift in Sources */,
+				0ACD164A29FFB9C900F32CAC /* ProfileCoordinatorImpl.swift in Sources */,
 				0A47FB7129FAB53A00D4736F /* FileManagerService.swift in Sources */,
 				0A85700129FBE4E700F46AFC /* ThemesViewDelegate.swift in Sources */,
 				0AFEF0512A08F4FF00A06F85 /* AlertCreatorService.swift in Sources */,
@@ -1220,7 +1220,7 @@
 				0A59D0D729FC3842008FD2C6 /* PhotoLoaderServiceImpl.swift in Sources */,
 				0A751AAC2A04B51C003A11B2 /* PhotoAddingService.swift in Sources */,
 				0A76FED02A161D8A00A5A700 /* AppCoordinatorImpl.swift in Sources */,
-				0ACD164C29FFB9D400F32CAC /* SettingsCoordinator.swift in Sources */,
+				0ACD164C29FFB9D400F32CAC /* SettingsCoordinatorImpl.swift in Sources */,
 				0A85700029FBE4E700F46AFC /* ThemesButton.swift in Sources */,
 				0A47FB7829FABACF00D4736F /* ServiceAssembly.swift in Sources */,
 				0A751AB32A04E5E8003A11B2 /* ProfileEditModuleOutput.swift in Sources */,

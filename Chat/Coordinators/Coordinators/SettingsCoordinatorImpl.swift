@@ -1,6 +1,6 @@
 import UIKit
 
-final class SettingsCoordinator {
+final class SettingsCoordinatorImpl {
     let navigationController: UINavigationController
     private let moduleAssembly: ModuleAssembly
     
@@ -13,7 +13,7 @@ final class SettingsCoordinator {
 
 // MARK: - Coordinator
 
-extension SettingsCoordinator: Coordinator {
+extension SettingsCoordinatorImpl: Coordinator {
     func start() {
         let vc = moduleAssembly.makeSettingsModule()
         vc.tabBarItem = UITabBarItem(
