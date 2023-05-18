@@ -1,6 +1,6 @@
 import UIKit
 
-final class AppCoordinator {
+final class AppCoordinatorImpl {
     
     private weak var window: UIWindow?
     private let moduleAssembly: ModuleAssembly
@@ -26,7 +26,11 @@ final class AppCoordinator {
     init(moduleAssembly: ModuleAssembly) {
         self.moduleAssembly = moduleAssembly
     }
-    
+}
+
+// MARK: - AppCoordinator
+
+extension AppCoordinatorImpl: AppCoordinator {
     func start(in window: UIWindow) {
         let tabBarController = tabBarController
         window.rootViewController = tabBarController
