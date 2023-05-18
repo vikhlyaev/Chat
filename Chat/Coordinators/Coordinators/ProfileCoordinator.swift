@@ -1,7 +1,6 @@
 import UIKit
 
 final class ProfileCoordinator {
-    
     let navigationController: UINavigationController
     private let moduleAssembly: ModuleAssembly
     
@@ -10,7 +9,11 @@ final class ProfileCoordinator {
         self.navigationController = navigationController
         self.moduleAssembly = moduleAssembly
     }
-    
+}
+
+// MARK: - Coordinator
+
+extension ProfileCoordinator: Coordinator {
     func start() {
         let vc = moduleAssembly.makeProfileModule(moduleOutput: self)
         vc.tabBarItem = UITabBarItem(
@@ -21,6 +24,8 @@ final class ProfileCoordinator {
         navigationController.pushViewController(vc, animated: true)
     }
 }
+
+// MARK: - ProfileModuleOutput, ProfileEditModuleOutput
 
 extension ProfileCoordinator: ProfileModuleOutput, ProfileEditModuleOutput {
     func moduleWantsToOpenPhotoSelection(withDelegate delegate: PhotoSelectionDelegate) {

@@ -1,7 +1,6 @@
 import UIKit
 
 final class SettingsCoordinator {
-    
     let navigationController: UINavigationController
     private let moduleAssembly: ModuleAssembly
     
@@ -10,7 +9,11 @@ final class SettingsCoordinator {
         self.navigationController = navigationController
         self.moduleAssembly = moduleAssembly
     }
-    
+}
+
+// MARK: - Coordinator
+
+extension SettingsCoordinator: Coordinator {
     func start() {
         let vc = moduleAssembly.makeSettingsModule()
         vc.tabBarItem = UITabBarItem(
@@ -20,5 +23,4 @@ final class SettingsCoordinator {
         )
         navigationController.pushViewController(vc, animated: true)
     }
-    
 }

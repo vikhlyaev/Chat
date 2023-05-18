@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let themesService = serviceAssembly.makeThemesService()
         window.overrideUserInterfaceStyle = themesService.currentTheme
         
-        coordinator = AppCoordinator(moduleAssembly: moduleAssembly)
+        coordinator = AppCoordinatorImpl(moduleAssembly: moduleAssembly)
         coordinator?.start(in: window)
         return true
     }

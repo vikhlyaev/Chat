@@ -65,6 +65,8 @@
 		0A751AB52A05000C003A11B2 /* ProfileEditDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A751AB42A05000C003A11B2 /* ProfileEditDelegate.swift */; };
 		0A751AB82A050B7E003A11B2 /* PhotoAddingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A751AB72A050B7E003A11B2 /* PhotoAddingView.swift */; };
 		0A751AC32A064264003A11B2 /* AlertViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A751AC22A064264003A11B2 /* AlertViewModel.swift */; };
+		0A76FECC2A161D2800A5A700 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A76FECB2A161D2800A5A700 /* Coordinator.swift */; };
+		0A76FED02A161D8A00A5A700 /* AppCoordinatorImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A76FECF2A161D8A00A5A700 /* AppCoordinatorImpl.swift */; };
 		0A80C74229E7DBAE00C96E8C /* ChatService + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A80C74129E7DBAE00C96E8C /* ChatService + Extensions.swift */; };
 		0A856FE429FAFA3700F46AFC /* ProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A856FE229FAFA3700F46AFC /* ProfileService.swift */; };
 		0A856FE529FAFA3700F46AFC /* ProfileServiceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A856FE329FAFA3700F46AFC /* ProfileServiceImpl.swift */; };
@@ -205,6 +207,8 @@
 		0A751AB42A05000C003A11B2 /* ProfileEditDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditDelegate.swift; sourceTree = "<group>"; };
 		0A751AB72A050B7E003A11B2 /* PhotoAddingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAddingView.swift; sourceTree = "<group>"; };
 		0A751AC22A064264003A11B2 /* AlertViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertViewModel.swift; sourceTree = "<group>"; };
+		0A76FECB2A161D2800A5A700 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
+		0A76FECF2A161D8A00A5A700 /* AppCoordinatorImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinatorImpl.swift; sourceTree = "<group>"; };
 		0A80C74129E7DBAE00C96E8C /* ChatService + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatService + Extensions.swift"; sourceTree = "<group>"; };
 		0A856FE229FAFA3700F46AFC /* ProfileService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileService.swift; sourceTree = "<group>"; };
 		0A856FE329FAFA3700F46AFC /* ProfileServiceImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileServiceImpl.swift; sourceTree = "<group>"; };
@@ -582,6 +586,26 @@
 			path = "Common Views";
 			sourceTree = "<group>";
 		};
+		0A76FECD2A161D6700A5A700 /* Coordinators */ = {
+			isa = PBXGroup;
+			children = (
+				0ACD164729FFB9B800F32CAC /* ChannelsCoordinator.swift */,
+				0ACD164B29FFB9D400F32CAC /* SettingsCoordinator.swift */,
+				0ACD164929FFB9C900F32CAC /* ProfileCoordinator.swift */,
+				0A76FECB2A161D2800A5A700 /* Coordinator.swift */,
+			);
+			path = Coordinators;
+			sourceTree = "<group>";
+		};
+		0A76FECE2A161D7600A5A700 /* AppCoordinator */ = {
+			isa = PBXGroup;
+			children = (
+				0ACD160B29FEEC8A00F32CAC /* AppCoordinator.swift */,
+				0A76FECF2A161D8A00A5A700 /* AppCoordinatorImpl.swift */,
+			);
+			path = AppCoordinator;
+			sourceTree = "<group>";
+		};
 		0A80C74029E7DB5500C96E8C /* TFSChatTransport */ = {
 			isa = PBXGroup;
 			children = (
@@ -753,10 +777,8 @@
 		0ACD160D29FEEC8E00F32CAC /* Coordinators */ = {
 			isa = PBXGroup;
 			children = (
-				0ACD160B29FEEC8A00F32CAC /* AppCoordinator.swift */,
-				0ACD164729FFB9B800F32CAC /* ChannelsCoordinator.swift */,
-				0ACD164B29FFB9D400F32CAC /* SettingsCoordinator.swift */,
-				0ACD164929FFB9C900F32CAC /* ProfileCoordinator.swift */,
+				0A76FECE2A161D7600A5A700 /* AppCoordinator */,
+				0A76FECD2A161D6700A5A700 /* Coordinators */,
 			);
 			path = Coordinators;
 			sourceTree = "<group>";
@@ -1197,6 +1219,7 @@
 				0A72EC962A03D35C000AED23 /* ParticleAnimation.swift in Sources */,
 				0A59D0D729FC3842008FD2C6 /* PhotoLoaderServiceImpl.swift in Sources */,
 				0A751AAC2A04B51C003A11B2 /* PhotoAddingService.swift in Sources */,
+				0A76FED02A161D8A00A5A700 /* AppCoordinatorImpl.swift in Sources */,
 				0ACD164C29FFB9D400F32CAC /* SettingsCoordinator.swift in Sources */,
 				0A85700029FBE4E700F46AFC /* ThemesButton.swift in Sources */,
 				0A47FB7829FABACF00D4736F /* ServiceAssembly.swift in Sources */,
@@ -1205,6 +1228,7 @@
 				0AB6B5BA29C1E5CD00361A2C /* CustomNavBar.swift in Sources */,
 				0ACD165029FFF7E400F32CAC /* SSETransportService.swift in Sources */,
 				0A856FE929FAFA4200F46AFC /* ThemesService.swift in Sources */,
+				0A76FECC2A161D2800A5A700 /* Coordinator.swift in Sources */,
 				0A72EC8A2A02EB43000AED23 /* ProfileEditPresenter.swift in Sources */,
 				0A80C74229E7DBAE00C96E8C /* ChatService + Extensions.swift in Sources */,
 				0A59D0CF29FC1510008FD2C6 /* NetworkServiceImpl.swift in Sources */,
