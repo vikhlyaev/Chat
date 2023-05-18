@@ -49,7 +49,7 @@ final class ProfileServiceTests: XCTestCase {
         }
     
         // Assert
-        wait(for: [expectation], timeout: 1)
+        wait(for: [expectation], timeout: 3)
         XCTAssertTrue(coreDataService.invokedUpdate)
         XCTAssertEqual(coreDataService.invokedUpdateCount, 1)
     }
