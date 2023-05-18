@@ -18,3 +18,5 @@
           if: always()
           with:
             webhook: ${{ secrets.DISCORD }}
+            content: "Hey <@955676518896533504>"
+            username: Octocat
