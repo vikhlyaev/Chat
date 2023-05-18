@@ -12,12 +12,6 @@ final class ProfileEditButton: UIButton {
         setTitle(title, for: .normal)
         setupView()
         setupGestureRecognizers()
-        
-        
-        
-        
-        
-        
     }
     
     override init(frame: CGRect) {
