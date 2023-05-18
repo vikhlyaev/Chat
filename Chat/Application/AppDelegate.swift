@@ -4,14 +4,36 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    var coordinator: AppCoordinator?
     
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        window = UIWindow(frame: UIScreen.main.bounds)
-        let tabBarController = TabBarController()
-        window?.rootViewController = tabBarController
-        window?.overrideUserInterfaceStyle = ThemesManager().currentTheme
-        window?.makeKeyAndVisible()
+        let window = UIWindow(frame: UIScreen.main.bounds)
+        self.window = window
+        
+        let serviceAssembly = ServiceAssembly()
+        let moduleAssembly = ModuleAssembly(serviceAssembly: serviceAssembly)
+        
+        let tabBarController = TabBarController(
+            channelsCoordinator:
+                ChannelsCoordinator(
+                    navigationController: UINavigationController(),
+                    moduleAssembly: moduleAssembly
+                ),
+            settingsCoordinator:
+                SettingsCoordinator(
+                    navigationController: UINavigationController(),
+                    moduleAssembly: moduleAssembly
+                ),
+            profileCoordinator:
+                ProfileCoordinator(
+                    navigationController: UINavigationController(),
+                    moduleAssembly: moduleAssembly
+                )
+        )
+        
+        coordinator = AppCoordinator(tabBarController: tabBarController)
+        coordinator?.start(in: window)
         return true
     }
 }

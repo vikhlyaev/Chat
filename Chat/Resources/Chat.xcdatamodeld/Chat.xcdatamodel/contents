@@ -16,4 +16,9 @@
         <attribute name="userName" optional="YES" attributeType="String"/>
         <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelManagedObject" inverseName="messages" inverseEntity="ChannelManagedObject"/>
     </entity>
+    <entity name="ProfileManagedObject" representedClassName="ProfileManagedObject" syncable="YES" codeGenerationType="class">
+        <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="info" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+    </entity>
 </model>
