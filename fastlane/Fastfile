@@ -1,0 +1,34 @@
+desc "Swiftlint"
+lane :lint do
+  # Run SwiftLint
+  swiftlint(
+    executable: "Pods/SwiftLint/swiftlint",
+    mode: :lint,
+    strict: true,
+    config_file: '.swiftlint.yml'
+  )
+end
+
+desc "Custom build for testing"
+lane :custom_build_for_testing do
+  # Installing Pods with clean installation
+  cocoapods(clean_install: true) 
+  # Creates a clean build without running tests
+  scan( 
+    clean: true,
+    build_for_testing: true
+  )
+end
+
+desc "Custom run tests"
+lane :custom_run_tests do
+  # Runs tests on an existing build
+  scan(test_without_building: true)
+end
+
+desc "Custom build and test"
+lane :custom_build_and_test do
+  lint
+  custom_build_for_testing
+  custom_run_tests
+end

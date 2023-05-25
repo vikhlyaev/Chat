@@ -200,7 +200,6 @@ extension DataServiceImpl: DataService {
                 self?.saveChannelInStorage(with: channelModel)
             }
             .store(in: &cancellables)
-
     }
     
     func createChannelInNetwork(name: String, logoUrl: String?, _ completion: @escaping (ChannelModel) -> Void) {

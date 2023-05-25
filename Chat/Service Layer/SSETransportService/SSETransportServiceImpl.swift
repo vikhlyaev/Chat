@@ -3,23 +3,22 @@ import TFSChatTransport
 import Combine
 
 final class SSETransportServiceImpl {
-    
-    private struct SSEServiceSettings {
-        static let ip = "167.235.86.234"
-        static let port = 8080
-    }
-    
     private var sseService: SSEService?
     private var cancellables = Set<AnyCancellable>()
+    private let host = Bundle.main.object(forInfoDictionaryKey: "Chat Service IP") as? String
+    private let port = Bundle.main.object(forInfoDictionaryKey: "Chat Service Port") as? String
 }
 
 extension SSETransportServiceImpl: SSETransportService {
     func subscribeOnEvents() -> AnyPublisher<ChatEvent, Error>? {
-        sseService = SSEService(
-            host: SSEServiceSettings.ip,
-            port: SSEServiceSettings.port
-        )
-        return sseService?.subscribeOnEvents()
+        if let host, let port, let portInt = Int(port) {
+            sseService = SSEService(
+                host: host,
+                port: portInt
+            )
+            return sseService?.subscribeOnEvents()
+        }
+        return nil
     }
     
     func cancelSubscription() {

@@ -2,13 +2,13 @@ import UIKit
 
 final class TabBarController: UITabBarController {
     
-    private let channelsCoordinator: ChannelsCoordinator
-    private let settingsCoordinator: SettingsCoordinator
-    private let profileCoordinator: ProfileCoordinator
+    private let channelsCoordinator: Coordinator
+    private let settingsCoordinator: Coordinator
+    private let profileCoordinator: Coordinator
     
-    init(channelsCoordinator: ChannelsCoordinator,
-         settingsCoordinator: SettingsCoordinator,
-         profileCoordinator: ProfileCoordinator) {
+    init(channelsCoordinator: Coordinator,
+         settingsCoordinator: Coordinator,
+         profileCoordinator: Coordinator) {
         self.channelsCoordinator = channelsCoordinator
         self.settingsCoordinator = settingsCoordinator
         self.profileCoordinator = profileCoordinator

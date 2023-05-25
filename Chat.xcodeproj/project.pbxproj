@@ -65,6 +65,8 @@
 		0A751AB52A05000C003A11B2 /* ProfileEditDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A751AB42A05000C003A11B2 /* ProfileEditDelegate.swift */; };
 		0A751AB82A050B7E003A11B2 /* PhotoAddingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A751AB72A050B7E003A11B2 /* PhotoAddingView.swift */; };
 		0A751AC32A064264003A11B2 /* AlertViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A751AC22A064264003A11B2 /* AlertViewModel.swift */; };
+		0A76FECC2A161D2800A5A700 /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A76FECB2A161D2800A5A700 /* Coordinator.swift */; };
+		0A76FED02A161D8A00A5A700 /* AppCoordinatorImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A76FECF2A161D8A00A5A700 /* AppCoordinatorImpl.swift */; };
 		0A80C74229E7DBAE00C96E8C /* ChatService + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A80C74129E7DBAE00C96E8C /* ChatService + Extensions.swift */; };
 		0A856FE429FAFA3700F46AFC /* ProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A856FE229FAFA3700F46AFC /* ProfileService.swift */; };
 		0A856FE529FAFA3700F46AFC /* ProfileServiceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A856FE329FAFA3700F46AFC /* ProfileServiceImpl.swift */; };
@@ -90,14 +92,16 @@
 		0AB6B5BA29C1E5CD00361A2C /* CustomNavBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB6B5B929C1E5CD00361A2C /* CustomNavBar.swift */; };
 		0AB6B5CE29C20E1B00361A2C /* ChannelsListHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB6B5CD29C20E1B00361A2C /* ChannelsListHeader.swift */; };
 		0AB6B5D629C25B4100361A2C /* ChannelHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB6B5D529C25B4100361A2C /* ChannelHeader.swift */; };
+		0AB8A56D2A139694005E239F /* ModuleAssemblyImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB8A56C2A139694005E239F /* ModuleAssemblyImpl.swift */; };
+		0AB8A5702A13978C005E239F /* ServiceAssemblyImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB8A56F2A13978C005E239F /* ServiceAssemblyImpl.swift */; };
 		0ABA25BB29DF0DAC00BEC0DB /* SortedMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ABA25BA29DF0DAC00BEC0DB /* SortedMessage.swift */; };
 		0AC2F8E829DFC2C100A6F320 /* BubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC2F8E729DFC2C100A6F320 /* BubbleView.swift */; };
 		0ACD160C29FEEC8A00F32CAC /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD160B29FEEC8A00F32CAC /* AppCoordinator.swift */; };
 		0ACD160F29FEF45C00F32CAC /* ProfileModuleOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD160E29FEF45C00F32CAC /* ProfileModuleOutput.swift */; };
 		0ACD164629FFA3F100F32CAC /* ModuleAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD164529FFA3F100F32CAC /* ModuleAssembly.swift */; };
-		0ACD164829FFB9B800F32CAC /* ChannelsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD164729FFB9B800F32CAC /* ChannelsCoordinator.swift */; };
-		0ACD164A29FFB9C900F32CAC /* ProfileCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD164929FFB9C900F32CAC /* ProfileCoordinator.swift */; };
-		0ACD164C29FFB9D400F32CAC /* SettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD164B29FFB9D400F32CAC /* SettingsCoordinator.swift */; };
+		0ACD164829FFB9B800F32CAC /* ChannelsCoordinatorImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD164729FFB9B800F32CAC /* ChannelsCoordinatorImpl.swift */; };
+		0ACD164A29FFB9C900F32CAC /* ProfileCoordinatorImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD164929FFB9C900F32CAC /* ProfileCoordinatorImpl.swift */; };
+		0ACD164C29FFB9D400F32CAC /* SettingsCoordinatorImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD164B29FFB9D400F32CAC /* SettingsCoordinatorImpl.swift */; };
 		0ACD164E29FFD60700F32CAC /* ChannelsListModuleOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD164D29FFD60700F32CAC /* ChannelsListModuleOutput.swift */; };
 		0ACD165029FFF7E400F32CAC /* SSETransportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD164F29FFF7E400F32CAC /* SSETransportService.swift */; };
 		0ACD165229FFF7ED00F32CAC /* SSETransportServiceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD165129FFF7ED00F32CAC /* SSETransportServiceImpl.swift */; };
@@ -194,6 +198,8 @@
 		0A72EC892A02EB43000AED23 /* ProfileEditPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditPresenter.swift; sourceTree = "<group>"; };
 		0A72EC8D2A037FF3000AED23 /* ProfileAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileAnimator.swift; sourceTree = "<group>"; };
 		0A72EC952A03D35C000AED23 /* ParticleAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleAnimation.swift; sourceTree = "<group>"; };
+		0A73A6D82A0FCD9A00C5B768 /* AllTestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllTestPlan.xctestplan; sourceTree = "<group>"; };
+		0A73A6D92A10C32300C5B768 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		0A751AAB2A04B51C003A11B2 /* PhotoAddingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAddingService.swift; sourceTree = "<group>"; };
 		0A751AAD2A04B53C003A11B2 /* PhotoAddingServiceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAddingServiceImpl.swift; sourceTree = "<group>"; };
 		0A751AB02A04B5F0003A11B2 /* PhotoAddingServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAddingServiceDelegate.swift; sourceTree = "<group>"; };
@@ -201,6 +207,8 @@
 		0A751AB42A05000C003A11B2 /* ProfileEditDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditDelegate.swift; sourceTree = "<group>"; };
 		0A751AB72A050B7E003A11B2 /* PhotoAddingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAddingView.swift; sourceTree = "<group>"; };
 		0A751AC22A064264003A11B2 /* AlertViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertViewModel.swift; sourceTree = "<group>"; };
+		0A76FECB2A161D2800A5A700 /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
+		0A76FECF2A161D8A00A5A700 /* AppCoordinatorImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinatorImpl.swift; sourceTree = "<group>"; };
 		0A80C74129E7DBAE00C96E8C /* ChatService + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatService + Extensions.swift"; sourceTree = "<group>"; };
 		0A856FE229FAFA3700F46AFC /* ProfileService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileService.swift; sourceTree = "<group>"; };
 		0A856FE329FAFA3700F46AFC /* ProfileServiceImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileServiceImpl.swift; sourceTree = "<group>"; };
@@ -223,17 +231,20 @@
 		0AA2EBCE29FD550C008D0B57 /* ChannelsListViewInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsListViewInput.swift; sourceTree = "<group>"; };
 		0AA2EBD029FD5518008D0B57 /* ChannelsListViewOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsListViewOutput.swift; sourceTree = "<group>"; };
 		0AA2EBD229FD5551008D0B57 /* ChannelsListPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsListPresenter.swift; sourceTree = "<group>"; };
+		0AB26A422A1202FF00B2AACA /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		0AB6B5B929C1E5CD00361A2C /* CustomNavBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavBar.swift; sourceTree = "<group>"; };
 		0AB6B5CD29C20E1B00361A2C /* ChannelsListHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsListHeader.swift; sourceTree = "<group>"; };
 		0AB6B5D529C25B4100361A2C /* ChannelHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelHeader.swift; sourceTree = "<group>"; };
+		0AB8A56C2A139694005E239F /* ModuleAssemblyImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleAssemblyImpl.swift; sourceTree = "<group>"; };
+		0AB8A56F2A13978C005E239F /* ServiceAssemblyImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceAssemblyImpl.swift; sourceTree = "<group>"; };
 		0ABA25BA29DF0DAC00BEC0DB /* SortedMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortedMessage.swift; sourceTree = "<group>"; };
 		0AC2F8E729DFC2C100A6F320 /* BubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BubbleView.swift; sourceTree = "<group>"; };
 		0ACD160B29FEEC8A00F32CAC /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		0ACD160E29FEF45C00F32CAC /* ProfileModuleOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileModuleOutput.swift; sourceTree = "<group>"; };
 		0ACD164529FFA3F100F32CAC /* ModuleAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleAssembly.swift; sourceTree = "<group>"; };
-		0ACD164729FFB9B800F32CAC /* ChannelsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsCoordinator.swift; sourceTree = "<group>"; };
-		0ACD164929FFB9C900F32CAC /* ProfileCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCoordinator.swift; sourceTree = "<group>"; };
-		0ACD164B29FFB9D400F32CAC /* SettingsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCoordinator.swift; sourceTree = "<group>"; };
+		0ACD164729FFB9B800F32CAC /* ChannelsCoordinatorImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsCoordinatorImpl.swift; sourceTree = "<group>"; };
+		0ACD164929FFB9C900F32CAC /* ProfileCoordinatorImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCoordinatorImpl.swift; sourceTree = "<group>"; };
+		0ACD164B29FFB9D400F32CAC /* SettingsCoordinatorImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCoordinatorImpl.swift; sourceTree = "<group>"; };
 		0ACD164D29FFD60700F32CAC /* ChannelsListModuleOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsListModuleOutput.swift; sourceTree = "<group>"; };
 		0ACD164F29FFF7E400F32CAC /* SSETransportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSETransportService.swift; sourceTree = "<group>"; };
 		0ACD165129FFF7ED00F32CAC /* SSETransportServiceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSETransportServiceImpl.swift; sourceTree = "<group>"; };
@@ -411,8 +422,8 @@
 		0A47FB7929FABADB00D4736F /* Assembly */ = {
 			isa = PBXGroup;
 			children = (
-				0ACD164529FFA3F100F32CAC /* ModuleAssembly.swift */,
-				0A47FB7729FABACF00D4736F /* ServiceAssembly.swift */,
+				0AB8A56E2A139768005E239F /* ModuleAssembly */,
+				0AB8A5712A1397D9005E239F /* ServiceAssembly */,
 			);
 			path = Assembly;
 			sourceTree = "<group>";
@@ -488,6 +499,7 @@
 			children = (
 				0A2377802A0BDC1800B8B2AD /* UnitTestPlan.xctestplan */,
 				0A2377B92A0BE02A00B8B2AD /* UITestPlan.xctestplan */,
+				0A73A6D82A0FCD9A00C5B768 /* AllTestPlan.xctestplan */,
 			);
 			path = TestPlans;
 			sourceTree = "<group>";
@@ -572,6 +584,26 @@
 				0A751AB72A050B7E003A11B2 /* PhotoAddingView.swift */,
 			);
 			path = "Common Views";
+			sourceTree = "<group>";
+		};
+		0A76FECD2A161D6700A5A700 /* Coordinators */ = {
+			isa = PBXGroup;
+			children = (
+				0A76FECB2A161D2800A5A700 /* Coordinator.swift */,
+				0ACD164729FFB9B800F32CAC /* ChannelsCoordinatorImpl.swift */,
+				0ACD164B29FFB9D400F32CAC /* SettingsCoordinatorImpl.swift */,
+				0ACD164929FFB9C900F32CAC /* ProfileCoordinatorImpl.swift */,
+			);
+			path = Coordinators;
+			sourceTree = "<group>";
+		};
+		0A76FECE2A161D7600A5A700 /* AppCoordinator */ = {
+			isa = PBXGroup;
+			children = (
+				0ACD160B29FEEC8A00F32CAC /* AppCoordinator.swift */,
+				0A76FECF2A161D8A00A5A700 /* AppCoordinatorImpl.swift */,
+			);
+			path = AppCoordinator;
 			sourceTree = "<group>";
 		};
 		0A80C74029E7DB5500C96E8C /* TFSChatTransport */ = {
@@ -724,13 +756,29 @@
 			path = Settings;
 			sourceTree = "<group>";
 		};
+		0AB8A56E2A139768005E239F /* ModuleAssembly */ = {
+			isa = PBXGroup;
+			children = (
+				0ACD164529FFA3F100F32CAC /* ModuleAssembly.swift */,
+				0AB8A56C2A139694005E239F /* ModuleAssemblyImpl.swift */,
+			);
+			path = ModuleAssembly;
+			sourceTree = "<group>";
+		};
+		0AB8A5712A1397D9005E239F /* ServiceAssembly */ = {
+			isa = PBXGroup;
+			children = (
+				0A47FB7729FABACF00D4736F /* ServiceAssembly.swift */,
+				0AB8A56F2A13978C005E239F /* ServiceAssemblyImpl.swift */,
+			);
+			path = ServiceAssembly;
+			sourceTree = "<group>";
+		};
 		0ACD160D29FEEC8E00F32CAC /* Coordinators */ = {
 			isa = PBXGroup;
 			children = (
-				0ACD160B29FEEC8A00F32CAC /* AppCoordinator.swift */,
-				0ACD164729FFB9B800F32CAC /* ChannelsCoordinator.swift */,
-				0ACD164B29FFB9D400F32CAC /* SettingsCoordinator.swift */,
-				0ACD164929FFB9C900F32CAC /* ProfileCoordinator.swift */,
+				0A76FECE2A161D7600A5A700 /* AppCoordinator */,
+				0A76FECD2A161D6700A5A700 /* Coordinators */,
 			);
 			path = Coordinators;
 			sourceTree = "<group>";
@@ -797,6 +845,8 @@
 				C81EA66786004A5B0FC4B826 /* Pods */,
 				E393F93ABC914108816B261B /* Frameworks */,
 				0AFE033329DB438400672330 /* .swiftlint.yml */,
+				0AB26A422A1202FF00B2AACA /* Config.xcconfig */,
+				0A73A6D92A10C32300C5B768 /* Secrets.xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1121,6 +1171,7 @@
 				0A3ED4AD2A026E5000EDCA2F /* ProfileServiceError.swift in Sources */,
 				0A85700429FBE4E700F46AFC /* SettingsViewInput.swift in Sources */,
 				0A751AB52A05000C003A11B2 /* ProfileEditDelegate.swift in Sources */,
+				0AB8A5702A13978C005E239F /* ServiceAssemblyImpl.swift in Sources */,
 				0A72EC862A02EB32000AED23 /* ProfileEditViewOutput.swift in Sources */,
 				0AF3176829A0D667005417A5 /* AppDelegate.swift in Sources */,
 				0A856FF029FB9BFE00F46AFC /* ProfileViewOutput.swift in Sources */,
@@ -1130,14 +1181,15 @@
 				0AB6B5CE29C20E1B00361A2C /* ChannelsListHeader.swift in Sources */,
 				0A714C0B29DC5F89007D76C5 /* UIImageView + Extensions.swift in Sources */,
 				0A856FEE29FB9BF400F46AFC /* ProfileViewInput.swift in Sources */,
+				0AB8A56D2A139694005E239F /* ModuleAssemblyImpl.swift in Sources */,
 				0A03CD6329B98A2300B9CC8E /* ProfileModel.swift in Sources */,
 				0A03CD7229B99C1300B9CC8E /* ChannelCell.swift in Sources */,
 				0A72EC842A02EB29000AED23 /* ProfileEditViewController.swift in Sources */,
 				0AEAF80829FD648800B6024F /* DataServiceImpl.swift in Sources */,
 				0A41D71B29C97FE600F7987D /* ProfileEditCell.swift in Sources */,
 				0AB6B5D629C25B4100361A2C /* ChannelHeader.swift in Sources */,
-				0ACD164829FFB9B800F32CAC /* ChannelsCoordinator.swift in Sources */,
-				0ACD164A29FFB9C900F32CAC /* ProfileCoordinator.swift in Sources */,
+				0ACD164829FFB9B800F32CAC /* ChannelsCoordinatorImpl.swift in Sources */,
+				0ACD164A29FFB9C900F32CAC /* ProfileCoordinatorImpl.swift in Sources */,
 				0A47FB7129FAB53A00D4736F /* FileManagerService.swift in Sources */,
 				0A85700129FBE4E700F46AFC /* ThemesViewDelegate.swift in Sources */,
 				0AFEF0512A08F4FF00A06F85 /* AlertCreatorService.swift in Sources */,
@@ -1167,7 +1219,8 @@
 				0A72EC962A03D35C000AED23 /* ParticleAnimation.swift in Sources */,
 				0A59D0D729FC3842008FD2C6 /* PhotoLoaderServiceImpl.swift in Sources */,
 				0A751AAC2A04B51C003A11B2 /* PhotoAddingService.swift in Sources */,
-				0ACD164C29FFB9D400F32CAC /* SettingsCoordinator.swift in Sources */,
+				0A76FED02A161D8A00A5A700 /* AppCoordinatorImpl.swift in Sources */,
+				0ACD164C29FFB9D400F32CAC /* SettingsCoordinatorImpl.swift in Sources */,
 				0A85700029FBE4E700F46AFC /* ThemesButton.swift in Sources */,
 				0A47FB7829FABACF00D4736F /* ServiceAssembly.swift in Sources */,
 				0A751AB32A04E5E8003A11B2 /* ProfileEditModuleOutput.swift in Sources */,
@@ -1175,6 +1228,7 @@
 				0AB6B5BA29C1E5CD00361A2C /* CustomNavBar.swift in Sources */,
 				0ACD165029FFF7E400F32CAC /* SSETransportService.swift in Sources */,
 				0A856FE929FAFA4200F46AFC /* ThemesService.swift in Sources */,
+				0A76FECC2A161D2800A5A700 /* Coordinator.swift in Sources */,
 				0A72EC8A2A02EB43000AED23 /* ProfileEditPresenter.swift in Sources */,
 				0A80C74229E7DBAE00C96E8C /* ChatService + Extensions.swift in Sources */,
 				0A59D0CF29FC1510008FD2C6 /* NetworkServiceImpl.swift in Sources */,
@@ -1317,6 +1371,7 @@
 		};
 		0AF3177629A0D66A005417A5 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0AB26A422A1202FF00B2AACA /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1377,6 +1432,7 @@
 		};
 		0AF3177729A0D66A005417A5 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0AB26A422A1202FF00B2AACA /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;

@@ -1,0 +1,22 @@
+
+  name: CI
+  on: [push]
+  jobs:
+    build:
+      runs-on: [self-hosted]
+      steps:
+        - uses: actions/checkout@v3
+        - name: Setup Ruby 3.1
+          uses: ruby/setup-ruby@v1
+          with: 
+            ruby-version: '3.1'
+            bundler-cache: true
+        - name: Build and test
+          run: bundle exec fastlane custom_build_and_test
+        - name: Discord notification
+          uses: sarisia/actions-status-discord@v1
+          if: always()
+          with:
+            webhook: ${{ secrets.DISCORD }}
+            content: "Hey <@955676518896533504>"
+            username: Octocat

@@ -6,7 +6,17 @@ final class PhotoLoaderServiceImpl {
     private let networkService: NetworkService
     private let fileManagerService: FileManagerService
     
-    private let baseUrl = URL(string: "https://pixabay.com/api/")
+    private let baseUrlString = Bundle.main.object(forInfoDictionaryKey: "Base URL") as? String
+    private let apiKey = Bundle.main.object(forInfoDictionaryKey: "API Key") as? String
+    private var baseUrl: URL? {
+        guard let baseUrlString else { return nil }
+        if baseUrlString.isEmpty {
+            return URL(string: "https://example.com")
+        } else {
+            return URL(string: baseUrlString)
+        }
+    }
+
     private let searchKeyword = "mountains"
     private var lastLoadedPage: Int?
     
@@ -23,7 +33,7 @@ final class PhotoLoaderServiceImpl {
             var urlComponents = URLComponents(url: baseUrl, resolvingAgainstBaseURL: false)
         else { throw PhotoLoaderError.invalidRequest }
         urlComponents.queryItems = [
-            URLQueryItem(name: "key", value: "35861770-94831b655d8cb35ee0929d805"),
+            URLQueryItem(name: "key", value: apiKey ?? ""),
             URLQueryItem(name: "q", value: keyword),
             URLQueryItem(name: "image_type", value: "true"),
             URLQueryItem(name: "per_page", value: "100"),
