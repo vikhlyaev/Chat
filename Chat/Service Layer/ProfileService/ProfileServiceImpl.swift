@@ -72,24 +72,31 @@ extension ProfileServiceImpl: ProfileService {
     }
     
     func saveProfile(_ profile: ProfileModel, _ completion: @escaping (Error?) -> Void) {
-        coreDataService.update { context in
-            let fetchRequest = ProfileManagedObject.fetchRequest()
-            if let profileManagedObject = try context.fetch(fetchRequest).first {
-                profileManagedObject.name = profile.name
-                profileManagedObject.info = profile.information
-            } else {
-                let profileManagedObject = ProfileManagedObject(context: context)
-                profileManagedObject.id = "\(UUID())"
-                profileManagedObject.name = profile.name
-                profileManagedObject.info = profile.information
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            self?.coreDataService.update { context in
+                let fetchRequest = ProfileManagedObject.fetchRequest()
+                if let profileManagedObject = try context.fetch(fetchRequest).first {
+                    profileManagedObject.name = profile.name
+                    profileManagedObject.info = profile.information
+                } else {
+                    let profileManagedObject = ProfileManagedObject(context: context)
+                    profileManagedObject.id = "\(UUID())"
+                    profileManagedObject.name = profile.name
+                    profileManagedObject.info = profile.information
+                }
+            }
+            self?.savePhoto(profile) { error in
+                guard let error else {
+                    DispatchQueue.main.async {
+                        completion(nil)
+                    }
+                    return
+                }
+                DispatchQueue.main.async {
+                    completion(error)
+                }
             }
         }
-        savePhoto(profile) { error in
-            guard let error else {
-                completion(nil)
-                return
-            }
-            completion(error)
-        }
+        
     }
 }

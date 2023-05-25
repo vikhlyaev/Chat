@@ -4,19 +4,23 @@ final class SettingsViewController: UIViewController {
     
     // MARK: - UI
     
-    private lazy var settingsTableView: UITableView = {
-        let tableView = UITableView(frame: .zero, style: .insetGrouped)
-        tableView.allowsSelection = false
-        tableView.bounces = false
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        return tableView
+    private lazy var wrapperView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .appSecondaryBackground
+        view.layer.cornerRadius = 10
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
+    
+    private lazy var themesView = ThemesView()
+    
+    private var particleAnimation: ParticleAnimation?
     
     // MARK: - Output
     
     private var output: SettingsViewOutput
     
-    // MARK: - Init
+    // MARK: - Life Cycle
     
     init(output: SettingsViewOutput) {
         self.output = output
@@ -27,55 +31,56 @@ final class SettingsViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Life Cycle
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupView()
-        setConstraints()
         setupNavBar()
-        setupTableView()
+        setupView()
         setDelegates()
+        setConstraints()
+        output.viewIsReady()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        guard let window = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first else { return }
+        particleAnimation = ParticleAnimation(on: window)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        particleAnimation = nil
     }
     
     // MARK: - Setup View
     
     private func setupView() {
-        view.backgroundColor = .systemBackground
-        view.addSubview(settingsTableView)
+        view.backgroundColor = .appBackground
+        view.addSubview(wrapperView)
+        wrapperView.addSubview(themesView)
     }
     
     private func setupNavBar() {
-        navigationItem.largeTitleDisplayMode = .never
+        navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.backgroundColor = .clear
         title = "Settings"
     }
     
-    private func setupTableView() {
-        settingsTableView.registerReusableCell(cellType: ThemesCell.self)
-    }
-    
     private func setDelegates() {
-        settingsTableView.dataSource = self
+        themesView.delegate = self
     }
 }
 
-// MARK: - UITableViewDataSource
+// MARK: - SettingsViewInput
 
-extension SettingsViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { 1 }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(cellType: ThemesCell.self)
-        cell.configureInitialState(currentTheme: output.currentTheme)
-        cell.delegate = self
-        return cell
+extension SettingsViewController: SettingsViewInput {
+    func setInitialState(currentTheme: UIUserInterfaceStyle) {
+        themesView.setInitialState(currentTheme: currentTheme)
     }
 }
 
-// MARK: - ThemesCellDelegate
+// MARK: - ThemesViewDelegate
 
-extension SettingsViewController: ThemesCellDelegate {
+extension SettingsViewController: ThemesViewDelegate {
     func didDayButtonTapped() {
         output.didButtonTapped(theme: .light)
     }
@@ -85,17 +90,19 @@ extension SettingsViewController: ThemesCellDelegate {
     }
 }
 
-extension SettingsViewController: SettingsViewInput {}
-
 // MARK: - Setting Constraints
 
 extension SettingsViewController {
     private func setConstraints() {
         NSLayoutConstraint.activate([
-            settingsTableView.topAnchor.constraint(equalTo: view.topAnchor),
-            settingsTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            settingsTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            settingsTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            wrapperView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15),
+            wrapperView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            wrapperView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            
+            themesView.topAnchor.constraint(equalTo: wrapperView.topAnchor, constant: 24),
+            themesView.leadingAnchor.constraint(equalTo: wrapperView.leadingAnchor),
+            themesView.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor),
+            themesView.bottomAnchor.constraint(equalTo: wrapperView.bottomAnchor, constant: -24)
         ])
     }
 }

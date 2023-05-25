@@ -15,7 +15,10 @@ final class SSETransportServiceImpl {
 
 extension SSETransportServiceImpl: SSETransportService {
     func subscribeOnEvents() -> AnyPublisher<ChatEvent, Error>? {
-        sseService = SSEService(host: SSEServiceSettings.ip, port: SSEServiceSettings.port)
+        sseService = SSEService(
+            host: SSEServiceSettings.ip,
+            port: SSEServiceSettings.port
+        )
         return sseService?.subscribeOnEvents()
     }
     

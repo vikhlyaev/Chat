@@ -23,6 +23,7 @@ final class ModuleAssembly {
             dataService: serviceAssembly.makeDataService(),
             profileService: serviceAssembly.makeProfileService(),
             photoLoaderService: serviceAssembly.makePhotoLoaderService(),
+            alertCreatorService: serviceAssembly.makeAlertCreaterService(),
             moduleOutput: moduleOutput,
             channel: channel)
         let vc = ChannelViewController(output: presenter)
@@ -43,6 +44,8 @@ final class ModuleAssembly {
         let presenter = ProfilePresenter(
             profileService: serviceAssembly.makeProfileService(),
             photoLoaderService: serviceAssembly.makePhotoLoaderService(),
+            photoAddingService: serviceAssembly.makePhotoAddingService(),
+            alertCreatorService: serviceAssembly.makeAlertCreaterService(),
             moduleOutput: moduleOutput
         )
         let vc = ProfileViewController(output: presenter)
@@ -50,11 +53,35 @@ final class ModuleAssembly {
         return vc
     }
     
+    func makeProfileEditModule(
+        with profileModel: ProfileModel,
+        moduleOutput: ProfileEditModuleOutput,
+        transitioningDelegate: UIViewControllerTransitioningDelegate,
+        delegate: ProfileEditDelegate
+    ) -> UIViewController {
+        let presenter = ProfileEditPresenter(
+            profileModel: profileModel,
+            profileService: serviceAssembly.makeProfileService(),
+            photoLoaderService: serviceAssembly.makePhotoLoaderService(),
+            photoAddingService: serviceAssembly.makePhotoAddingService(),
+            alertCreatorService: serviceAssembly.makeAlertCreaterService(),
+            moduleOutput: moduleOutput,
+            delegate: delegate
+        )
+        let vc = ProfileEditViewController(output: presenter)
+        presenter.viewInput = vc
+        let navigationController = UINavigationController(rootViewController: vc)
+        navigationController.transitioningDelegate = transitioningDelegate
+        return navigationController
+    }
+    
     func makePhotoSelectionModule(with delegate: PhotoSelectionDelegate) -> UIViewController {
         let presenter = PhotoSelectionPresenter(
-            photoLoaderService: serviceAssembly.makePhotoLoaderService()
+            photoLoaderService: serviceAssembly.makePhotoLoaderService(),
+            alertCreatorService: serviceAssembly.makeAlertCreaterService(),
+            delegate: delegate
         )
-        let vc = PhotoSelectionViewController(output: presenter, delegate: delegate)
+        let vc = PhotoSelectionViewController(output: presenter)
         let navigationController = UINavigationController(rootViewController: vc)
         presenter.viewInput = vc
         return navigationController

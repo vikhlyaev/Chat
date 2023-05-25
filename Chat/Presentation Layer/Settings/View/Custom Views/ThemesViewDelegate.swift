@@ -1,6 +1,6 @@
 import Foundation
 
-protocol ThemesCellDelegate: AnyObject {
+protocol ThemesViewDelegate: AnyObject {
     func didDayButtonTapped()
     func didNightButtonTapped()
 }

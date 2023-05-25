@@ -1,3 +1,5 @@
-import Foundation
+import UIKit
 
-protocol SettingsViewInput: AnyObject {}
+protocol SettingsViewInput: AnyObject {
+    func setInitialState(currentTheme: UIUserInterfaceStyle)
+}

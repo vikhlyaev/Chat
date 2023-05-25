@@ -1,6 +1,6 @@
 import UIKit
 
-final class ThemesCell: UITableViewCell {
+final class ThemesView: UIView {
     
     // MARK: - UI
     
@@ -16,12 +16,12 @@ final class ThemesCell: UITableViewCell {
     private lazy var dayThemeButton = ThemesButton(theme: .light, completion: dayThemeButtonTapped)
     private lazy var nightThemeButton = ThemesButton(theme: .dark, completion: nightThemeButtonTapped)
     
-    weak var delegate: ThemesCellDelegate?
+    weak var delegate: ThemesViewDelegate?
     
     // MARK: - Init
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         setupView()
         setConstraints()
     }
@@ -33,7 +33,8 @@ final class ThemesCell: UITableViewCell {
     // MARK: - Setup View
     
     private func setupView() {
-        contentView.addSubview(themeButtonsStackView)
+        translatesAutoresizingMaskIntoConstraints = false
+        addSubview(themeButtonsStackView)
     }
     
     private func dayThemeButtonTapped() {
@@ -46,33 +47,21 @@ final class ThemesCell: UITableViewCell {
         delegate?.didNightButtonTapped()
     }
     
-    func configureInitialState(currentTheme: UIUserInterfaceStyle) {
+    func setInitialState(currentTheme: UIUserInterfaceStyle) {
         dayThemeButton.isSelected = currentTheme == .light
         nightThemeButton.isSelected = !dayThemeButton.isSelected
-//
-//        switch currentTheme {
-//        case .light:
-//            dayThemeButton.isSelected = true
-//            nightThemeButton.isSelected = false
-//        case .dark:
-//            dayThemeButton.isSelected = false
-//            nightThemeButton.isSelected = true
-//        default:
-//            dayThemeButton.isSelected = false
-//            nightThemeButton.isSelected = false
-//        }
     }
 }
 
 // MARK: - Setting Constraints
 
-extension ThemesCell {
+extension ThemesView {
     private func setConstraints() {
         NSLayoutConstraint.activate([
-            themeButtonsStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
-            themeButtonsStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            themeButtonsStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            themeButtonsStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24)
+            themeButtonsStackView.topAnchor.constraint(equalTo: topAnchor),
+            themeButtonsStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            themeButtonsStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            themeButtonsStackView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
 }

@@ -2,23 +2,30 @@ import Foundation
 import PhotosUI
 
 final class ProfilePresenter: NSObject {
-    
-    weak var viewInput: ProfileViewInput?
-    
     private let profileService: ProfileService
     private let photoLoaderService: PhotoLoaderService
-    weak var moduleOutput: ProfileModuleOutput?
+    private var photoAddingService: PhotoAddingService
+    private let alertCreatorService: AlertCreatorService
     
-    var profileModel: ProfileModel?
-
-    private var imagePicker: UIImagePickerController?
+    private var profileModel: ProfileModel?
+    
+    weak var moduleOutput: ProfileModuleOutput?
+    weak var viewInput: ProfileViewInput?
     
     init(profileService: ProfileService,
          photoLoaderService: PhotoLoaderService,
+         photoAddingService: PhotoAddingService,
+         alertCreatorService: AlertCreatorService,
          moduleOutput: ProfileModuleOutput?) {
         self.profileService = profileService
         self.photoLoaderService = photoLoaderService
+        self.photoAddingService = photoAddingService
+        self.alertCreatorService = alertCreatorService
         self.moduleOutput = moduleOutput
+    }
+    
+    private func setDelegates() {
+        photoAddingService.delegate = self
     }
     
     private func loadProfile() {
@@ -38,49 +45,66 @@ final class ProfilePresenter: NSObject {
 
 extension ProfilePresenter: ProfileViewOutput {
     func viewIsReady() {
+        setDelegates()
         loadProfile()
     }
     
-    func didSaveProfile(_ profile: ProfileModel) {
-        viewInput?.startActivityIndicator()
-        profileService.saveProfile(profile) { [weak self] error in
-            guard error != nil else {
-                self?.viewInput?.showSuccessAlert()
-                self?.viewInput?.stopActivityIndicator()
-                return
+    func didOpenPhotoAddingAlertSheet() {
+        guard let viewInput else { return }
+        viewInput.showViewController(
+            alertCreatorService.makePhotoAddingAlertSheet(
+                takePhotoAction: { [weak self] in
+                    self?.photoAddingService.didTakePhoto()
+                },
+                chooseFromGalleryAction: { [weak self] in
+                    self?.photoAddingService.didChooseFromGallery()
+                },
+                loadFromNetworkAction: { [weak self] in
+                    guard let self else { return }
+                    self.moduleOutput?.moduleWantsToOpenPhotoSelection(withDelegate: self)
+                }
+            )
+        )
+    }
+    
+    func didOpenProfileEdit(with transitioningDelegate: UIViewControllerTransitioningDelegate) {
+        guard let profileModel else { return }
+        moduleOutput?.moduleWantsToOpenProfileEdit(
+            with: profileModel,
+            transitioningDelegate: transitioningDelegate,
+            delegate: self
+        )
+    }
+}
+
+// MARK: - ProfileEditDelegate
+
+extension ProfilePresenter: ProfileEditDelegate {
+    func didUpdateProfile() {
+        loadProfile()
+    }
+    
+    func didUpdatePhoto() {
+        didOpenPhotoAddingAlertSheet()
+    }
+}
+
+// MARK: - PhotoAddingServiceDelegate
+
+extension ProfilePresenter: PhotoAddingServiceDelegate {
+    func showController(_ viewController: UIViewController) {
+        viewInput?.showViewController(viewController)
+    }
+    
+    func updatePhoto(_ photo: UIImage) {
+        viewInput?.updatePhoto(photo)
+        profileModel?.photo = photo
+        guard let profileModel else { return }
+        profileService.saveProfile(profileModel) { [weak self] error in
+            if error != nil {
+                self?.viewInput?.showErrorAlert(with: "Failed to save profile")
             }
-            self?.viewInput?.showErrorAlert(with: "Failed to save profile")
-            self?.viewInput?.stopActivityIndicator()
         }
-    }
-    
-    func didTakePhoto() {
-        guard UIImagePickerController.isSourceTypeAvailable(.camera) else {
-            didChooseFromGallery()
-            return
-        }
-        imagePicker = UIImagePickerController()
-        guard let imagePicker = imagePicker else { return }
-        imagePicker.delegate = self
-        imagePicker.sourceType = .camera
-        imagePicker.cameraCaptureMode = .photo
-        imagePicker.cameraDevice = .front
-        DispatchQueue.main.async { [weak self] in
-            self?.viewInput?.showController(imagePicker)
-        }
-    }
-    
-    func didChooseFromGallery() {
-        let configuration = PHPickerConfiguration()
-        let picker = PHPickerViewController(configuration: configuration)
-        picker.delegate = self
-        DispatchQueue.main.async { [weak self] in
-            self?.viewInput?.showController(picker)
-        }
-    }
-    
-    func didLoadFromNetwork() {
-        moduleOutput?.moduleWantsToOpenPhotoSelection(with: self)
     }
 }
 
@@ -91,44 +115,10 @@ extension ProfilePresenter: PhotoSelectionDelegate {
         photoLoaderService.fetchPhoto(by: photoModel.webformatURL) { [weak self] result in
             switch result {
             case .success(let photo):
-                self?.viewInput?.updatePhoto(photo)
+                self?.updatePhoto(photo)
             case .failure:
                 self?.viewInput?.showErrorAlert(with: "Failed to load photo")
             }
         }
     }
 }
-
-// MARK: - UIImagePickerControllerDelegate
-
-extension ProfilePresenter: PHPickerViewControllerDelegate {
-    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        picker.dismiss(animated: true)
-        guard let itemProvider = results.first?.itemProvider,
-              itemProvider.canLoadObject(ofClass: UIImage.self) else { return }
-        itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, _ in
-            if let image = image as? UIImage {
-                DispatchQueue.main.async { [weak self] in
-                    self?.viewInput?.updatePhoto(image)
-                }
-            }
-        }
-    }
-}
-
-// MARK: - UIImagePickerControllerDelegate
-
-extension ProfilePresenter: UIImagePickerControllerDelegate {
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-        guard let imagePicker = imagePicker,
-              let image = info[.originalImage] as? UIImage else { return }
-        imagePicker.dismiss(animated: true, completion: nil)
-        DispatchQueue.main.async { [weak self] in
-            self?.viewInput?.updatePhoto(image)
-        }
-    }
-}
-
-// MARK: - UINavigationControllerDelegate
-
-extension ProfilePresenter: UINavigationControllerDelegate {}
