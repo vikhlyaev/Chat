@@ -10,16 +10,16 @@ final class ServiceAssembly {
         CoreDataServiceImpl()
     }
     
+    func makeNetworkService() -> NetworkService {
+        NetworkServiceImpl()
+    }
+    
     func makeChatTransportService() -> ChatTransportService {
         ChatTransportServiceImpl()
     }
     
     func makeSSETransportService() -> SSETransportService {
         SSETransportServiceImpl()
-    }
-    
-    func makeNetworkService() -> NetworkService {
-        NetworkServiceImpl(fileManagerService: makeFileManagerService())
     }
     
     func makeThemesService() -> ThemesService {
@@ -34,7 +34,10 @@ final class ServiceAssembly {
     }
     
     func makePhotoLoaderService() -> PhotoLoaderService {
-        PhotoLoaderServiceImpl(networkService: makeNetworkService())
+        PhotoLoaderServiceImpl(
+            networkService: makeNetworkService(),
+            fileManagerService: makeFileManagerService()
+        )
     }
     
     func makeDataService() -> DataService {

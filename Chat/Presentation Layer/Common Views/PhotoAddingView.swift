@@ -15,6 +15,7 @@ final class PhotoAddingView: UIView {
         imageView.backgroundColor = .red
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
+        imageView.accessibilityLabel = "Profile photo"
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
@@ -28,6 +29,7 @@ final class PhotoAddingView: UIView {
             action: #selector(addPhotoButtonTapped),
             for: .touchUpInside
         )
+        button.accessibilityLabel = "Add photo button"
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()

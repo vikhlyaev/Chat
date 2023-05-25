@@ -23,6 +23,7 @@ final class ProfileViewController: UIViewController {
         label.numberOfLines = 1
         label.adjustsFontSizeToFitWidth = true
         label.font = .systemFont(ofSize: 22, weight: .bold)
+        label.accessibilityLabel = "Profile name"
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
